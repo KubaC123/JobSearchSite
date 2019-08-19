@@ -53,7 +53,7 @@ public class CompanyRepositoryUnitTest {
     @Test
     @Transactional
     public void givenValidDataThenCreatesNewCompany() {
-        Long companyId = companyRepository.createCompany(validCompany);
+        Long companyId = companyRepository.saveCompany(validCompany);
         companyRepository.removeCompanyById(companyId);
         assertNotNull(companyId);
     }
@@ -61,8 +61,8 @@ public class CompanyRepositoryUnitTest {
     @Test
     @Transactional
     public void givenExistingCompanyThenFindsItById() {
-        Long companyId = companyRepository.createCompany(validCompany);
-        Company foundCompany = companyRepository.findById(companyId);
+        Long companyId = companyRepository.saveCompany(validCompany);
+        Company foundCompany = companyRepository.getById(companyId);
         Long foundCompanyId = foundCompany.getId();
         companyRepository.removeCompany(foundCompany);
         assertEquals(companyId, foundCompanyId);
@@ -71,15 +71,15 @@ public class CompanyRepositoryUnitTest {
     @Test
     @Transactional
     public void givenExistingCompanyRemovesIt() {
-        Long companyId = companyRepository.createCompany(validCompany);
+        Long companyId = companyRepository.saveCompany(validCompany);
         companyRepository.removeCompanyById(companyId);
-        Optional<Company> removedCompany =Optional.ofNullable(companyRepository.findById(companyId));
+        Optional<Company> removedCompany = companyRepository.findById(companyId);
         assertTrue(removedCompany.isEmpty());
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void givenNullNameOnCreateThenThrowsConstraintViolationException() {
-        companyRepository.createCompany(Company.builder()
+        companyRepository.saveCompany(Company.builder()
                 .withWebSite(TEST_COMPANY_WEBSITE)
                 .withSize(TEST_COMPANY_SIZE)
                 .build());
@@ -88,11 +88,11 @@ public class CompanyRepositoryUnitTest {
     @Test
     @Transactional
     public void givenValidDataOnUpdateThenUpdatesExistingCompany() {
-        Long companyId = companyRepository.createCompany(validCompany);
-        Company createdCompany = companyRepository.findById(companyId);
+        Long companyId = companyRepository.saveCompany(validCompany);
+        Company createdCompany = companyRepository.getById(companyId);
         Company updatedCompany = buildUpdatedCompany(createdCompany);
         companyRepository.updateCompany(updatedCompany);
-        Company finalCompany = companyRepository.findById(companyId);
+        Company finalCompany = companyRepository.getById(companyId);
         companyRepository.removeCompany(finalCompany);
         assertEquals(TEST_COMPANY_NAME + UPDATE, finalCompany.getName());
         assertEquals(TEST_COMPANY_WEBSITE + UPDATE, finalCompany.getWebSite());

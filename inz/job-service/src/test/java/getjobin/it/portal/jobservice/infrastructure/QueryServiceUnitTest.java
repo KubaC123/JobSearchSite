@@ -31,7 +31,7 @@ public class QueryServiceUnitTest {
     public void givenExistingCompaniesIdsThenFindsIt() {
         List<Company> companies = buildValidCompanies();
         List<Long> companiesIds = companies.stream()
-                .map(companyRepository::createCompany)
+                .map(companyRepository::saveCompany)
                 .collect(Collectors.toList());
         List<Long> foundCompaniesIds = queryService.findEntitiesByIds(Company.class, companiesIds).stream()
                 .map(Company::getId)

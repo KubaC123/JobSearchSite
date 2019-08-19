@@ -8,71 +8,57 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Repository
+@Transactional
 public class TechStackRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    private Validator validator;
     private QueryService queryService;
 
     @Autowired
-    public TechStackRepository(Validator validator, QueryService queryService) {
-        this.validator = validator;
+    public TechStackRepository(QueryService queryService) {
         this.queryService = queryService;
     }
 
-    public TechStack findById(Long techStackId) {
-        return entityManager.find(TechStack.class, techStackId);
+    public Optional<TechStack> findById(Long techStackId) {
+        return Optional.ofNullable(entityManager.find(TechStack.class, techStackId));
+    }
+
+    public TechStack getById(Long techStackId) {
+        return findById(techStackId)
+                .orElseThrow(() -> new RuntimeException(MessageFormat.format("Tech Stack with id: {0} does not exist or was removed", String.valueOf(techStackId))));
     }
 
     public List<TechStack> findByIds(List<Long> techStackIds) {
         return queryService.findEntitiesByIds(TechStack.class, techStackIds);
     }
 
-    @Transactional
-    public List<Long> createTechStacks(List<TechStack> techStacks) {
+    public List<Long> saveTechStacks(List<TechStack> techStacks) {
         return techStacks.stream()
-                .map(this::createTechStack)
+                .map(this::saveTechStack)
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public Long createTechStack(TechStack techStack) {
-        validate(techStack);
+    public Long saveTechStack(TechStack techStack) {
         entityManager.persist(techStack);
         return techStack.getId();
     }
 
-    private void validate(TechStack techStack) {
-        Set<ConstraintViolation<TechStack>> violations = validator.validate(techStack);
-        if(!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
-        }
-    }
-
-    @Transactional
     public Long updateTechStack(TechStack techStack) {
-        validate(techStack);
         return entityManager.merge(techStack).getId();
     }
 
-    @Transactional
     public void removeTechStackById(Long techStackId) {
-        Optional.ofNullable(findById(techStackId))
-                .ifPresent(entityManager::remove);
+        findById(techStackId).ifPresent(entityManager::remove);
     }
 
-    @Transactional
     public void removeTechStack(TechStack techStack) {
         entityManager.remove(techStack);
     }

@@ -1,7 +1,7 @@
 package getjobin.it.portal.jobservice.domain;
 
-import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackRepository;
+import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,7 +46,7 @@ public class TechStackRepositoryUnitTest {
     @Test
     @Transactional
     public void givenValidDataThenCreatesNewTechStack() {
-        Long techStackId = techStackRepository.createTechStack(validTechStack);
+        Long techStackId = techStackRepository.saveTechStack(validTechStack);
         techStackRepository.removeTechStackById(techStackId);
         assertNotNull(techStackId);
     }
@@ -54,15 +54,15 @@ public class TechStackRepositoryUnitTest {
     @Test
     @Transactional
     public void givenExistingTechStackThenFindsItById() {
-        Long techStackId = techStackRepository.createTechStack(validTechStack);
-        TechStack foundTechStack = techStackRepository.findById(techStackId);
+        Long techStackId = techStackRepository.saveTechStack(validTechStack);
+        TechStack foundTechStack = techStackRepository.getById(techStackId);
         techStackRepository.removeTechStackById(techStackId);
         assertEquals(techStackId, foundTechStack.getId());
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void givenEmptyNameOnCreateThenThrowsConstraintViolationException() {
-        techStackRepository.createTechStack(TechStack.builder()
+        techStackRepository.saveTechStack(TechStack.builder()
                 .withName("")
                 .build());
     }
@@ -70,13 +70,13 @@ public class TechStackRepositoryUnitTest {
     @Test
     @Transactional
     public void givenValidDataOnUpdateThenUpdatedExistingTechStack() {
-        Long techStackId = techStackRepository.createTechStack(validTechStack);
-        TechStack foundTechStack = techStackRepository.findById(techStackId);
+        Long techStackId = techStackRepository.saveTechStack(validTechStack);
+        TechStack foundTechStack = techStackRepository.getById(techStackId);
         TechStack updatedTechStack = TechStack.toBuilder(foundTechStack)
                 .withName(TEST_TECH_STACK_NAME + UPDATE)
                 .build();
         techStackRepository.updateTechStack(updatedTechStack);
-        TechStack finalTechStack = techStackRepository.findById(techStackId);
+        TechStack finalTechStack = techStackRepository.getById(techStackId);
         techStackRepository.removeTechStack(finalTechStack);
         assertEquals(TEST_TECH_STACK_NAME + UPDATE, finalTechStack.getName());
     }

@@ -5,6 +5,7 @@ import getjobin.it.portal.jobservice.api.CompanyDTO;
 import getjobin.it.portal.jobservice.api.ResourceDTO;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyMapper;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyRepository;
+import getjobin.it.portal.jobservice.domain.company.control.CompanyService;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.infrastructure.IdsParam;
 import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServiceIllegalArgumentException;
@@ -31,23 +32,23 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CompanyResource {
 
-    static final String MAIN_PATH = "company";
+    public static final String MAIN_PATH = "company";
     private static final String IDS_PATH = "{ids}";
     private static final String IDS = "ids";
 
     private CompanyMapper companyMapper;
-    private CompanyRepository companyRepository;
+    private CompanyService companyService;
 
     @Autowired
-    public CompanyResource(CompanyMapper companyMapper, CompanyRepository companyRepository) {
+    public CompanyResource(CompanyMapper companyMapper, CompanyService companyService) {
         this.companyMapper = companyMapper;
-        this.companyRepository = companyRepository;
+        this.companyService = companyService;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = IDS_PATH)
     @ResponseStatus(code = HttpStatus.OK)
     public List<CompanyDTO> browseCompanies(@PathVariable(IDS) IdsParam ids) {
-        return companyRepository.findByIds(ids.asList()).stream()
+        return companyService.findByIds(ids.asList()).stream()
                 .map(companyMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -55,7 +56,7 @@ public class CompanyResource {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(code = HttpStatus.CREATED)
     public ResourceDTO createCompany(@RequestBody CompanyDTO companyDTO) {
-        Long newCompanyId = companyRepository.createCompany(companyMapper.toEntity(companyDTO));
+        Long newCompanyId = companyService.createCompany(companyMapper.toEntity(companyDTO));
         return buildResourceDTO(newCompanyId);
     }
 
@@ -74,24 +75,18 @@ public class CompanyResource {
     @ResponseStatus(code = HttpStatus.OK)
     public ResourceDTO updateCompany(@RequestBody CompanyDTO companyDTO) {
         JobServicePreconditions.checkArgument(Objects.nonNull(companyDTO.getId()), "Specify company id in order to update it");
-        Company foundCompany = getExistingCompany(companyDTO);
+        Company foundCompany = companyService.getById(companyDTO.getId());
         Company updatedCompany = companyMapper.updateExistingEntity(foundCompany, companyDTO);
-        companyRepository.updateCompany(updatedCompany);
+        companyService.updateCompany(updatedCompany);
         return buildResourceDTO(updatedCompany.getId());
-    }
-
-    private Company getExistingCompany(CompanyDTO companyDTO) {
-        return Optional.ofNullable(companyRepository.findById(companyDTO.getId()))
-                .orElseThrow(() -> new JobServiceIllegalArgumentException(
-                        MessageFormat.format("Company with id: {0} does not exist or was removed", companyDTO.getId())));
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
     @ResponseStatus(code = HttpStatus.OK)
     public void deleteCompanies(@PathVariable(IDS) IdsParam ids) {
-        List<Company> foundCompanies = companyRepository.findByIds(ids.asList());
+        List<Company> foundCompanies = companyService.findByIds(ids.asList());
         log.info(MessageFormat.format("[COMPANY] removing companies with ids: {0}", getCommaSeparatedIds(foundCompanies)));
-        companyRepository.removeCompanies(foundCompanies);
+        companyService.removeCompanies(foundCompanies);
     }
 
     private String getCommaSeparatedIds(List<Company> companies) {

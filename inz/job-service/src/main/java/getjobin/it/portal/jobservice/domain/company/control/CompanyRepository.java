@@ -20,18 +20,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Repository
-@Slf4j
+@Transactional
 public class CompanyRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    private Validator validator;
     private QueryService queryService;
 
     @Autowired
-    public CompanyRepository(Validator validator, QueryService queryService) {
-        this.validator = validator;
+    public CompanyRepository(QueryService queryService) {
         this.queryService = queryService;
     }
 
@@ -39,46 +37,34 @@ public class CompanyRepository {
         return queryService.findEntitiesByIds(Company.class, companyIds);
     }
 
-    public Company findById(Long companyId) {
-        return entityManager.find(Company.class, companyId);
+    public Optional<Company> findById(Long companyId) {
+        return Optional.ofNullable(entityManager.find(Company.class, companyId));
     }
 
-    @Transactional
-    public Long createCompany(Company company) {
-        validate(company);
-        return saveCompany(company);
+    public Company getById(Long companyId) {
+        return findById(companyId)
+                .orElseThrow(() -> new RuntimeException(MessageFormat.format("Company with id: {0} does not exist or was removed", String.valueOf(companyId))));
     }
 
-    private void validate(Company company) {
-        Set<ConstraintViolation<Company>> violations = validator.validate(company);
-        if(!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
-        }
-    }
-
-    private Long saveCompany(Company company) {
+    public Long saveCompany(Company company) {
         company.setCreateDate(CurrentDate.get());
         entityManager.persist(company);
         return company.getId();
     }
 
-    @Transactional
     public Long updateCompany(Company company) {
-        validate(company);
+        company.setModifyDate(CurrentDate.get());
         return entityManager.merge(company).getId();
     }
 
-    @Transactional
     public void removeCompanyById(Long companyId) {
-        Optional.ofNullable(findById(companyId))
-                .ifPresent(entityManager::remove);
+        findById(companyId).ifPresent(entityManager::remove);
     }
 
     public void removeCompanies(List<Company> companies) {
         companies.forEach(this::removeCompany);
     }
 
-    @Transactional
     public void removeCompany(Company company) {
         entityManager.remove(company);
     }

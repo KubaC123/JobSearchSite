@@ -5,6 +5,7 @@ import getjobin.it.portal.jobservice.api.TechStackDTO;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackMapper;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackRepository;
+import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 import getjobin.it.portal.jobservice.infrastructure.IdsParam;
 import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServicePreconditions;
@@ -32,18 +33,18 @@ public class TechStackResource {
     private static final String IDS = "ids";
 
     private TechStackMapper techStackMapper;
-    private TechStackRepository techStackRepository;
+    private TechStackService techStackService;
 
     @Autowired
-    public TechStackResource(TechStackMapper techStackMapper, TechStackRepository techStackRepository) {
+    public TechStackResource(TechStackMapper techStackMapper, TechStackService techStackService) {
         this.techStackMapper = techStackMapper;
-        this.techStackRepository = techStackRepository;
+        this.techStackService = techStackService;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = IDS_PATH)
     @ResponseStatus(value = HttpStatus.OK)
     public List<TechStackDTO> browseTechStacks(@PathVariable(IDS) IdsParam ids) {
-        return techStackRepository.findByIds(ids.asList()).stream()
+        return techStackService.findByIds(ids.asList()).stream()
                 .map(techStackMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -51,8 +52,7 @@ public class TechStackResource {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
     public List<ResourceDTO> createTechStacks(List<TechStackDTO> techStackDTOs) {
-        List<Long> createdTechStacksIds = techStackRepository.createTechStacks(techStackMapper.toEntities(techStackDTOs));
-        return createdTechStacksIds.stream()
+        return  techStackService.createTechStacks(techStackMapper.toEntities(techStackDTOs)).stream()
                 .map(this::buildResourceDTO)
                 .collect(Collectors.toList());
     }
@@ -74,7 +74,7 @@ public class TechStackResource {
         JobServicePreconditions.checkArgument(allTechStackDTOsContainUniqueIds(techStackDTOs),
                 "Specify unique id in each DTO in order to update tech stacks");
         return getUpdatedTechStacks(techStackDTOs).stream()
-                .map(techStackRepository::updateTechStack)
+                .map(techStackService::updateTechStack)
                 .map(this::buildResourceDTO)
                 .collect(Collectors.toList());
     }
@@ -89,7 +89,7 @@ public class TechStackResource {
     private List<TechStack> getUpdatedTechStacks(List<TechStackDTO> techStackDTOs) {
         List<TechStack> updatedTechStacks = new ArrayList<>();
         techStackDTOs.forEach(techStackDTO -> {
-            Optional.ofNullable(techStackRepository.findById(techStackDTO.getId()))
+            techStackService.findById(techStackDTO.getId())
                     .map(foundTechStack -> techStackMapper.updateExistingTechStack(foundTechStack, techStackDTO))
                     .ifPresent(updatedTechStacks::add);
         });
@@ -98,8 +98,8 @@ public class TechStackResource {
 
     @RequestMapping(method = RequestMethod.DELETE, value = IDS_PATH)
     @ResponseStatus(value = HttpStatus.OK)
-    public void deleteCompanies(@PathVariable(IDS) IdsParam ids) {
-        ids.asSet().forEach(techStackRepository::removeTechStackById);
+    public void deleteTechStacks(@PathVariable(IDS) IdsParam ids) {
+        techStackService.deleteTechStacksByIds(ids.asList());
     }
 
 }
