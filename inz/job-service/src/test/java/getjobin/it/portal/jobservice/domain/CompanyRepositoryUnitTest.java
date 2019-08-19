@@ -1,9 +1,9 @@
 package getjobin.it.portal.jobservice.domain;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
-import getjobin.it.portal.jobservice.domain.company.CompanyRepository;
+import getjobin.it.portal.jobservice.domain.company.control.CompanyRepository;
+import getjobin.it.portal.jobservice.domain.company.entity.Company;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,18 +12,38 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
+import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CompanyRepositoryUnitTest {
 
-    private static final String TEST_COMPANY_NAME = "Cichy kącik";
-    private static final String TEST_COMPANY_WEBSITE = "www.cichykacik.pl";
-    private static final String TEST_COMPANY_SIZE = "1";
+    public static final String TEST_COMPANY_NAME = "Cichy kącik";
+    public static final String TEST_COMPANY_WEBSITE = "www.cichykacik.pl";
+    public static final String TEST_COMPANY_SIZE = "1";
     private static final String UPDATE = "update";
 
     @Autowired
     private CompanyRepository companyRepository;
+
+    private Company validCompany;
+
+    @Before
+    public void buildTestCompanies() {
+        validCompany = buildValidCompany();
+    }
+
+    public Company buildValidCompany() {
+        return Company.builder()
+                .withName(TEST_COMPANY_NAME)
+                .withWebSite(TEST_COMPANY_WEBSITE)
+                .withSize(TEST_COMPANY_SIZE)
+                .build();
+    }
 
     @Test
     public void givenDependenciesThenTheyAreInjected() {
@@ -32,29 +52,34 @@ public class CompanyRepositoryUnitTest {
 
     @Test
     @Transactional
-    public void givenValidDataOnCreateThenCreatesNewCompanyAndFindsItById() {
-        Long companyId = createValidCompany();
-        CompanyEntity foundCompany = companyRepository.findById(companyId);
+    public void givenValidDataThenCreatesNewCompany() {
+        Long companyId = companyRepository.createCompany(validCompany);
+        companyRepository.removeCompanyById(companyId);
+        assertNotNull(companyId);
+    }
+
+    @Test
+    @Transactional
+    public void givenExistingCompanyThenFindsItById() {
+        Long companyId = companyRepository.createCompany(validCompany);
+        Company foundCompany = companyRepository.findById(companyId);
         Long foundCompanyId = foundCompany.getId();
         companyRepository.removeCompany(foundCompany);
         assertEquals(companyId, foundCompanyId);
     }
 
-    public Long createValidCompany() {
-        return companyRepository.createCompany(CompanyEntity.builder()
-                .withName(TEST_COMPANY_NAME)
-                .withWebSite(TEST_COMPANY_WEBSITE)
-                .withSize(TEST_COMPANY_SIZE)
-                .build());
+    @Test
+    @Transactional
+    public void givenExistingCompanyRemovesIt() {
+        Long companyId = companyRepository.createCompany(validCompany);
+        companyRepository.removeCompanyById(companyId);
+        Optional<Company> removedCompany =Optional.ofNullable(companyRepository.findById(companyId));
+        assertTrue(removedCompany.isEmpty());
     }
 
     @Test(expected = ConstraintViolationException.class)
-    public void givenEmptyNameOnCreateThenThrowsConstraintViolationException() {
-        createCompanyWithEmptyName();
-    }
-
-    public Long createCompanyWithEmptyName() {
-        return companyRepository.createCompany(CompanyEntity.builder()
+    public void givenNullNameOnCreateThenThrowsConstraintViolationException() {
+        companyRepository.createCompany(Company.builder()
                 .withWebSite(TEST_COMPANY_WEBSITE)
                 .withSize(TEST_COMPANY_SIZE)
                 .build());
@@ -63,28 +88,21 @@ public class CompanyRepositoryUnitTest {
     @Test
     @Transactional
     public void givenValidDataOnUpdateThenUpdatesExistingCompany() {
-        Long companyId = createValidCompany();
-        CompanyEntity createdCompany = companyRepository.findById(companyId);
-        CompanyEntity updatedCompany = CompanyEntity.toBuilder(createdCompany)
-                .withName(TEST_COMPANY_NAME + UPDATE)
-                .withWebSite(TEST_COMPANY_WEBSITE + UPDATE)
-                .build();
+        Long companyId = companyRepository.createCompany(validCompany);
+        Company createdCompany = companyRepository.findById(companyId);
+        Company updatedCompany = buildUpdatedCompany(createdCompany);
         companyRepository.updateCompany(updatedCompany);
-        CompanyEntity finalCompany = companyRepository.findById(companyId);
+        Company finalCompany = companyRepository.findById(companyId);
+        companyRepository.removeCompany(finalCompany);
         assertEquals(TEST_COMPANY_NAME + UPDATE, finalCompany.getName());
         assertEquals(TEST_COMPANY_WEBSITE + UPDATE, finalCompany.getWebSite());
         assertEquals(TEST_COMPANY_SIZE, finalCompany.getSize());
-        companyRepository.removeCompany(finalCompany);
     }
 
-    @Test(expected = ConstraintViolationException.class)
-    public void givenEmptyNameOnUpdateThenThrowsConstraintViolationException() {
-        Long companyId = createValidCompany();
-        CompanyEntity foundCompany = companyRepository.findById(companyId);
-        CompanyEntity updatedCompany = CompanyEntity.toBuilder(foundCompany)
-                .withName(null)
+    private Company buildUpdatedCompany(Company createdCompany) {
+        return Company.toBuilder(createdCompany)
+                .withName(TEST_COMPANY_NAME + UPDATE)
+                .withWebSite(TEST_COMPANY_WEBSITE + UPDATE)
                 .build();
-        companyRepository.updateCompany(updatedCompany);
     }
-
 }

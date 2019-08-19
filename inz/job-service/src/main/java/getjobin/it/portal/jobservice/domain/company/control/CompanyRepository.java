@@ -1,6 +1,6 @@
-package getjobin.it.portal.jobservice.domain.company;
+package getjobin.it.portal.jobservice.domain.company.control;
 
-import getjobin.it.portal.jobservice.domain.CompanyEntity;
+import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.infrastructure.CurrentDate;
 import getjobin.it.portal.jobservice.infrastructure.query.QueryService;
 import lombok.extern.slf4j.Slf4j;
@@ -35,35 +35,35 @@ public class CompanyRepository {
         this.queryService = queryService;
     }
 
-    public List<CompanyEntity> findByIds(List<Long> companyIds) {
-        return queryService.findEntitiesByIds(CompanyEntity.class, companyIds);
+    public List<Company> findByIds(List<Long> companyIds) {
+        return queryService.findEntitiesByIds(Company.class, companyIds);
     }
 
-    public CompanyEntity findById(Long companyId) {
-        return entityManager.find(CompanyEntity.class, companyId);
+    public Company findById(Long companyId) {
+        return entityManager.find(Company.class, companyId);
     }
 
     @Transactional
-    public Long createCompany(CompanyEntity company) {
+    public Long createCompany(Company company) {
         validate(company);
         return saveCompany(company);
     }
 
-    private void validate(CompanyEntity company) {
-        Set<ConstraintViolation<CompanyEntity>> violations = validator.validate(company);
+    private void validate(Company company) {
+        Set<ConstraintViolation<Company>> violations = validator.validate(company);
         if(!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
     }
 
-    private Long saveCompany(CompanyEntity company) {
+    private Long saveCompany(Company company) {
         company.setCreateDate(CurrentDate.get());
         entityManager.persist(company);
         return company.getId();
     }
 
     @Transactional
-    public Long updateCompany(CompanyEntity company) {
+    public Long updateCompany(Company company) {
         validate(company);
         return entityManager.merge(company).getId();
     }
@@ -74,20 +74,12 @@ public class CompanyRepository {
                 .ifPresent(entityManager::remove);
     }
 
-    public void removeCompanies(List<CompanyEntity> companies) {
-        log.info(MessageFormat.format("[COMPANY] removing companies with ids: {0}", getCommaSeparatedIds(companies)));
+    public void removeCompanies(List<Company> companies) {
         companies.forEach(this::removeCompany);
     }
 
-    private String getCommaSeparatedIds(List<CompanyEntity> companies) {
-        return companies.stream()
-                .map(CompanyEntity::getId)
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
-    }
-
     @Transactional
-    public void removeCompany(CompanyEntity company) {
+    public void removeCompany(Company company) {
         entityManager.remove(company);
     }
 }

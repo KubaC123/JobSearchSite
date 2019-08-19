@@ -11,4 +11,6 @@ public class CompanyDTO {
     private String webSite;
     private String size;
     private String logoPath;
+    private Integer establishment;
+    private String description;
 }

@@ -1,10 +1,7 @@
-package getjobin.it.portal.jobservice.domain;
+package getjobin.it.portal.jobservice.domain.company.entity;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import getjobin.it.portal.jobservice.domain.ManagedEntity;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
@@ -13,13 +10,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 
 @Entity
 @Table(name = "COMPANY")
 @Getter
-public class CompanyEntity extends ManagedEntity {
+public class Company extends ManagedEntity {
 
     public static final String COMPANY_TYPE = "Company";
 
@@ -29,7 +26,7 @@ public class CompanyEntity extends ManagedEntity {
     private Long id;
 
     @Column(name = "NAME")
-    @NotNull(message = "Company name must be provided")
+    @NotEmpty(message = "Company name must be provided")
     private String name;
 
     @Column(name = "WEBSITE")
@@ -38,8 +35,14 @@ public class CompanyEntity extends ManagedEntity {
     @Column(name = "SIZE")
     private String size;
 
-    @Column(name = "LOGO_PATH")
+    @Column(name = "LOGO")
     private String logoPath;
+
+    @Column(name = "ESTABLISHMENT")
+    private Integer establishment;
+
+    @Column(name = "DESCRIPTION")
+    private String description;
 
     @Setter
     @Column(name = "CREATE_DATE")
@@ -53,27 +56,31 @@ public class CompanyEntity extends ManagedEntity {
         return new CompanyEntityBuilder();
     }
 
-    public CompanyEntity() { }
+    public Company() { }
 
-    public static CompanyEntityBuilder toBuilder(CompanyEntity companyEntity) {
-        return new CompanyEntityBuilder()
-                .withId(companyEntity.getId())
-                .withName(companyEntity.getName())
-                .withWebSite(companyEntity.getWebSite())
-                .withSize(companyEntity.getSize())
-                .withLogoPath(companyEntity.getLogoPath())
-                .withCreateDate(companyEntity.getCreateDate())
-                .withModifyDate(companyEntity.getModifyDate());
-    }
-
-    private CompanyEntity(CompanyEntityBuilder builder) {
+    private Company(CompanyEntityBuilder builder) {
         this.id = builder.id;
         this.name= builder.name;
         this.webSite = builder.webSite;
         this.size = builder.size;
         this.logoPath = builder.logoPath;
+        this.establishment = builder.establishment;
+        this.description = builder.description;
         this.createDate = builder.createDate;
         this.modifyDate = builder.modifyDate;
+    }
+
+    public static CompanyEntityBuilder toBuilder(Company company) {
+        return new CompanyEntityBuilder()
+                .withId(company.getId())
+                .withName(company.getName())
+                .withWebSite(company.getWebSite())
+                .withSize(company.getSize())
+                .withLogoPath(company.getLogoPath())
+                .withEstablishment(company.getEstablishment())
+                .withDescription(company.getDescription())
+                .withCreateDate(company.getCreateDate())
+                .withModifyDate(company.getModifyDate());
     }
 
     public static class CompanyEntityBuilder {
@@ -83,6 +90,8 @@ public class CompanyEntity extends ManagedEntity {
         private String webSite;
         private String size;
         private String logoPath;
+        private Integer establishment;
+        private String description;
         private Date createDate;
         private Date modifyDate;
 
@@ -111,6 +120,16 @@ public class CompanyEntity extends ManagedEntity {
             return this;
         }
 
+        public CompanyEntityBuilder withEstablishment(Integer establishment) {
+            this.establishment = establishment;
+            return this;
+        }
+
+        public CompanyEntityBuilder withDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
         public CompanyEntityBuilder withCreateDate(Date createDate) {
             this.createDate = createDate;
             return this;
@@ -121,8 +140,8 @@ public class CompanyEntity extends ManagedEntity {
             return this;
         }
 
-        public CompanyEntity build() {
-            return new CompanyEntity(this);
+        public Company build() {
+            return new Company(this);
         }
     }
 }
