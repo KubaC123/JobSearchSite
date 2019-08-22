@@ -4,11 +4,9 @@ package getjobin.it.portal.jobservice.domain.company.boundary;
 import getjobin.it.portal.jobservice.api.CompanyDTO;
 import getjobin.it.portal.jobservice.api.ResourceDTO;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyMapper;
-import getjobin.it.portal.jobservice.domain.company.control.CompanyRepository;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyService;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.infrastructure.IdsParam;
-import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServiceIllegalArgumentException;
 import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServicePreconditions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +22,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -86,7 +83,7 @@ public class CompanyResource {
     public void deleteCompanies(@PathVariable(IDS) IdsParam ids) {
         List<Company> foundCompanies = companyService.findByIds(ids.asList());
         log.info(MessageFormat.format("[COMPANY] removing companies with ids: {0}", getCommaSeparatedIds(foundCompanies)));
-        companyService.removeCompanies(foundCompanies);
+        foundCompanies.forEach(companyService::removeCompany);
     }
 
     private String getCommaSeparatedIds(List<Company> companies) {

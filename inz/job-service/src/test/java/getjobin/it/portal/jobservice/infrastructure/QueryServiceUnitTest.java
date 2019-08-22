@@ -3,7 +3,7 @@ package getjobin.it.portal.jobservice.infrastructure;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import getjobin.it.portal.jobservice.domain.CompanyRepositoryUnitTest;
+import getjobin.it.portal.jobservice.domain.company.entity.TestCompanyBuilder;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyRepository;
 import getjobin.it.portal.jobservice.infrastructure.query.QueryService;
@@ -15,7 +15,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -29,7 +28,7 @@ public class QueryServiceUnitTest {
 
     @Test
     public void givenExistingCompaniesIdsThenFindsIt() {
-        List<Company> companies = buildValidCompanies();
+        List<Company> companies = TestCompanyBuilder.buildValidCompanies(20);
         List<Long> companiesIds = companies.stream()
                 .map(companyRepository::saveCompany)
                 .collect(Collectors.toList());
@@ -38,16 +37,6 @@ public class QueryServiceUnitTest {
                 .collect(Collectors.toList());
         companiesIds.forEach(companyRepository::removeCompanyById);
         companiesIds.forEach(id -> assertTrue(foundCompaniesIds.contains(id)));
-    }
-
-    private List<Company> buildValidCompanies() {
-        return IntStream.rangeClosed(1, 20)
-                .mapToObj(index -> Company.builder()
-                    .withName(CompanyRepositoryUnitTest.TEST_COMPANY_NAME + index)
-                    .withWebSite(CompanyRepositoryUnitTest.TEST_COMPANY_WEBSITE)
-                    .withSize(CompanyRepositoryUnitTest.TEST_COMPANY_SIZE)
-                    .build())
-                .collect(Collectors.toList());
     }
 
 }

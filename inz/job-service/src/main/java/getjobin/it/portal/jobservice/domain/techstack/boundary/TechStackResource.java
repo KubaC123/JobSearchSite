@@ -2,9 +2,7 @@ package getjobin.it.portal.jobservice.domain.techstack.boundary;
 
 import getjobin.it.portal.jobservice.api.ResourceDTO;
 import getjobin.it.portal.jobservice.api.TechStackDTO;
-import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackMapper;
-import getjobin.it.portal.jobservice.domain.techstack.control.TechStackRepository;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 import getjobin.it.portal.jobservice.infrastructure.IdsParam;
@@ -18,10 +16,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -52,7 +48,8 @@ public class TechStackResource {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
     public List<ResourceDTO> createTechStacks(List<TechStackDTO> techStackDTOs) {
-        return  techStackService.createTechStacks(techStackMapper.toEntities(techStackDTOs)).stream()
+        return techStackMapper.toEntities(techStackDTOs).stream()
+                .map(techStackService::createTechStack)
                 .map(this::buildResourceDTO)
                 .collect(Collectors.toList());
     }
@@ -99,7 +96,8 @@ public class TechStackResource {
     @RequestMapping(method = RequestMethod.DELETE, value = IDS_PATH)
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteTechStacks(@PathVariable(IDS) IdsParam ids) {
-        techStackService.deleteTechStacksByIds(ids.asList());
+        techStackService.findByIds(ids.asList())
+                .forEach(techStackService::removeTechStack);
     }
 
 }

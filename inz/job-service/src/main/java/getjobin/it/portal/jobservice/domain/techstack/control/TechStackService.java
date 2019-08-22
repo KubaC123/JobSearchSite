@@ -31,9 +31,13 @@ public class TechStackService {
         return techStackRepository.findById(techStackId);
     }
 
-    public List<Long> createTechStacks(List<TechStack> techStacks) {
-        techStacks.forEach(this::validate);
-        return techStackRepository.saveTechStacks(techStacks);
+    public TechStack getById(Long techStackId) {
+        return techStackRepository.getById(techStackId);
+    }
+
+    public Long createTechStack(TechStack techStack) {
+        validate(techStack);
+        return techStackRepository.saveTechStack(techStack);
     }
 
     private void validate(TechStack techStack) {
@@ -48,8 +52,8 @@ public class TechStackService {
         return techStackRepository.updateTechStack(techStack);
     }
 
-    public void deleteTechStacksByIds(List<Long> techStacksIds) {
-        techStacksIds.forEach(techStackRepository::removeTechStackById);
+    public void removeTechStack(TechStack techStack) {
+        techStackRepository.removeTechStack(techStack);
     }
 
 }

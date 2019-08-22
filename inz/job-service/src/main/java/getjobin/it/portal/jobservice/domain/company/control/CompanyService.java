@@ -1,16 +1,14 @@
 package getjobin.it.portal.jobservice.domain.company.control;
 
-import getjobin.it.portal.jobservice.api.CompanyDTO;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
-import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServiceIllegalArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
-import java.text.MessageFormat;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -25,8 +23,16 @@ public class CompanyService {
         this.companyRepository = companyRepository;
     }
 
+    public Optional<Company> findById(Long companyId) {
+        return companyRepository.findById(companyId);
+    }
+
     public List<Company> findByIds(List<Long> companyIds) {
         return companyRepository.findByIds(companyIds);
+    }
+
+    public Company getById(Long companyId) {
+        return companyRepository.getById(companyId);
     }
 
     public Long createCompany(Company company) {
@@ -46,11 +52,8 @@ public class CompanyService {
         return companyRepository.updateCompany(company);
     }
 
-    public Company getById(Long companyId) {
-        return companyRepository.getById(companyId);
-    }
 
-    public void removeCompanies(List<Company> companies) {
-        companyRepository.removeCompanies(companies);
+    public void removeCompany(Company company) {
+        companyRepository.removeCompany(company);
     }
 }

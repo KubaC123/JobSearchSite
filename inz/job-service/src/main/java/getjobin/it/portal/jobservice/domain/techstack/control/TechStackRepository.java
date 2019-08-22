@@ -11,7 +11,6 @@ import javax.transaction.Transactional;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 @Transactional
@@ -31,19 +30,13 @@ public class TechStackRepository {
         return Optional.ofNullable(entityManager.find(TechStack.class, techStackId));
     }
 
-    public TechStack getById(Long techStackId) {
-        return findById(techStackId)
-                .orElseThrow(() -> new RuntimeException(MessageFormat.format("Tech Stack with id: {0} does not exist or was removed", String.valueOf(techStackId))));
-    }
-
     public List<TechStack> findByIds(List<Long> techStackIds) {
         return queryService.findEntitiesByIds(TechStack.class, techStackIds);
     }
 
-    public List<Long> saveTechStacks(List<TechStack> techStacks) {
-        return techStacks.stream()
-                .map(this::saveTechStack)
-                .collect(Collectors.toList());
+    public TechStack getById(Long techStackId) {
+        return findById(techStackId)
+                .orElseThrow(() -> new RuntimeException(MessageFormat.format("Tech Stack with id: {0} does not exist or was removed", String.valueOf(techStackId))));
     }
 
     public Long saveTechStack(TechStack techStack) {

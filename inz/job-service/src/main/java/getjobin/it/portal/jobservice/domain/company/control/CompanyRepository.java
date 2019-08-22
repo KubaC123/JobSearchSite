@@ -3,21 +3,15 @@ package getjobin.it.portal.jobservice.domain.company.control;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.infrastructure.CurrentDate;
 import getjobin.it.portal.jobservice.infrastructure.query.QueryService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Repository
 @Transactional
@@ -33,12 +27,12 @@ public class CompanyRepository {
         this.queryService = queryService;
     }
 
-    public List<Company> findByIds(List<Long> companyIds) {
-        return queryService.findEntitiesByIds(Company.class, companyIds);
-    }
-
     public Optional<Company> findById(Long companyId) {
         return Optional.ofNullable(entityManager.find(Company.class, companyId));
+    }
+
+    public List<Company> findByIds(List<Long> companyIds) {
+        return queryService.findEntitiesByIds(Company.class, companyIds);
     }
 
     public Company getById(Long companyId) {
@@ -59,10 +53,6 @@ public class CompanyRepository {
 
     public void removeCompanyById(Long companyId) {
         findById(companyId).ifPresent(entityManager::remove);
-    }
-
-    public void removeCompanies(List<Company> companies) {
-        companies.forEach(this::removeCompany);
     }
 
     public void removeCompany(Company company) {
