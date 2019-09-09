@@ -1,11 +1,8 @@
 package getjobin.it.portal.jobservice.infrastructure;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import getjobin.it.portal.jobservice.domain.company.entity.TestCompanyBuilder;
-import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyRepository;
+import getjobin.it.portal.jobservice.domain.company.entity.Company;
+import getjobin.it.portal.jobservice.domain.company.entity.TestCompanyBuilder;
 import getjobin.it.portal.jobservice.infrastructure.query.QueryService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +12,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

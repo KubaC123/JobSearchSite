@@ -20,11 +20,15 @@ public class CompanyMapper {
         return Company.builder()
                 .withId(companyDTO.getId())
                 .withName(companyDTO.getName())
-                .withWebSite(companyDTO.getWebSite())
+                .withWebSiteUrl(companyDTO.getWebSiteUrl())
                 .withSize(companyDTO.getSize())
-                .withLogoPath(companyDTO.getLogoPath())
+                .withLogoUrl(companyDTO.getLogoUrl())
                 .withEstablishment(companyDTO.getEstablishment())
                 .withDescription(companyDTO.getDescription())
+                .withInstagramUrl(companyDTO.getInstagramUrl())
+                .withFacebookUrl(companyDTO.getFacebookUrl())
+                .withLinkedinUrl(companyDTO.getLinkedinUrl())
+                .withTwitterUrl(companyDTO.getTwitterUrl())
                 .build();
 
     }
@@ -39,22 +43,30 @@ public class CompanyMapper {
         return CompanyDTO.builder()
                 .id(company.getId())
                 .name(company.getName())
-                .webSite(company.getWebSite())
+                .webSiteUrl(company.getWebSiteUrl())
                 .size(company.getSize())
-                .logoPath(company.getLogoPath())
+                .logoUrl(company.getLogoUrl())
                 .establishment(company.getEstablishment())
                 .description(company.getDescription())
+                .instagramUrl(company.getInstagramUrl())
+                .facebookUrl(company.getFacebookUrl())
+                .linkedinUrl(company.getLinkedinUrl())
+                .twitterUrl(company.getTwitterUrl())
                 .build();
     }
 
     public Company updateExistingEntity(Company existingEntity, CompanyDTO companyDTO) {
         Company.CompanyEntityBuilder builder = Company.toBuilder(existingEntity);
         return builder.withName(companyDTO.getName())
-                .withWebSite(companyDTO.getWebSite())
+                .withWebSiteUrl(companyDTO.getWebSiteUrl())
                 .withSize(companyDTO.getSize())
-                .withLogoPath(companyDTO.getLogoPath())
+                .withLogoUrl(companyDTO.getLogoUrl())
                 .withEstablishment(companyDTO.getEstablishment())
                 .withDescription(companyDTO.getDescription())
+                .withInstagramUrl(companyDTO.getInstagramUrl())
+                .withFacebookUrl(companyDTO.getFacebookUrl())
+                .withLinkedinUrl(companyDTO.getLinkedinUrl())
+                .withTwitterUrl(companyDTO.getTwitterUrl())
                 .build();
     }
 }

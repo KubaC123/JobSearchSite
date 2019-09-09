@@ -1,7 +1,5 @@
 package getjobin.it.portal.jobservice.domain.company.entity;
 
-import getjobin.it.portal.jobservice.domain.company.entity.Company;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -16,7 +14,7 @@ public class TestCompanyBuilder {
     public static Company buildValidCompany() {
         return Company.builder()
                 .withName(TEST_COMPANY_NAME)
-                .withWebSite(TEST_COMPANY_WEBSITE)
+                .withWebSiteUrl(TEST_COMPANY_WEBSITE)
                 .withSize(TEST_COMPANY_SIZE)
                 .build();
     }
@@ -25,7 +23,7 @@ public class TestCompanyBuilder {
         return IntStream.rangeClosed(1, numberOfCompanies)
                 .mapToObj(index -> Company.builder()
                         .withName(TEST_COMPANY_NAME + index)
-                        .withWebSite(TEST_COMPANY_WEBSITE)
+                        .withWebSiteUrl(TEST_COMPANY_WEBSITE)
                         .withSize(TEST_COMPANY_SIZE)
                         .build())
                 .collect(Collectors.toList());
@@ -33,7 +31,7 @@ public class TestCompanyBuilder {
 
     public static Company buildCompanyWithNullName() {
         return Company.builder()
-                .withWebSite(TEST_COMPANY_WEBSITE)
+                .withWebSiteUrl(TEST_COMPANY_WEBSITE)
                 .withSize(TEST_COMPANY_SIZE)
                 .build();
     }
@@ -41,7 +39,7 @@ public class TestCompanyBuilder {
     public static Company buildCompanyWithEmptyName() {
         return Company.builder()
                 .withName("")
-                .withWebSite(TEST_COMPANY_WEBSITE)
+                .withWebSiteUrl(TEST_COMPANY_WEBSITE)
                 .withSize(TEST_COMPANY_SIZE)
                 .build();
     }
@@ -49,7 +47,7 @@ public class TestCompanyBuilder {
     public static Company buildValidUpdatedCompany(Company createdCompany) {
         return Company.toBuilder(createdCompany)
                 .withName(TEST_COMPANY_NAME + UPDATE)
-                .withWebSite(TEST_COMPANY_WEBSITE + UPDATE)
+                .withWebSiteUrl(TEST_COMPANY_WEBSITE + UPDATE)
                 .build();
     }
 

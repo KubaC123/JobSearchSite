@@ -60,7 +60,7 @@ public class CompanyServiceUnitTest {
         Company finalCompany = companyService.getById(companyId);
         companyService.removeCompany(finalCompany);
         assertEquals(TestCompanyBuilder.TEST_COMPANY_NAME + UPDATE, finalCompany.getName());
-        assertEquals(TestCompanyBuilder.TEST_COMPANY_WEBSITE + UPDATE, finalCompany.getWebSite());
+        assertEquals(TestCompanyBuilder.TEST_COMPANY_WEBSITE + UPDATE, finalCompany.getWebSiteUrl());
         assertEquals(TestCompanyBuilder.TEST_COMPANY_SIZE, finalCompany.getSize());
     }
 

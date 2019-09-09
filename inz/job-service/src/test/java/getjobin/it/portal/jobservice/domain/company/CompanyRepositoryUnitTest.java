@@ -68,7 +68,7 @@ public class CompanyRepositoryUnitTest {
         Company finalCompany = companyRepository.getById(companyId);
         companyRepository.removeCompany(finalCompany);
         assertEquals(TestCompanyBuilder.TEST_COMPANY_NAME + UPDATE, finalCompany.getName());
-        assertEquals(TestCompanyBuilder.TEST_COMPANY_WEBSITE + UPDATE, finalCompany.getWebSite());
+        assertEquals(TestCompanyBuilder.TEST_COMPANY_WEBSITE + UPDATE, finalCompany.getWebSiteUrl());
         assertEquals(TestCompanyBuilder.TEST_COMPANY_SIZE, finalCompany.getSize());
     }
 

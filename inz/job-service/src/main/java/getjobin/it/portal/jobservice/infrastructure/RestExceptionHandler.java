@@ -18,7 +18,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<ErrorMessageDTO> handleConstraintViolation(ConstraintViolationException exception, WebRequest request) {
-        Map<String, String> errorsByField = exception.getConstraintViolations().stream()
+        Map<String, String> validationsByField = exception.getConstraintViolations().stream()
                 .collect(Collectors.toMap(
                         constraintViolation -> constraintViolation.getPropertyPath().toString(),
                         constraintViolation -> constraintViolation.getMessage()));
@@ -28,7 +28,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                         .timeStamp(CurrentDate.get())
                         .status(HttpStatus.PRECONDITION_FAILED)
                         .message(exception.getLocalizedMessage())
-                        .errorsByField(errorsByField)
+                        .validationsByField(validationsByField)
                         .build());
     }
 

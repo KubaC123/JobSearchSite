@@ -29,20 +29,32 @@ public class Company extends ManagedEntity {
     @NotEmpty(message = "Company name must be provided")
     private String name;
 
-    @Column(name = "WEBSITE")
-    private String webSite;
+    @Column(name = "WEBSITE_URL")
+    private String webSiteUrl;
 
     @Column(name = "SIZE")
     private String size;
 
-    @Column(name = "LOGO")
-    private String logoPath;
+    @Column(name = "LOGO_URL")
+    private String logoUrl;
 
     @Column(name = "ESTABLISHMENT")
     private Integer establishment;
 
     @Column(name = "DESCRIPTION")
     private String description;
+
+    @Column(name = "INSTAGRAM_URL")
+    private String instagramUrl;
+
+    @Column(name = "FACEBOOK_URL")
+    private String facebookUrl;
+
+    @Column(name = "LINKEDIN_URL")
+    private String linkedinUrl;
+
+    @Column(name = "TWITTER_URL")
+    private String twitterUrl;
 
     @Setter
     @Column(name = "CREATE_DATE")
@@ -61,11 +73,15 @@ public class Company extends ManagedEntity {
     private Company(CompanyEntityBuilder builder) {
         this.id = builder.id;
         this.name= builder.name;
-        this.webSite = builder.webSite;
+        this.webSiteUrl = builder.webSiteUrl;
         this.size = builder.size;
-        this.logoPath = builder.logoPath;
+        this.logoUrl = builder.logoUrl;
         this.establishment = builder.establishment;
         this.description = builder.description;
+        this.instagramUrl = builder.instagramUrl;
+        this.facebookUrl = builder.facebookUrl;
+        this.linkedinUrl = builder.linkedinUrl;
+        this.twitterUrl = builder.twitterUrl;
         this.createDate = builder.createDate;
         this.modifyDate = builder.modifyDate;
     }
@@ -74,11 +90,15 @@ public class Company extends ManagedEntity {
         return new CompanyEntityBuilder()
                 .withId(company.getId())
                 .withName(company.getName())
-                .withWebSite(company.getWebSite())
+                .withWebSiteUrl(company.getWebSiteUrl())
                 .withSize(company.getSize())
-                .withLogoPath(company.getLogoPath())
+                .withLogoUrl(company.getLogoUrl())
                 .withEstablishment(company.getEstablishment())
                 .withDescription(company.getDescription())
+                .withInstagramUrl(company.getInstagramUrl())
+                .withFacebookUrl(company.getFacebookUrl())
+                .withLinkedinUrl(company.getLinkedinUrl())
+                .withTwitterUrl(company.getTwitterUrl())
                 .withCreateDate(company.getCreateDate())
                 .withModifyDate(company.getModifyDate());
     }
@@ -87,11 +107,15 @@ public class Company extends ManagedEntity {
 
         private Long id;
         private String name;
-        private String webSite;
+        private String webSiteUrl;
         private String size;
-        private String logoPath;
+        private String logoUrl;
         private Integer establishment;
         private String description;
+        private String instagramUrl;
+        private String facebookUrl;
+        private String linkedinUrl;
+        private String twitterUrl;
         private Date createDate;
         private Date modifyDate;
 
@@ -105,8 +129,8 @@ public class Company extends ManagedEntity {
             return this;
         }
 
-        public CompanyEntityBuilder withWebSite(String webSite) {
-            this.webSite = webSite;
+        public CompanyEntityBuilder withWebSiteUrl(String webSiteUrl) {
+            this.webSiteUrl = webSiteUrl;
             return this;
         }
 
@@ -115,8 +139,8 @@ public class Company extends ManagedEntity {
             return this;
         }
 
-        public CompanyEntityBuilder withLogoPath(String logoPath) {
-            this.logoPath = logoPath;
+        public CompanyEntityBuilder withLogoUrl(String logoUrl) {
+            this.logoUrl = logoUrl;
             return this;
         }
 
@@ -127,6 +151,26 @@ public class Company extends ManagedEntity {
 
         public CompanyEntityBuilder withDescription(String description) {
             this.description = description;
+            return this;
+        }
+
+        public CompanyEntityBuilder withInstagramUrl(String instagramUrl) {
+            this.instagramUrl = instagramUrl;
+            return this;
+        }
+
+        public CompanyEntityBuilder withFacebookUrl(String facebookUrl) {
+            this.facebookUrl = facebookUrl;
+            return this;
+        }
+
+        public CompanyEntityBuilder withLinkedinUrl(String linkedinUrl) {
+            this.linkedinUrl = linkedinUrl;
+            return this;
+        }
+
+        public CompanyEntityBuilder withTwitterUrl(String twitterUrl) {
+            this.twitterUrl = twitterUrl;
             return this;
         }
 

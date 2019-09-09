@@ -7,7 +7,6 @@ import getjobin.it.portal.jobservice.domain.company.control.CompanyMapper;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyService;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.infrastructure.IdsParam;
-import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServicePreconditions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,6 +28,8 @@ import java.util.stream.Collectors;
 public class CompanyResource {
 
     public static final String MAIN_PATH = "company";
+    private static final String ID_PATH = "{id}";
+    private static final String ID = "id";
     private static final String IDS_PATH = "{ids}";
     private static final String IDS = "ids";
 
@@ -68,11 +68,10 @@ public class CompanyResource {
                 .build();
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT, value = ID_PATH)
     @ResponseStatus(code = HttpStatus.OK)
-    public ResourceDTO updateCompany(@RequestBody CompanyDTO companyDTO) {
-        JobServicePreconditions.checkArgument(Objects.nonNull(companyDTO.getId()), "Specify company id in order to update it");
-        Company foundCompany = companyService.getById(companyDTO.getId());
+    public ResourceDTO updateCompany(@PathVariable(ID) Long companyId, @RequestBody CompanyDTO companyDTO) {
+        Company foundCompany = companyService.getById(companyId);
         Company updatedCompany = companyMapper.updateExistingEntity(foundCompany, companyDTO);
         companyService.updateCompany(updatedCompany);
         return buildResourceDTO(updatedCompany.getId());

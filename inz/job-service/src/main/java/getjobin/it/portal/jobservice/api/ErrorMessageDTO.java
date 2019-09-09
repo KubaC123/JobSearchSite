@@ -13,6 +13,6 @@ public class ErrorMessageDTO {
     private Date timeStamp;
     private HttpStatus status;
     private String message;
-    private Map<String, String> errorsByField;
+    private Map<String, String> validationsByField;
 
 }

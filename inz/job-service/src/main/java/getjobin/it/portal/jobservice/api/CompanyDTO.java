@@ -8,9 +8,13 @@ public class CompanyDTO {
 
     private Long id;
     private String name;
-    private String webSite;
+    private String webSiteUrl;
     private String size;
-    private String logoPath;
+    private String logoUrl;
     private Integer establishment;
     private String description;
+    private String instagramUrl;
+    private String facebookUrl;
+    private String linkedinUrl;
+    private String twitterUrl;
 }
