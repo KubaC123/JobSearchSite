@@ -1,6 +1,7 @@
 package getjobin.it.portal.jobservice.domain.company.entity;
 
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
+import getjobin.it.portal.jobservice.domain.joboffer.entity.JobOffer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,9 +10,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "COMPANY")
@@ -63,6 +66,9 @@ public class Company extends ManagedEntity {
     @Setter
     @Column(name = "MODIFY_DATE")
     private Date modifyDate;
+
+    @OneToMany(mappedBy = "company")
+    private List<JobOffer> jobOffers;
 
     public static CompanyEntityBuilder builder() {
         return new CompanyEntityBuilder();

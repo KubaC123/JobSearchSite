@@ -52,7 +52,6 @@ public class CompanyService {
         return companyRepository.updateCompany(company);
     }
 
-
     public void removeCompany(Company company) {
         companyRepository.removeCompany(company);
     }

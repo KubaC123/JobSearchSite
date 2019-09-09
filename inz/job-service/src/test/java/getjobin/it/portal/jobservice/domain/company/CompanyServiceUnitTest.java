@@ -42,7 +42,7 @@ public class CompanyServiceUnitTest {
 
     @Test
     @Transactional
-    public void givenExistingCompanyRemovesIt() {
+    public void givenExistingCompanyThenRemovesIt() {
         Long companyId = companyService.createCompany(TestCompanyBuilder.buildValidCompany());
         Company createdCompany = companyService.getById(companyId);
         companyService.removeCompany(createdCompany);

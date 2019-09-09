@@ -28,10 +28,6 @@ import java.util.stream.Collectors;
 public class CompanyResource {
 
     public static final String MAIN_PATH = "company";
-    private static final String ID_PATH = "{id}";
-    private static final String ID = "id";
-    private static final String IDS_PATH = "{ids}";
-    private static final String IDS = "ids";
 
     private CompanyMapper companyMapper;
     private CompanyService companyService;
@@ -42,9 +38,9 @@ public class CompanyResource {
         this.companyService = companyService;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = IDS_PATH)
+    @RequestMapping(method = RequestMethod.GET, value = IdsParam.IDS_PATH)
     @ResponseStatus(code = HttpStatus.OK)
-    public List<CompanyDTO> browseCompanies(@PathVariable(IDS) IdsParam ids) {
+    public List<CompanyDTO> browseCompanies(@PathVariable(IdsParam.IDS) IdsParam ids) {
         return companyService.findByIds(ids.asList()).stream()
                 .map(companyMapper::toDTO)
                 .collect(Collectors.toList());
@@ -68,18 +64,18 @@ public class CompanyResource {
                 .build();
     }
 
-    @RequestMapping(method = RequestMethod.PUT, value = ID_PATH)
+    @RequestMapping(method = RequestMethod.PUT, value = IdsParam.ID_PATH)
     @ResponseStatus(code = HttpStatus.OK)
-    public ResourceDTO updateCompany(@PathVariable(ID) Long companyId, @RequestBody CompanyDTO companyDTO) {
+    public ResourceDTO updateCompany(@PathVariable(IdsParam.ID) Long companyId, @RequestBody CompanyDTO companyDTO) {
         Company foundCompany = companyService.getById(companyId);
         Company updatedCompany = companyMapper.updateExistingEntity(foundCompany, companyDTO);
         companyService.updateCompany(updatedCompany);
         return buildResourceDTO(updatedCompany.getId());
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.DELETE, value = IdsParam.IDS_PATH)
     @ResponseStatus(code = HttpStatus.OK)
-    public void deleteCompanies(@PathVariable(IDS) IdsParam ids) {
+    public void deleteCompanies(@PathVariable(IdsParam.IDS) IdsParam ids) {
         List<Company> foundCompanies = companyService.findByIds(ids.asList());
         log.info(MessageFormat.format("[COMPANY] removing companies with ids: {0}", getCommaSeparatedIds(foundCompanies)));
         foundCompanies.forEach(companyService::removeCompany);

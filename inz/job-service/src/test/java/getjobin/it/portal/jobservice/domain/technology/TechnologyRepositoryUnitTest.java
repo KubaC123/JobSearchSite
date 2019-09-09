@@ -2,6 +2,7 @@ package getjobin.it.portal.jobservice.domain.technology;
 
 import getjobin.it.portal.jobservice.domain.technology.control.TechnologyRepository;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
+import getjobin.it.portal.jobservice.domain.technology.entity.TestTechnologyBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

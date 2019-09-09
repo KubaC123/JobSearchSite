@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.domain.technology;
+package getjobin.it.portal.jobservice.domain.technology.entity;
 
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 
