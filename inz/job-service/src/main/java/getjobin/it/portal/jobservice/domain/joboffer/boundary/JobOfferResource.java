@@ -4,10 +4,9 @@ import getjobin.it.portal.jobservice.api.JobOfferDTO;
 import getjobin.it.portal.jobservice.api.ResourceDTO;
 import getjobin.it.portal.jobservice.domain.joboffer.control.JobOfferMapper;
 import getjobin.it.portal.jobservice.domain.joboffer.control.JobOfferService;
-import getjobin.it.portal.jobservice.domain.joboffer.control.JobTechStackRelationMapper;
 import getjobin.it.portal.jobservice.domain.joboffer.entity.JobOffer;
-import getjobin.it.portal.jobservice.domain.joboffer.entity.JobTechStackRelation;
 import getjobin.it.portal.jobservice.infrastructure.IdsParam;
+import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServicePreconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +17,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = JobOfferResource.MAIN_PATH)
@@ -28,30 +29,26 @@ public class JobOfferResource {
 
     private JobOfferMapper jobOfferMapper;
     private JobOfferService jobOfferService;
-    private JobTechStackRelationMapper jobTechStackRelationMapper;
 
     @Autowired
-    public JobOfferResource(JobOfferMapper jobOfferMapper, JobOfferService jobOfferService,
-                            JobTechStackRelationMapper jobTechStackRelationMapper) {
+    public JobOfferResource(JobOfferMapper jobOfferMapper, JobOfferService jobOfferService) {
         this.jobOfferMapper = jobOfferMapper;
         this.jobOfferService = jobOfferService;
-        this.jobTechStackRelationMapper = jobTechStackRelationMapper;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = IdsParam.IDS_PATH)
     @ResponseStatus(value = HttpStatus.OK)
     public List<JobOfferDTO> browseJobOffers(@PathVariable(IdsParam.IDS) IdsParam ids) {
-        // todo
-        return null;
+        return jobOfferService.findByIds(ids.asList()).stream()
+                .map(jobOfferMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResourceDTO createJobOffer(@RequestBody JobOfferDTO jobOfferDTO) {
         JobOffer jobOffer = jobOfferMapper.toEntity(jobOfferDTO);
-        Long createdJobOfferId = jobOfferService.createJobOffer(jobOffer, jobOfferDTO.getTechStacks());
-        List<JobTechStackRelation> jobTechStackRelations = jobTechStackRelationMapper.toEntities(createdJobOfferId, jobOfferDTO.getTechStacks());
-        jobOfferService.createJobOfferTechStackRelations(jobTechStackRelations);
+        Long createdJobOfferId = jobOfferService.createJobOffer(jobOffer);
         return buildResourceDTO(createdJobOfferId);
     }
 
@@ -64,5 +61,22 @@ public class JobOfferResource {
                         .build()
                         .toUri())
                 .build();
+    }
+
+    @RequestMapping(method = RequestMethod.PUT)
+    @ResponseStatus(value = HttpStatus.OK)
+    public ResourceDTO updateJobOffer(@RequestBody JobOfferDTO jobOfferDTO) {
+        JobServicePreconditions.checkArgument(jobOfferDTO.getId() != null, "Job offer id must be specified in DTO order to update it");
+        JobOffer existingJobOffer = jobOfferService.getById(jobOfferDTO.getId());
+        JobOffer updatedJobOffer = jobOfferMapper.updateExistingJobOffer(existingJobOffer, jobOfferDTO);
+        jobOfferService.updateJobOffer(updatedJobOffer);
+        return buildResourceDTO(jobOfferDTO.getId());
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, value = IdsParam.IDS)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteJobOffers(@PathParam(IdsParam.IDS) IdsParam ids) {
+        jobOfferService.findByIds(ids.asList())
+                .forEach(jobOfferService::removeJobOffer);
     }
 }

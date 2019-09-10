@@ -9,15 +9,13 @@ import getjobin.it.portal.jobservice.domain.joboffer.entity.JobOffer;
 import getjobin.it.portal.jobservice.domain.technology.boundary.TechnologyResource;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackMapper;
-import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
+import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
 import getjobin.it.portal.jobservice.infrastructure.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -25,10 +23,14 @@ import java.util.stream.Collectors;
 public class JobOfferMapper {
 
     private TechStackMapper techStackMapper;
+    private JobTechStackRelationMapper techStackRelationMapper;
+    private TechStackService techStackService;
 
     @Autowired
-    public JobOfferMapper(TechStackMapper techStackMapper) {
+    public JobOfferMapper(TechStackMapper techStackMapper, JobTechStackRelationMapper techStackRelationMapper, TechStackService techStackService) {
         this.techStackMapper = techStackMapper;
+        this.techStackRelationMapper = techStackRelationMapper;
+        this.techStackService = techStackService;
     }
 
     public JobOffer toEntity(JobOfferDTO jobOfferDTO) {
@@ -51,10 +53,11 @@ public class JobOfferMapper {
                 .withDescription(jobOfferDTO.getDescription())
                 .withAgreements(jobOfferDTO.getAgreements())
                 .withRemote(jobOfferDTO.getRemote())
+                .withTechStackRelations(techStackRelationMapper.toEntities(jobOfferDTO.getId(), jobOfferDTO.getTechStacks()))
                 .build();
     }
 
-    public JobOfferDTO toDTO(JobOffer jobOffer, List<Pair<TechStack, Integer>> techStacks) {
+    public JobOfferDTO toDTO(JobOffer jobOffer) {
         JobOfferDTO.JobOfferDTOBuilder builder = JobOfferDTO.builder();
         Optional.ofNullable(jobOffer.getCompany()).ifPresent(company -> builder.company(ResourceDTO.builder()
                 .objectId(company.getId())
@@ -79,10 +82,10 @@ public class JobOfferMapper {
                 .agreements(jobOffer.getAgreements())
                 .remote(jobOffer.getRemote())
                 .applications(jobOffer.getApplications())
-                .techStacks(techStacks.stream()
-                        .map(techStackAndExperienceLevel -> JobTechStackDTO.builder()
-                                .techStack(techStackMapper.toDTO(techStackAndExperienceLevel.getFirst()))
-                                .experienceLevel(techStackAndExperienceLevel.getSecond())
+                .techStacks(jobOffer.getTechStackRelations().stream()
+                        .map(techStackRelation -> JobTechStackDTO.builder()
+                                .techStack(techStackMapper.toDTO(techStackService.getById(techStackRelation.getTechStackId())))
+                                .experienceLevel(techStackRelation.getExperienceLevel())
                                 .build())
                         .collect(Collectors.toList()))
                 .build();
@@ -100,5 +103,23 @@ public class JobOfferMapper {
                 .methodOn(TechnologyResource.class)
                 .browseTechnologies(new IdsParam(String.valueOf(technologyId))))
                 .toUri();
+    }
+
+    public JobOffer updateExistingJobOffer(JobOffer existingJobOffer, JobOfferDTO jobOfferDTO) {
+        JobOffer.JobOfferEntityBuilder builder = JobOffer.toBuilder(existingJobOffer)
+                .withTitle(jobOfferDTO.getTitle())
+                .withExperienceLevel(jobOfferDTO.getExperienceLevel())
+                .withEmploymentType(jobOfferDTO.getEmploymentType())
+                .withSalaryMin(jobOfferDTO.getSalaryMin())
+                .withSalaryMax(jobOfferDTO.getSalaryMax())
+                .withCurrency(jobOfferDTO.getCurrency())
+                .withDescription(jobOfferDTO.getDescription())
+                .withAgreements(jobOfferDTO.getAgreements())
+                .withRemote(jobOfferDTO.getRemote())
+                .withTechStackRelations(techStackRelationMapper.toEntities(existingJobOffer.getId(), jobOfferDTO.getTechStacks()));
+        Optional.ofNullable(jobOfferDTO.getTechnology()).ifPresent(technology -> builder.withTechnology(Technology.builder()
+                .withId(technology.getObjectId())
+                .build()));
+        return builder.build();
     }
 }

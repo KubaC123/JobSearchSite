@@ -13,9 +13,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "JOB_OFFER")
@@ -69,6 +71,7 @@ public class JobOffer extends ManagedEntity {
     @Column(name = "REMOTE")
     private Boolean remote;
 
+    @Setter
     @Column(name = "ACTIVE")
     private Boolean active;
 
@@ -85,6 +88,10 @@ public class JobOffer extends ManagedEntity {
 
     @Column(name = "EXPIRE_DATE")
     private Date expireDate;
+
+    @OneToMany
+    @JoinColumn(name = "JOB_OFFER_ID")
+    private List<JobTechStackRelation> techStackRelations;
 
     public JobOffer() { }
 
@@ -111,6 +118,7 @@ public class JobOffer extends ManagedEntity {
         this.createDate = builder.createDate;
         this.modifyDate = builder.modifyDate;
         this.expireDate = builder.expireDate;
+        this.techStackRelations = builder.techStackRelations;
     }
 
     public static JobOfferEntityBuilder toBuilder(JobOffer jobOffer) {
@@ -132,7 +140,8 @@ public class JobOffer extends ManagedEntity {
                 .withApplications(jobOffer.getApplications())
                 .withCreateDate(jobOffer.getCreateDate())
                 .withModifyDate(jobOffer.getModifyDate())
-                .withExpireDate(jobOffer.getExpireDate());
+                .withExpireDate(jobOffer.getExpireDate())
+                .withTechStackRelations(jobOffer.getTechStackRelations());
     }
 
     public static class JobOfferEntityBuilder {
@@ -155,6 +164,7 @@ public class JobOffer extends ManagedEntity {
         private Date createDate;
         private Date modifyDate;
         private Date expireDate;
+        private List<JobTechStackRelation> techStackRelations;
 
         public JobOfferEntityBuilder withId(Long id) {
             this.id = id;
@@ -243,6 +253,11 @@ public class JobOffer extends ManagedEntity {
 
         public JobOfferEntityBuilder withExpireDate(Date expireDate) {
             this.expireDate = expireDate;
+            return this;
+        }
+
+        public JobOfferEntityBuilder withTechStackRelations(List<JobTechStackRelation> techStackRelations) {
+            this.techStackRelations = techStackRelations;
             return this;
         }
 

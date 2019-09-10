@@ -1,6 +1,7 @@
 package getjobin.it.portal.jobservice.domain.joboffer.entity;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,6 +24,7 @@ public class JobTechStackRelation {
     @Column(name = "ID")
     private Long id;
 
+    @Setter
     @Column(name = "JOB_OFFER_ID")
     private Long jobOfferId;
 
