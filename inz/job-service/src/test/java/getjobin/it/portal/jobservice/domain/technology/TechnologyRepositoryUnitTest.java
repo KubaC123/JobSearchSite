@@ -12,10 +12,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class TechnologyRepositoryUnitTest {
 
     private static final String UPDATE = "update";
@@ -29,24 +32,19 @@ public class TechnologyRepositoryUnitTest {
     }
 
     @Test
-    @Transactional
-    public void givenValidDataThenCreatesNewTechnology() {
+    public void givenValidDataThenCreatesTechnology() {
         Long technologyId = technologyRepository.saveTechnology(TestTechnologyBuilder.buildValidTechnology());
-        technologyRepository.removeTechnologyById(technologyId);
         assertNotNull(technologyId);
     }
 
     @Test
-    @Transactional
     public void givenExistingTechnologyThenFindsItById() {
         Long technologyId = technologyRepository.saveTechnology(TestTechnologyBuilder.buildValidTechnology());
-        Technology foundTechnology = technologyRepository.getById(technologyId);
-        technologyRepository.removeTechnology(foundTechnology);
-        assertEquals(technologyId, foundTechnology.getId());
+        Optional<Technology> foundTechnology = technologyRepository.findById(technologyId);
+        assertTrue(foundTechnology.isPresent());
     }
 
     @Test
-    @Transactional
     public void givenExistingTechnologyThenRemovesIt() {
         Long technologyId = technologyRepository.saveTechnology(TestTechnologyBuilder.buildValidTechnology());
         technologyRepository.removeTechnologyById(technologyId);
@@ -56,16 +54,14 @@ public class TechnologyRepositoryUnitTest {
 
 
     @Test
-    @Transactional
-    public void givenValidDataOnUpdateThenUpdatedExistingTechnology() {
+    public void givenValidDataOnUpdateThenUpdatesTechnology() {
         Long technologyId = technologyRepository.saveTechnology(TestTechnologyBuilder.buildValidTechnology());
         Technology foundTechnology = technologyRepository.getById(technologyId);
         Technology updatedTechnology = TestTechnologyBuilder.buildValidUpdatedTechnology(foundTechnology);
         technologyRepository.updateTechnology(updatedTechnology);
         Technology finalTechnology = technologyRepository.getById(technologyId);
-        technologyRepository.removeTechnology(finalTechnology);
-        assertEquals(TestTechnologyBuilder.TEST_TECHNOLOGY_NAME + UPDATE, finalTechnology.getName());
-        assertEquals(TestTechnologyBuilder.TEST_TECHNOLOGY_IMAGE_URL + UPDATE, finalTechnology.getImageUrl());
+        assertEquals(TestTechnologyBuilder.NAME + UPDATE, finalTechnology.getName());
+        assertEquals(TestTechnologyBuilder.IMAGE_URL + UPDATE, finalTechnology.getImageUrl());
     }
 
 }

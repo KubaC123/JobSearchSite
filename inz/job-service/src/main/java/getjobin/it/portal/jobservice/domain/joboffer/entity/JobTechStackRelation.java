@@ -26,7 +26,7 @@ public class JobTechStackRelation {
 
     @Setter
     @Column(name = "JOB_OFFER_ID")
-    private Long jobOfferId;
+    private Long jobId;
 
     @Column(name = "TECH_STACK_ID")
     private Long techStackId;
@@ -44,7 +44,7 @@ public class JobTechStackRelation {
 
     private JobTechStackRelation(JobTechStackRelationBuilder builder) {
         this.id = builder.id;
-        this.jobOfferId = builder.jobOfferId;
+        this.jobId = builder.jobId;
         this.techStackId = builder.techStackId;
         this.experienceLevel = builder.experienceLevel;
     }
@@ -52,7 +52,7 @@ public class JobTechStackRelation {
     public static JobTechStackRelationBuilder toBuilder(JobTechStackRelation jobTechStackRelation) {
         return new JobTechStackRelationBuilder()
                 .withId(jobTechStackRelation.getId())
-                .withJobOfferId(jobTechStackRelation.getJobOfferId())
+                .withJobId(jobTechStackRelation.getJobId())
                 .withTechStackId(jobTechStackRelation.getTechStackId())
                 .withExperienceLevel(jobTechStackRelation.getExperienceLevel());
     }
@@ -60,7 +60,7 @@ public class JobTechStackRelation {
     public static class JobTechStackRelationBuilder {
 
         private Long id;
-        private Long jobOfferId;
+        private Long jobId;
         private Long techStackId;
         private Integer experienceLevel;
 
@@ -69,8 +69,8 @@ public class JobTechStackRelation {
             return this;
         }
 
-        public JobTechStackRelationBuilder withJobOfferId(Long jobOfferId) {
-            this.jobOfferId = jobOfferId;
+        public JobTechStackRelationBuilder withJobId(Long jobId) {
+            this.jobId = jobId;
             return this;
         }
 

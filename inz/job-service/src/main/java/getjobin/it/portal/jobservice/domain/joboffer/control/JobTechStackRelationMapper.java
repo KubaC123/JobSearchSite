@@ -19,7 +19,7 @@ public class JobTechStackRelationMapper {
 
     private JobTechStackRelation toEntity(Optional<Long> jobOfferId, JobTechStackDTO jobTechStackDTO) {
         return JobTechStackRelation.builder()
-                .withJobOfferId(jobOfferId.orElse(null))
+                .withJobId(jobOfferId.orElse(null))
                 .withTechStackId(jobTechStackDTO.getTechStack().getId())
                 .withExperienceLevel(jobTechStackDTO.getExperienceLevel())
                 .build();

@@ -1,7 +1,7 @@
 package getjobin.it.portal.jobservice.domain.company.entity;
 
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
-import getjobin.it.portal.jobservice.domain.joboffer.entity.JobOffer;
+import getjobin.it.portal.jobservice.domain.joboffer.entity.Job;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -68,7 +68,7 @@ public class Company extends ManagedEntity {
     private Date modifyDate;
 
     @OneToMany(mappedBy = "company")
-    private List<JobOffer> jobOffers;
+    private List<Job> jobs;
 
     public static CompanyEntityBuilder builder() {
         return new CompanyEntityBuilder();

@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class TechStackServiceUnitTest {
 
     private static final String UPDATE = "update";
@@ -32,8 +33,7 @@ public class TechStackServiceUnitTest {
     }
 
     @Test
-    @Transactional
-    public void givenValidDataThenCreatesNewTechStacks() {
+    public void givenValidDataThenCreatesTechStacks() {
         Long createdTechStackId = techStackService.createTechStack(TestTechStackBuilder.buildValidTechStack());
         TechStack createdTechStack = techStackService.getById(createdTechStackId);
         techStackService.removeTechStack(createdTechStack);
@@ -41,7 +41,6 @@ public class TechStackServiceUnitTest {
     }
 
     @Test
-    @Transactional
     public void givenExistingTechStackThenFindsItById() {
         Long techStackId = techStackService.createTechStack(TestTechStackBuilder.buildValidTechStack());
         Optional<TechStack> foundTechStack = techStackService.findById(techStackId);
@@ -50,15 +49,14 @@ public class TechStackServiceUnitTest {
     }
 
     @Test
-    @Transactional
-    public void givenValidDataOnUpdateThenUpdatedExistingTechStack() {
+    public void givenValidDataOnUpdateThenUpdatedTechStack() {
         Long techStackId = techStackService.createTechStack(TestTechStackBuilder.buildValidTechStack());
         TechStack foundTechStack = techStackService.getById(techStackId);
         TechStack updatedTechStack = TestTechStackBuilder.buildValidUpdatedTechStack(foundTechStack);
         techStackService.updateTechStack(updatedTechStack);
         TechStack finalTechStack = techStackService.getById(techStackId);
         techStackService.removeTechStack(finalTechStack);
-        assertEquals(TestTechStackBuilder.TEST_TECH_STACK_NAME + UPDATE, finalTechStack.getName());
+        assertEquals(TestTechStackBuilder.NAME + UPDATE, finalTechStack.getName());
     }
 
     @Test(expected = ConstraintViolationException.class)

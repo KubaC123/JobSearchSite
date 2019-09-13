@@ -18,13 +18,14 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "JOB_OFFER")
 @Getter
-public class JobOffer extends ManagedEntity {
+public class Job extends ManagedEntity {
 
-    public static final String JOB_OFFER_TYPE = "JobOffer";
+    public static final String JOB_OFFER_TYPE = "Job";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,11 +33,11 @@ public class JobOffer extends ManagedEntity {
     private Long id;
 
     @Column(name = "TYPE")
-    @NotEmpty(message = "Job offer type must be provided")
+    @NotEmpty(message = "Job type must be provided")
     private String type;
 
     @Column(name = "TITLE")
-    @NotEmpty(message = "Job offer title must be provided")
+    @NotEmpty(message = "Job title must be provided")
     private String title;
 
     @ManyToOne
@@ -93,13 +94,17 @@ public class JobOffer extends ManagedEntity {
     @JoinColumn(name = "JOB_OFFER_ID")
     private List<JobTechStackRelation> techStackRelations;
 
-    public JobOffer() { }
+    public Optional<List<JobTechStackRelation>> getTechStackRelations() {
+        return Optional.ofNullable(techStackRelations);
+    }
+
+    public Job() { }
 
     public static JobOfferEntityBuilder builder() {
         return new JobOfferEntityBuilder();
     }
 
-    private JobOffer(JobOfferEntityBuilder builder) {
+    private Job(JobOfferEntityBuilder builder) {
         this.id = builder.id;
         this.type = builder.type;
         this.title = builder.title;
@@ -121,27 +126,27 @@ public class JobOffer extends ManagedEntity {
         this.techStackRelations = builder.techStackRelations;
     }
 
-    public static JobOfferEntityBuilder toBuilder(JobOffer jobOffer) {
+    public static JobOfferEntityBuilder toBuilder(Job job) {
         return new JobOfferEntityBuilder()
-                .withId(jobOffer.getId())
-                .withType(jobOffer.getType())
-                .withTitle(jobOffer.getTitle())
-                .withCompany(jobOffer.getCompany())
-                .withExperienceLevel(jobOffer.getExperienceLevel())
-                .withEmploymentType(jobOffer.getEmploymentType())
-                .withSalaryMin(jobOffer.getSalaryMin())
-                .withSalaryMax(jobOffer.getSalaryMax())
-                .withCurrency(jobOffer.getCurrency())
-                .withDescription(jobOffer.getDescription())
-                .withTechnology(jobOffer.getTechnology())
-                .withAgreements(jobOffer.getAgreements())
-                .withRemote(jobOffer.getRemote())
-                .withActive(jobOffer.getActive())
-                .withApplications(jobOffer.getApplications())
-                .withCreateDate(jobOffer.getCreateDate())
-                .withModifyDate(jobOffer.getModifyDate())
-                .withExpireDate(jobOffer.getExpireDate())
-                .withTechStackRelations(jobOffer.getTechStackRelations());
+                .id(job.getId())
+                .type(job.getType())
+                .title(job.getTitle())
+                .company(job.getCompany())
+                .experienceLevel(job.getExperienceLevel())
+                .employmentType(job.getEmploymentType())
+                .salaryMin(job.getSalaryMin())
+                .salaryMax(job.getSalaryMax())
+                .currency(job.getCurrency())
+                .description(job.getDescription())
+                .technology(job.getTechnology())
+                .agreements(job.getAgreements())
+                .remote(job.getRemote())
+                .active(job.getActive())
+                .applications(job.getApplications())
+                .createDate(job.getCreateDate())
+                .modifyDate(job.getModifyDate())
+                .expireDate(job.getExpireDate())
+                .techStackRelations(job.getTechStackRelations().orElse(null));
     }
 
     public static class JobOfferEntityBuilder {
@@ -166,103 +171,103 @@ public class JobOffer extends ManagedEntity {
         private Date expireDate;
         private List<JobTechStackRelation> techStackRelations;
 
-        public JobOfferEntityBuilder withId(Long id) {
+        public JobOfferEntityBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public JobOfferEntityBuilder withType(String type) {
+        public JobOfferEntityBuilder type(String type) {
             this.type = type;
             return this;
         }
 
-        public JobOfferEntityBuilder withTitle(String title) {
+        public JobOfferEntityBuilder title(String title) {
             this.title = title;
             return this;
         }
 
-        public JobOfferEntityBuilder withCompany(Company company) {
+        public JobOfferEntityBuilder company(Company company) {
             this.company = company;
             return this;
         }
 
-        public JobOfferEntityBuilder withExperienceLevel(String experienceLevel) {
+        public JobOfferEntityBuilder experienceLevel(String experienceLevel) {
             this.experienceLevel = experienceLevel;
             return this;
         }
 
-        public JobOfferEntityBuilder withEmploymentType(String employmentType) {
+        public JobOfferEntityBuilder employmentType(String employmentType) {
             this.employmentType = employmentType;
             return this;
         }
 
-        public JobOfferEntityBuilder withSalaryMin(Integer salaryMin) {
+        public JobOfferEntityBuilder salaryMin(Integer salaryMin) {
             this.salaryMin = salaryMin;
             return this;
         }
 
-        public JobOfferEntityBuilder withSalaryMax(Integer salaryMax) {
+        public JobOfferEntityBuilder salaryMax(Integer salaryMax) {
             this.salaryMax = salaryMax;
             return this;
         }
 
-        public JobOfferEntityBuilder withCurrency(String currency) {
+        public JobOfferEntityBuilder currency(String currency) {
             this.currency = currency;
             return this;
         }
 
-        public JobOfferEntityBuilder withDescription(String description) {
+        public JobOfferEntityBuilder description(String description) {
             this.description = description;
             return this;
         }
 
-        public JobOfferEntityBuilder withTechnology(Technology technology) {
+        public JobOfferEntityBuilder technology(Technology technology) {
             this.technology = technology;
             return this;
         }
 
-        public JobOfferEntityBuilder withAgreements(String agreements) {
+        public JobOfferEntityBuilder agreements(String agreements) {
             this.agreements = agreements;
             return this;
         }
 
-        public JobOfferEntityBuilder withRemote(Boolean remote) {
+        public JobOfferEntityBuilder remote(Boolean remote) {
             this.remote = remote;
             return this;
         }
 
-        public JobOfferEntityBuilder withActive(Boolean active) {
+        public JobOfferEntityBuilder active(Boolean active) {
             this.active = active;
             return this;
         }
 
-        public JobOfferEntityBuilder withApplications(Integer applications) {
+        public JobOfferEntityBuilder applications(Integer applications) {
             this.applications = applications;
             return this;
         }
 
-        public JobOfferEntityBuilder withCreateDate(Date createDate) {
+        public JobOfferEntityBuilder createDate(Date createDate) {
             this.createDate = createDate;
             return this;
         }
 
-        public JobOfferEntityBuilder withModifyDate(Date modifyDate) {
+        public JobOfferEntityBuilder modifyDate(Date modifyDate) {
             this.modifyDate = modifyDate;
             return this;
         }
 
-        public JobOfferEntityBuilder withExpireDate(Date expireDate) {
+        public JobOfferEntityBuilder expireDate(Date expireDate) {
             this.expireDate = expireDate;
             return this;
         }
 
-        public JobOfferEntityBuilder withTechStackRelations(List<JobTechStackRelation> techStackRelations) {
+        public JobOfferEntityBuilder techStackRelations(List<JobTechStackRelation> techStackRelations) {
             this.techStackRelations = techStackRelations;
             return this;
         }
 
-        public JobOffer build() {
-            return new JobOffer(this);
+        public Job build() {
+            return new Job(this);
         }
     }
 }

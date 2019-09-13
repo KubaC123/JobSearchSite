@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class CompanyRepositoryUnitTest {
 
     private static final String UPDATE = "update";
@@ -32,25 +33,20 @@ public class CompanyRepositoryUnitTest {
     }
 
     @Test
-    @Transactional
-    public void givenValidDataThenCreatesNewCompany() {
+    public void givenValidDataThenCreatesCompany() {
         Long companyId = companyRepository.saveCompany(TestCompanyBuilder.buildValidCompany());
-        companyRepository.removeCompanyById(companyId);
         assertNotNull(companyId);
     }
 
     @Test
-    @Transactional
     public void givenExistingCompanyThenFindsItById() {
         Long companyId = companyRepository.saveCompany(TestCompanyBuilder.buildValidCompany());
         Company foundCompany = companyRepository.getById(companyId);
         Long foundCompanyId = foundCompany.getId();
-        companyRepository.removeCompany(foundCompany);
         assertEquals(companyId, foundCompanyId);
     }
 
     @Test
-    @Transactional
     public void givenExistingCompanyRemovesIt() {
         Long companyId = companyRepository.saveCompany(TestCompanyBuilder.buildValidCompany());
         companyRepository.removeCompanyById(companyId);
@@ -59,17 +55,15 @@ public class CompanyRepositoryUnitTest {
     }
 
     @Test
-    @Transactional
-    public void givenValidDataOnUpdateThenUpdatesExistingCompany() {
+    public void givenValidDataOnUpdateThenUpdatesCompany() {
         Long companyId = companyRepository.saveCompany(TestCompanyBuilder.buildValidCompany());
         Company createdCompany = companyRepository.getById(companyId);
         Company updatedCompany = TestCompanyBuilder.buildValidUpdatedCompany(createdCompany);
         companyRepository.updateCompany(updatedCompany);
         Company finalCompany = companyRepository.getById(companyId);
-        companyRepository.removeCompany(finalCompany);
-        assertEquals(TestCompanyBuilder.TEST_COMPANY_NAME + UPDATE, finalCompany.getName());
-        assertEquals(TestCompanyBuilder.TEST_COMPANY_WEBSITE + UPDATE, finalCompany.getWebSiteUrl());
-        assertEquals(TestCompanyBuilder.TEST_COMPANY_SIZE, finalCompany.getSize());
+        assertEquals(TestCompanyBuilder.NAME + UPDATE, finalCompany.getName());
+        assertEquals(TestCompanyBuilder.WEBSITE + UPDATE, finalCompany.getWebSiteUrl());
+        assertEquals(TestCompanyBuilder.SIZE, finalCompany.getSize());
     }
 
 }

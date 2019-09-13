@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class CompanyServiceUnitTest {
 
     private static final String UPDATE = "update";
@@ -31,17 +32,12 @@ public class CompanyServiceUnitTest {
     }
 
     @Test
-    @Transactional
-    public void givenValidDataThenCreatesNewCompany() {
+    public void givenValidDataThenCreatesCompany() {
         Long companyId = companyService.createCompany(TestCompanyBuilder.buildValidCompany());
-        Company createdCompany = companyService.getById(companyId);
-        companyService.removeCompany(createdCompany);
         assertNotNull(companyId);
     }
 
-
     @Test
-    @Transactional
     public void givenExistingCompanyThenRemovesIt() {
         Long companyId = companyService.createCompany(TestCompanyBuilder.buildValidCompany());
         Company createdCompany = companyService.getById(companyId);
@@ -51,17 +47,15 @@ public class CompanyServiceUnitTest {
     }
 
     @Test
-    @Transactional
-    public void givenValidDataOnUpdateThenUpdatesExistingCompany() {
+    public void givenValidDataOnUpdateThenUpdatesCompany() {
         Long companyId = companyService.createCompany(TestCompanyBuilder.buildValidCompany());
         Company createdCompany = companyService.getById(companyId);
         Company updatedCompany = TestCompanyBuilder.buildValidUpdatedCompany(createdCompany);
         companyService.updateCompany(updatedCompany);
         Company finalCompany = companyService.getById(companyId);
-        companyService.removeCompany(finalCompany);
-        assertEquals(TestCompanyBuilder.TEST_COMPANY_NAME + UPDATE, finalCompany.getName());
-        assertEquals(TestCompanyBuilder.TEST_COMPANY_WEBSITE + UPDATE, finalCompany.getWebSiteUrl());
-        assertEquals(TestCompanyBuilder.TEST_COMPANY_SIZE, finalCompany.getSize());
+        assertEquals(TestCompanyBuilder.NAME + UPDATE, finalCompany.getName());
+        assertEquals(TestCompanyBuilder.WEBSITE + UPDATE, finalCompany.getWebSiteUrl());
+        assertEquals(TestCompanyBuilder.SIZE, finalCompany.getSize());
     }
 
     @Test(expected = ConstraintViolationException.class)

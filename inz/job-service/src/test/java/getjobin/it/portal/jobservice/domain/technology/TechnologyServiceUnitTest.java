@@ -19,6 +19,7 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class TechnologyServiceUnitTest {
 
     private static final String UPDATE = "update";
@@ -32,34 +33,28 @@ public class TechnologyServiceUnitTest {
     }
 
     @Test
-    @Transactional
-    public void givenValidDataThenCreatesNewTechnology() {
+    public void givenValidDataThenCreatesTechnology() {
         Long createdTechnologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
         Technology createdTechnology = technologyService.getById(createdTechnologyId);
-        technologyService.removeTechnology(createdTechnology);
         assertEquals(createdTechnologyId, createdTechnology.getId());
     }
 
     @Test
-    @Transactional
     public void givenExistingTechStackThenFindsItById() {
         Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
         Optional<Technology> foundTechnology = technologyService.findById(technologyId);
-        technologyService.removeTechnology(foundTechnology.orElseThrow());
         assertTrue(foundTechnology.isPresent());
     }
 
     @Test
-    @Transactional
-    public void givenValidDataOnUpdateThenUpdatedExistingTechStack() {
+    public void givenValidDataOnUpdateThenUpdatesTechStack() {
         Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
         Technology foundTechnology = technologyService.getById(technologyId);
         Technology updatedTechnology = TestTechnologyBuilder.buildValidUpdatedTechnology(foundTechnology);
         technologyService.updateTechnology(updatedTechnology);
         Technology finalTechnology = technologyService.getById(technologyId);
-        technologyService.removeTechnology(finalTechnology);
-        assertEquals(TestTechnologyBuilder.TEST_TECHNOLOGY_NAME + UPDATE, finalTechnology.getName());
-        assertEquals(TestTechnologyBuilder.TEST_TECHNOLOGY_IMAGE_URL + UPDATE, finalTechnology.getImageUrl());
+        assertEquals(TestTechnologyBuilder.NAME + UPDATE, finalTechnology.getName());
+        assertEquals(TestTechnologyBuilder.IMAGE_URL + UPDATE, finalTechnology.getImageUrl());
     }
 
     @Test(expected = ConstraintViolationException.class)

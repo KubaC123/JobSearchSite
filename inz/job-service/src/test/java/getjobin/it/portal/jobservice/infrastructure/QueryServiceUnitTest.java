@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class QueryServiceUnitTest {
 
     @Autowired
@@ -34,8 +36,6 @@ public class QueryServiceUnitTest {
         List<Long> foundCompaniesIds = queryService.findEntitiesByIds(Company.class, companiesIds).stream()
                 .map(Company::getId)
                 .collect(Collectors.toList());
-        companiesIds.forEach(companyRepository::removeCompanyById);
         companiesIds.forEach(id -> assertTrue(foundCompaniesIds.contains(id)));
     }
-
 }

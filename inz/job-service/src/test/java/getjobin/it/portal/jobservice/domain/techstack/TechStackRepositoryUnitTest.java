@@ -18,36 +18,33 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class TechStackRepositoryUnitTest {
 
     private static final String UPDATE = "update";
 
     @Autowired
     private TechStackRepository techStackRepository;
+
     @Test
     public void givenDependenciesThenTheyAreInjected() {
         assertNotNull(techStackRepository);
     }
 
     @Test
-    @Transactional
-    public void givenValidDataThenCreatesNewTechStack() {
+    public void givenValidDataThenCreatesTechStack() {
         Long techStackId = techStackRepository.saveTechStack(TestTechStackBuilder.buildValidTechStack());
-        techStackRepository.removeTechStackById(techStackId);
         assertNotNull(techStackId);
     }
 
     @Test
-    @Transactional
     public void givenExistingTechStackThenFindsItById() {
         Long techStackId = techStackRepository.saveTechStack(TestTechStackBuilder.buildValidTechStack());
         TechStack foundTechStack = techStackRepository.getById(techStackId);
-        techStackRepository.removeTechStack(foundTechStack);
         assertEquals(techStackId, foundTechStack.getId());
     }
 
     @Test
-    @Transactional
     public void givenExistingTechStackThenRemovesIt() {
         Long techStackId = techStackRepository.saveTechStack(TestTechStackBuilder.buildValidTechStack());
         techStackRepository.removeTechStackById(techStackId);
@@ -57,15 +54,13 @@ public class TechStackRepositoryUnitTest {
 
 
     @Test
-    @Transactional
-    public void givenValidDataOnUpdateThenUpdatedExistingTechStack() {
+    public void givenValidDataOnUpdateThenUpdatesTechStack() {
         Long techStackId = techStackRepository.saveTechStack(TestTechStackBuilder.buildValidTechStack());
         TechStack foundTechStack = techStackRepository.getById(techStackId);
         TechStack updatedTechStack = TestTechStackBuilder.buildValidUpdatedTechStack(foundTechStack);
         techStackRepository.updateTechStack(updatedTechStack);
         TechStack finalTechStack = techStackRepository.getById(techStackId);
-        techStackRepository.removeTechStack(finalTechStack);
-        assertEquals(TestTechStackBuilder.TEST_TECH_STACK_NAME + UPDATE, finalTechStack.getName());
+        assertEquals(TestTechStackBuilder.NAME + UPDATE, finalTechStack.getName());
     }
 
 }
