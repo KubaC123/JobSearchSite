@@ -2,6 +2,10 @@ package getjobin.it.portal.jobservice.domain.joboffer.entity;
 
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
+import getjobin.it.portal.jobservice.domain.joboffer.entity.validation.EmploymentTypeValidation;
+import getjobin.it.portal.jobservice.domain.joboffer.entity.validation.ExperienceLevelValidation;
+import getjobin.it.portal.jobservice.domain.joboffer.entity.validation.JobTypeValidation;
+import getjobin.it.portal.jobservice.domain.joboffer.entity.validation.TechStacksValidation;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,6 +38,7 @@ public class Job extends ManagedEntity {
 
     @Column(name = "TYPE")
     @NotEmpty(message = "Job type must be provided")
+    @JobTypeValidation
     private String type;
 
     @Column(name = "TITLE")
@@ -45,9 +50,11 @@ public class Job extends ManagedEntity {
     private Company company;
 
     @Column(name = "EXP_LEVEL")
+    @ExperienceLevelValidation
     private String experienceLevel;
 
     @Column(name = "EMPL_TYPE")
+    @EmploymentTypeValidation
     private String employmentType;
 
     @Column(name = "SALARY_MIN")
@@ -92,6 +99,7 @@ public class Job extends ManagedEntity {
 
     @OneToMany
     @JoinColumn(name = "JOB_OFFER_ID")
+    @TechStacksValidation
     private List<JobTechStackRelation> techStackRelations;
 
     public Optional<List<JobTechStackRelation>> getTechStackRelations() {

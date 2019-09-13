@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class QueryService {
@@ -17,9 +19,13 @@ public class QueryService {
 
     @Transactional
     public <T extends ManagedEntity> List<T> findEntitiesByIds(Class<T> entityClass, List<Long> ids) {
-        return entityManager.unwrap(Session.class)
+        List<T> result = entityManager.unwrap(Session.class)
                 .byMultipleIds(entityClass)
                 .enableSessionCheck(true)
                 .multiLoad(ids);
+        if(result.stream().allMatch(Objects::isNull)) {
+            return Collections.emptyList();
+        }
+        return result;
     }
 }

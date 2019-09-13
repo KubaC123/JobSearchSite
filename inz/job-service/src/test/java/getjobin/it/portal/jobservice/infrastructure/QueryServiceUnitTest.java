@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertTrue;
 
@@ -37,5 +38,12 @@ public class QueryServiceUnitTest {
                 .map(Company::getId)
                 .collect(Collectors.toList());
         companiesIds.forEach(id -> assertTrue(foundCompaniesIds.contains(id)));
+    }
+
+    @Test
+    public void givenIdsOfNonExistingEntitiesThenReturnsEmptyList() {
+        List<Long> unusedIds = Stream.of(-1L, -2L, -3L, -4L).collect(Collectors.toList());
+        List<Company> foundCompanies = queryService.findEntitiesByIds(Company.class, unusedIds);
+        assertTrue(foundCompanies.isEmpty());
     }
 }

@@ -1,9 +1,13 @@
 package getjobin.it.portal.jobservice.domain.job;
 
-import getjobin.it.portal.jobservice.domain.joboffer.entity.EmploymentType;
-import getjobin.it.portal.jobservice.domain.joboffer.entity.ExperienceLevel;
+import getjobin.it.portal.jobservice.domain.joboffer.control.enums.EmploymentType;
+import getjobin.it.portal.jobservice.domain.joboffer.control.enums.ExperienceLevel;
 import getjobin.it.portal.jobservice.domain.joboffer.entity.Job;
-import getjobin.it.portal.jobservice.domain.joboffer.entity.JobType;
+import getjobin.it.portal.jobservice.domain.joboffer.control.enums.JobType;
+import getjobin.it.portal.jobservice.domain.joboffer.entity.JobTechStackRelation;
+
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class TestJobBuilder {
 
@@ -54,4 +58,34 @@ class TestJobBuilder {
                 .remote(!REMOTE)
                 .build();
     }
+
+    static Job buildJobWithInvalidType() {
+        return Job.toBuilder(buildValidJob())
+                .type("random")
+                .build();
+    }
+
+    static Job buildJobWithInvalidExperienceLevel() {
+        return Job.toBuilder(buildValidJob())
+                .experienceLevel("random")
+                .build();
+    }
+
+    static Job buildJobWithInvalidEmploymentType() {
+        return Job.toBuilder(buildValidJob())
+                .employmentType("random")
+                .build();
+    }
+
+    static Job buildJobWithRelationsToNotExistingTechStacks() {
+        return Job.toBuilder(buildValidJob())
+                .techStackRelations(Stream.of(-1L, -2L, -3L, -4L)
+                        .map(techStackId -> JobTechStackRelation.builder()
+                                .withTechStackId(techStackId)
+                                .withExperienceLevel(1)
+                                .build())
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
 }
