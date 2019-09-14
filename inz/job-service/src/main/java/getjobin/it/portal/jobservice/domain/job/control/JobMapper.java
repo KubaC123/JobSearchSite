@@ -1,11 +1,11 @@
-package getjobin.it.portal.jobservice.domain.joboffer.control;
+package getjobin.it.portal.jobservice.domain.job.control;
 
 import getjobin.it.portal.jobservice.api.JobDTO;
 import getjobin.it.portal.jobservice.api.JobTechStackDTO;
 import getjobin.it.portal.jobservice.api.ResourceDTO;
 import getjobin.it.portal.jobservice.domain.company.boundary.CompanyResource;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
-import getjobin.it.portal.jobservice.domain.joboffer.entity.Job;
+import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.technology.boundary.TechnologyResource;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackMapper;

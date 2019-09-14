@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.domain.joboffer.control.enums;
+package getjobin.it.portal.jobservice.domain.job.control.enums;
 
 import java.util.Arrays;
 import java.util.Optional;

@@ -1,7 +1,8 @@
 package getjobin.it.portal.jobservice.domain.company.entity;
 
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
-import getjobin.it.portal.jobservice.domain.joboffer.entity.Job;
+import getjobin.it.portal.jobservice.domain.company.entity.validation.ActiveJobsValidation;
+import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +20,7 @@ import java.util.List;
 @Entity
 @Table(name = "COMPANY")
 @Getter
+@ActiveJobsValidation(groups = Company.DeleteValidations.class)
 public class Company extends ManagedEntity {
 
     public static final String COMPANY_TYPE = "Company";
@@ -69,6 +71,8 @@ public class Company extends ManagedEntity {
 
     @OneToMany(mappedBy = "company")
     private List<Job> jobs;
+
+    public interface DeleteValidations { }
 
     public static CompanyEntityBuilder builder() {
         return new CompanyEntityBuilder();

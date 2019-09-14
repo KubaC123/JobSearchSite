@@ -1,11 +1,11 @@
-package getjobin.it.portal.jobservice.domain.joboffer.entity;
+package getjobin.it.portal.jobservice.domain.job.entity;
 
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
-import getjobin.it.portal.jobservice.domain.joboffer.entity.validation.EmploymentTypeValidation;
-import getjobin.it.portal.jobservice.domain.joboffer.entity.validation.ExperienceLevelValidation;
-import getjobin.it.portal.jobservice.domain.joboffer.entity.validation.JobTypeValidation;
-import getjobin.it.portal.jobservice.domain.joboffer.entity.validation.TechStacksValidation;
+import getjobin.it.portal.jobservice.domain.job.entity.validation.EmploymentTypeValidation;
+import getjobin.it.portal.jobservice.domain.job.entity.validation.ExperienceLevelValidation;
+import getjobin.it.portal.jobservice.domain.job.entity.validation.JobTypeValidation;
+import getjobin.it.portal.jobservice.domain.job.entity.validation.TechStacksValidation;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import lombok.Getter;
 import lombok.Setter;

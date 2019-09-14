@@ -1,6 +1,7 @@
 package getjobin.it.portal.jobservice.domain.techstack.entity;
 
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
+import getjobin.it.portal.jobservice.domain.techstack.entity.validation.TechStackUsageValidation;
 import lombok.Getter;
 
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.validation.constraints.NotEmpty;
 @Entity
 @Table(name = "TECH_STACK")
 @Getter
+@TechStackUsageValidation
 public class TechStack extends ManagedEntity {
 
     public static String TECH_STACK_TYPE = "TechStack";

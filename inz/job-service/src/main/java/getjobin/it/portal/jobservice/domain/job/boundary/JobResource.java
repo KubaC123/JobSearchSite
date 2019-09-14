@@ -1,10 +1,10 @@
-package getjobin.it.portal.jobservice.domain.joboffer.boundary;
+package getjobin.it.portal.jobservice.domain.job.boundary;
 
 import getjobin.it.portal.jobservice.api.JobDTO;
 import getjobin.it.portal.jobservice.api.ResourceDTO;
-import getjobin.it.portal.jobservice.domain.joboffer.control.JobMapper;
-import getjobin.it.portal.jobservice.domain.joboffer.control.JobService;
-import getjobin.it.portal.jobservice.domain.joboffer.entity.Job;
+import getjobin.it.portal.jobservice.domain.job.control.JobMapper;
+import getjobin.it.portal.jobservice.domain.job.control.JobService;
+import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.infrastructure.IdsParam;
 import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServicePreconditions;
 import org.springframework.beans.factory.annotation.Autowired;

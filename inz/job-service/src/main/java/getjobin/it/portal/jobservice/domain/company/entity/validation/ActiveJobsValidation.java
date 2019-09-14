@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.domain.joboffer.entity.validation;
+package getjobin.it.portal.jobservice.domain.company.entity.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -9,10 +9,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Constraint(validatedBy = TechStacksValidator.class)
-@Target( {ElementType.FIELD} )
+@Constraint(validatedBy = ActiveJobsValidator.class)
+@Target( {ElementType.TYPE, ElementType.ANNOTATION_TYPE} )
 @Retention(RetentionPolicy.RUNTIME)
-public @interface TechStacksValidation {
+public @interface ActiveJobsValidation {
 
     String message() default "";
     Class<?>[] groups() default {};

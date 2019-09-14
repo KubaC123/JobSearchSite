@@ -9,7 +9,7 @@ public class TestCompanyBuilder {
     public static final String NAME = "Cichy kącik";
     public static final String WEBSITE = "www.cichykacik.pl";
     public static final String SIZE = "1";
-    private static final String UPDATE = "update";
+    public static final String UPDATE = "update";
 
     public static Company buildValidCompany() {
         return Company.builder()

@@ -3,6 +3,9 @@ package getjobin.it.portal.jobservice.domain.company;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyService;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.company.entity.TestCompanyBuilder;
+import getjobin.it.portal.jobservice.domain.job.TestJobBuilder;
+import getjobin.it.portal.jobservice.domain.job.control.JobService;
+import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +23,11 @@ import static org.junit.Assert.*;
 @Transactional
 public class CompanyServiceUnitTest {
 
-    private static final String UPDATE = "update";
-
     @Autowired
     private CompanyService companyService;
+
+    @Autowired
+    private JobService jobService;
 
     @Test
     public void givenDependenciesThenTheyAreInjected() {
@@ -52,8 +56,8 @@ public class CompanyServiceUnitTest {
         Company updatedCompany = TestCompanyBuilder.buildValidUpdatedCompany(createdCompany);
         companyService.updateCompany(updatedCompany);
         Company finalCompany = companyService.getById(companyId);
-        assertEquals(TestCompanyBuilder.NAME + UPDATE, finalCompany.getName());
-        assertEquals(TestCompanyBuilder.WEBSITE + UPDATE, finalCompany.getWebSiteUrl());
+        assertEquals(TestCompanyBuilder.NAME + TestCompanyBuilder.UPDATE, finalCompany.getName());
+        assertEquals(TestCompanyBuilder.WEBSITE + TestCompanyBuilder.UPDATE, finalCompany.getWebSiteUrl());
         assertEquals(TestCompanyBuilder.SIZE, finalCompany.getSize());
     }
 
@@ -65,6 +69,26 @@ public class CompanyServiceUnitTest {
     @Test(expected = ConstraintViolationException.class)
     public void givenEmptyNameOnCreateThenThrowsConstraintViolationException() {
         companyService.createCompany(TestCompanyBuilder.buildCompanyWithEmptyName());
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void givenCompanyWithActiveJobsOnRemoveThenThrowsConstraintViolationException() {
+        Long companyId = companyService.createCompany(TestCompanyBuilder.buildValidCompany());
+        Company createdCompany = companyService.getById(companyId);
+        jobService.createJob(TestJobBuilder.buildValidJobInCompany(createdCompany));
+        companyService.removeCompany(createdCompany);
+    }
+
+    @Test
+    public void givenCompanyWithInactiveJobsThenRemovesIt() {
+        Long companyId = companyService.createCompany(TestCompanyBuilder.buildValidCompany());
+        Company createdCompany = companyService.getById(companyId);
+        Long companyJobId = jobService.createJob(TestJobBuilder.buildValidJobInCompany(createdCompany));
+        Job companyJob = jobService.getById(companyJobId);
+        jobService.removeJob(companyJob);
+        companyService.removeCompany(createdCompany);
+        Optional<Company> removedCompany = companyService.findById(companyId);
+        assertTrue(removedCompany.isEmpty());
     }
 
 }

@@ -1,7 +1,7 @@
-package getjobin.it.portal.jobservice.domain.joboffer.control;
+package getjobin.it.portal.jobservice.domain.job.control;
 
 import getjobin.it.portal.jobservice.api.JobTechStackDTO;
-import getjobin.it.portal.jobservice.domain.joboffer.entity.JobTechStackRelation;
+import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

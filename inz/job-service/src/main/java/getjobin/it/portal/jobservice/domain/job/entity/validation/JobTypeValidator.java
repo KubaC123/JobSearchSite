@@ -1,6 +1,6 @@
-package getjobin.it.portal.jobservice.domain.joboffer.entity.validation;
+package getjobin.it.portal.jobservice.domain.job.entity.validation;
 
-import getjobin.it.portal.jobservice.domain.joboffer.control.enums.JobType;
+import getjobin.it.portal.jobservice.domain.job.control.enums.JobType;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

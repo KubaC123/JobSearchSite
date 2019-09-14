@@ -1,6 +1,7 @@
 package getjobin.it.portal.jobservice.domain.technology.entity;
 
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
+import getjobin.it.portal.jobservice.domain.technology.entity.validation.TechnologyUsageValidation;
 import lombok.Getter;
 
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.validation.constraints.NotEmpty;
 @Entity
 @Table(name = "TECHNOLOGY")
 @Getter
+@TechnologyUsageValidation(groups = Technology.DeleteValidations.class)
 public class Technology extends ManagedEntity {
 
     public static final String TECHNOLOGY_TYPE = "Technology";
@@ -29,6 +31,8 @@ public class Technology extends ManagedEntity {
 
     @Column(name = "IMAGE_URL")
     private String imageUrl;
+
+    public interface DeleteValidations { }
 
     public static TechnologyEntityBuilder builder() {
         return new TechnologyEntityBuilder();

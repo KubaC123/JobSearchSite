@@ -1,6 +1,6 @@
-package getjobin.it.portal.jobservice.domain.joboffer.control;
+package getjobin.it.portal.jobservice.domain.job.control;
 
-import getjobin.it.portal.jobservice.domain.joboffer.entity.JobTechStackRelation;
+import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -27,6 +27,12 @@ public class JobTechStackRelationRepository {
     public List<JobTechStackRelation> queryByJobId(Long jobOfferId) {
         return entityManager.createQuery("SELECT relation FROM JOB_TECH_STACK_RELATION relation WHERE relation.JOB_OFFER_ID = :jobId", JobTechStackRelation.class)
                 .setParameter("jobId", jobOfferId)
+                .getResultList();
+    }
+
+    public List<JobTechStackRelation> findByTechStackId(Long techStackId) {
+        return entityManager.createQuery("SELECT relation FROM JOB_TECH_STACK_RELATION relation WHERE relation.TECH_STACK_ID = :techStackId", JobTechStackRelation.class)
+                .setParameter("techStackId", techStackId)
                 .getResultList();
     }
 }

@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.domain.joboffer.entity;
+package getjobin.it.portal.jobservice.domain.job.entity;
 
 import lombok.Getter;
 import lombok.Setter;

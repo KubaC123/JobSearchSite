@@ -53,7 +53,14 @@ public class TechnologyService {
     }
 
     public void removeTechnology(Technology technology) {
+        validateOnRemove(technology);
         technologyRepository.removeTechnology(technology);
     }
 
+    private void validateOnRemove(Technology technology) {
+        Set<ConstraintViolation<Technology>> violations = validator.validate(technology, Technology.DeleteValidations.class);
+        if(!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+    }
 }

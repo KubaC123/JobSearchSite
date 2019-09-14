@@ -1,16 +1,24 @@
-package getjobin.it.portal.jobservice.domain.joboffer.control;
+package getjobin.it.portal.jobservice.domain.job.control;
 
-import getjobin.it.portal.jobservice.domain.joboffer.entity.Job;
-import getjobin.it.portal.jobservice.domain.joboffer.entity.JobTechStackRelation;
+import getjobin.it.portal.jobservice.domain.company.entity.Company;
+import getjobin.it.portal.jobservice.domain.job.entity.Job;
+import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
+import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.infrastructure.CurrentDate;
 import getjobin.it.portal.jobservice.infrastructure.query.QueryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.provider.HibernateUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +51,30 @@ public class JobRepository {
     public Job getById(Long jobId) {
         return findById(jobId)
                 .orElseThrow(() -> new RuntimeException(MessageFormat.format("Job offer with id: {0} does not exist or was removed", String.valueOf(jobId))));
+    }
+
+    public List<Job> findByCompany(Company company) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Job> criteriaQuery = criteriaBuilder.createQuery(Job.class);
+        Root<Job> job = criteriaQuery.from(Job.class);
+        Predicate companyIdPredicate = criteriaBuilder.equal(job.get("company"), company);
+        criteriaQuery.where(criteriaBuilder.and(activeJobPredicate(criteriaBuilder, job), companyIdPredicate));
+        TypedQuery<Job> query = entityManager.createQuery(criteriaQuery);
+        return query.getResultList();
+    }
+
+    public List<Job> findByTechnology(Technology technology) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Job> criteriaQuery = criteriaBuilder.createQuery(Job.class);
+        Root<Job> job = criteriaQuery.from(Job.class);
+        Predicate technologyPredicate = criteriaBuilder.equal(job.get("technology"), technology);
+        criteriaQuery.where(criteriaBuilder.and(activeJobPredicate(criteriaBuilder, job), technologyPredicate));
+        TypedQuery<Job> query = entityManager.createQuery(criteriaQuery);
+        return query.getResultList();
+    }
+
+    private Predicate activeJobPredicate(CriteriaBuilder criteriaBuilder, Root<Job> job) {
+        return criteriaBuilder.equal(job.get("active"), Boolean.TRUE);
     }
 
     public Long saveJob(Job job) {

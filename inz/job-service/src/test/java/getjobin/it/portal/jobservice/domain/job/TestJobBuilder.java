@@ -1,15 +1,17 @@
 package getjobin.it.portal.jobservice.domain.job;
 
-import getjobin.it.portal.jobservice.domain.joboffer.control.enums.EmploymentType;
-import getjobin.it.portal.jobservice.domain.joboffer.control.enums.ExperienceLevel;
-import getjobin.it.portal.jobservice.domain.joboffer.entity.Job;
-import getjobin.it.portal.jobservice.domain.joboffer.control.enums.JobType;
-import getjobin.it.portal.jobservice.domain.joboffer.entity.JobTechStackRelation;
+import getjobin.it.portal.jobservice.domain.company.entity.Company;
+import getjobin.it.portal.jobservice.domain.job.control.enums.EmploymentType;
+import getjobin.it.portal.jobservice.domain.job.control.enums.ExperienceLevel;
+import getjobin.it.portal.jobservice.domain.job.entity.Job;
+import getjobin.it.portal.jobservice.domain.job.control.enums.JobType;
+import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
+import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class TestJobBuilder {
+public class TestJobBuilder {
 
     static String TYPE = JobType.REGULAR.getLiteral();
     static String TYPE_UPDATE = JobType.FREELANCE.getLiteral();
@@ -88,4 +90,15 @@ class TestJobBuilder {
                 .build();
     }
 
+    public static Job buildValidJobInCompany(Company company) {
+        return Job.toBuilder(buildValidJob())
+                .company(company)
+                .build();
+    }
+
+    public static Job buildValidJobWithTechnology(Technology technology) {
+        return Job.toBuilder(buildValidJob())
+                .technology(technology)
+                .build();
+    }
 }

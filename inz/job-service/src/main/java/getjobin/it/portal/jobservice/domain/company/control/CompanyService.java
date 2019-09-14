@@ -53,6 +53,14 @@ public class CompanyService {
     }
 
     public void removeCompany(Company company) {
+        validateOnRemove(company);
         companyRepository.removeCompany(company);
+    }
+
+    private void validateOnRemove(Company company) {
+        Set<ConstraintViolation<Company>> violations = validator.validate(company, Company.DeleteValidations.class);
+        if(!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
     }
 }

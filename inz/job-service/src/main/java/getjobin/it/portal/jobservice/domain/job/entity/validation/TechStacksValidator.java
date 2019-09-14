@@ -1,6 +1,6 @@
-package getjobin.it.portal.jobservice.domain.joboffer.entity.validation;
+package getjobin.it.portal.jobservice.domain.job.entity.validation;
 
-import getjobin.it.portal.jobservice.domain.joboffer.entity.JobTechStackRelation;
+import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 import org.springframework.beans.factory.annotation.Autowired;

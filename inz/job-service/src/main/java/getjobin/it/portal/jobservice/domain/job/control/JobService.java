@@ -1,6 +1,8 @@
-package getjobin.it.portal.jobservice.domain.joboffer.control;
+package getjobin.it.portal.jobservice.domain.job.control;
 
-import getjobin.it.portal.jobservice.domain.joboffer.entity.Job;
+import getjobin.it.portal.jobservice.domain.company.entity.Company;
+import getjobin.it.portal.jobservice.domain.job.entity.Job;
+import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,14 @@ public class JobService {
 
     public Job getById(Long jobId) {
         return jobRepository.getById(jobId);
+    }
+
+    public List<Job> findByCompany(Company company) {
+        return jobRepository.findByCompany(company);
+    }
+
+    public List<Job> findByTechnology(Technology technology) {
+        return jobRepository.findByTechnology(technology);
     }
 
     public Long createJob(Job job) {

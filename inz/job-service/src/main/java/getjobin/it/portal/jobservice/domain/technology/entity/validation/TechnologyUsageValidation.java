@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.domain.joboffer.entity.validation;
+package getjobin.it.portal.jobservice.domain.technology.entity.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -9,12 +9,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Constraint(validatedBy = JobTypeValidator.class)
-@Target( {ElementType.FIELD} )
+@Constraint(validatedBy = TechnologyUsageValidator.class)
+@Target( {ElementType.TYPE, ElementType.ANNOTATION_TYPE} )
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JobTypeValidation {
+public @interface TechnologyUsageValidation {
 
     String message() default "";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
+    Class<?>[] groups() default { };
+    Class<? extends Payload>[] payload() default { };
 }

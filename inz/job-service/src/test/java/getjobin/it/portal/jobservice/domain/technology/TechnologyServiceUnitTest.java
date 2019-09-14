@@ -1,5 +1,8 @@
 package getjobin.it.portal.jobservice.domain.technology;
 
+import getjobin.it.portal.jobservice.domain.job.TestJobBuilder;
+import getjobin.it.portal.jobservice.domain.job.control.JobService;
+import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.technology.control.TechnologyService;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.domain.technology.entity.TestTechnologyBuilder;
@@ -27,6 +30,9 @@ public class TechnologyServiceUnitTest {
     @Autowired
     private TechnologyService technologyService;
 
+    @Autowired
+    private JobService jobService;
+
     @Test
     public void givenDependenciesThenTheyAreInjected() {
         assertNotNull(technologyService);
@@ -49,8 +55,8 @@ public class TechnologyServiceUnitTest {
     @Test
     public void givenValidDataOnUpdateThenUpdatesTechStack() {
         Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
-        Technology foundTechnology = technologyService.getById(technologyId);
-        Technology updatedTechnology = TestTechnologyBuilder.buildValidUpdatedTechnology(foundTechnology);
+        Technology createdTechnology = technologyService.getById(technologyId);
+        Technology updatedTechnology = TestTechnologyBuilder.buildValidUpdatedTechnology(createdTechnology);
         technologyService.updateTechnology(updatedTechnology);
         Technology finalTechnology = technologyService.getById(technologyId);
         assertEquals(TestTechnologyBuilder.NAME + UPDATE, finalTechnology.getName());
@@ -65,5 +71,25 @@ public class TechnologyServiceUnitTest {
     @Test(expected = ConstraintViolationException.class)
     public void givenNullNameOnCreateThenThrowsConstraintViolationException() {
         technologyService.createTechnology(TestTechnologyBuilder.buildTechnologyWithNullName());
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void givenTechnologyWithActiveJobsOnRemoveThenThrowsConstraintViolationException() {
+        Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
+        Technology createdTechnology = technologyService.getById(technologyId);
+        jobService.createJob(TestJobBuilder.buildValidJobWithTechnology(createdTechnology));
+        technologyService.removeTechnology(createdTechnology);
+    }
+
+    @Test
+    public void givenTechnologyWithInactiveJobsThenRemovesIt() {
+        Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
+        Technology createdTechnology = technologyService.getById(technologyId);
+        Long createdJobId = jobService.createJob(TestJobBuilder.buildValidJobWithTechnology(createdTechnology));
+        Job createdJob = jobService.getById(createdJobId);
+        jobService.removeJob(createdJob);
+        technologyService.removeTechnology(createdTechnology);
+        Optional<Technology> removedTechnology = technologyService.findById(technologyId);
+        assertTrue(removedTechnology.isEmpty());
     }
 }

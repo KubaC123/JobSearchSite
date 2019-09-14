@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.domain.joboffer.entity.validation;
+package getjobin.it.portal.jobservice.domain.job.entity.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
