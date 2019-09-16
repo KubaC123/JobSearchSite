@@ -1,5 +1,6 @@
 package getjobin.it.portal.jobservice.domain.job.entity;
 
+import getjobin.it.portal.jobservice.domain.ManagedEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,7 @@ import javax.validation.constraints.Min;
 @Entity
 @Table(name = "JOB_TECH_STACK_RELATION")
 @Getter
-public class JobTechStackRelation {
+public class JobTechStackRelation extends ManagedEntity {
 
     private static final String EXP_LEVEL_VALUE_MSG = "Experience level must be in range <1-5>";
 

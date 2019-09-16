@@ -8,7 +8,7 @@ public class TestTechnologyBuilder {
 
     public static final String NAME = "Java";
     public static final String IMAGE_URL = "lalala";
-    private static final String UPDATE = "update";
+    public static final String UPDATE = "update";
 
     public static Technology buildValidTechnology() {
         return Technology.builder()

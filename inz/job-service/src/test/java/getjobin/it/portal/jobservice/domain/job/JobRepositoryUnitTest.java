@@ -2,6 +2,7 @@ package getjobin.it.portal.jobservice.domain.job;
 
 import getjobin.it.portal.jobservice.domain.job.control.JobRepository;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
+import getjobin.it.portal.jobservice.domain.job.entity.TestJobBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -68,9 +68,4 @@ public class TechStackServiceUnitTest {
     public void givenNullNameOnCreateThenThrowsConstraintViolationException() {
         techStackService.createTechStack(TestTechStackBuilder.buildTechStackWithNullName());
     }
-
-    @Test(expected = ConstraintViolationException.class)
-    public void givenTechStackAssignedToJobOnRemoveThenThrowsConstraintViolationException() {
-        // todo
-    }
 }

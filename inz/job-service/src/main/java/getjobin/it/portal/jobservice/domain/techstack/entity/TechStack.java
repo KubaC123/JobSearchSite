@@ -15,7 +15,7 @@ import javax.validation.constraints.NotEmpty;
 @Entity
 @Table(name = "TECH_STACK")
 @Getter
-@TechStackUsageValidation
+@TechStackUsageValidation(groups = TechStack.DeleteValidations.class)
 public class TechStack extends ManagedEntity {
 
     public static String TECH_STACK_TYPE = "TechStack";
@@ -28,6 +28,8 @@ public class TechStack extends ManagedEntity {
     @Column(name = "NAME")
     @NotEmpty(message = "Tech stack name must be provided")
     private String name;
+
+    public interface DeleteValidations { }
 
     public static TechStackBuilder builder() {
         return new TechStackBuilder();

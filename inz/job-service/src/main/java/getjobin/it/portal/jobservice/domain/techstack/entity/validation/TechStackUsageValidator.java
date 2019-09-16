@@ -26,7 +26,7 @@ public class TechStackUsageValidator implements ConstraintValidator<TechStackUsa
         if(!relationsToTechStack.isEmpty()) {
             isValid = false;
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(MessageFormat.format("Cannot remove tech stack, it is assigned to {0} jobs. Ids: {1}",
+            context.buildConstraintViolationWithTemplate(MessageFormat.format("Cannot remove tech stack, it is assigned to {0} job(s). Ids: {1}",
                     String.valueOf(relationsToTechStack.size()), getCommaSeparatedIds(relationsToTechStack)))
                     .addConstraintViolation();
         }

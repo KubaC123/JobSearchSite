@@ -2,6 +2,7 @@ package getjobin.it.portal.jobservice.domain.job;
 
 import getjobin.it.portal.jobservice.domain.job.control.JobService;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
+import getjobin.it.portal.jobservice.domain.job.entity.TestJobBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,25 +32,21 @@ public class JobServiceUnitTest {
     }
 
     @Test
-    public void givenValidDataThenCreatesJob() throws Exception {
-        try {
-            Long createdJobId = jobService.createJob(TestJobBuilder.buildValidJob());
-            Job createdJob = jobService.getById(createdJobId);
-            assertNotNull(createdJobId);
-            assertEquals(TestJobBuilder.TYPE, createdJob.getType());
-            assertEquals(TestJobBuilder.TITLE, createdJob.getTitle());
-            assertEquals(TestJobBuilder.EXP_LEVEL, createdJob.getExperienceLevel());
-            assertEquals(TestJobBuilder.EMP_TYPE, createdJob.getEmploymentType());
-            assertEquals(TestJobBuilder.SALARY_MIN, createdJob.getSalaryMin());
-            assertEquals(TestJobBuilder.SALARY_MAX, createdJob.getSalaryMax());
-            assertEquals(TestJobBuilder.CURRENCY, createdJob.getCurrency());
-            assertEquals(TestJobBuilder.DESCRIPTION, createdJob.getDescription());
-            assertEquals(TestJobBuilder.AGREEMENTS, createdJob.getAgreements());
-            assertEquals(TestJobBuilder.REMOTE, createdJob.getRemote());
-            assertEquals(Boolean.TRUE, createdJob.getActive());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void givenValidDataThenCreatesJob(){
+        Long createdJobId = jobService.createJob(TestJobBuilder.buildValidJob());
+        Job createdJob = jobService.getById(createdJobId);
+        assertNotNull(createdJobId);
+        assertEquals(TestJobBuilder.TYPE, createdJob.getType());
+        assertEquals(TestJobBuilder.TITLE, createdJob.getTitle());
+        assertEquals(TestJobBuilder.EXP_LEVEL, createdJob.getExperienceLevel());
+        assertEquals(TestJobBuilder.EMP_TYPE, createdJob.getEmploymentType());
+        assertEquals(TestJobBuilder.SALARY_MIN, createdJob.getSalaryMin());
+        assertEquals(TestJobBuilder.SALARY_MAX, createdJob.getSalaryMax());
+        assertEquals(TestJobBuilder.CURRENCY, createdJob.getCurrency());
+        assertEquals(TestJobBuilder.DESCRIPTION, createdJob.getDescription());
+        assertEquals(TestJobBuilder.AGREEMENTS, createdJob.getAgreements());
+        assertEquals(TestJobBuilder.REMOTE, createdJob.getRemote());
+        assertEquals(Boolean.TRUE, createdJob.getActive());
     }
 
     @Test

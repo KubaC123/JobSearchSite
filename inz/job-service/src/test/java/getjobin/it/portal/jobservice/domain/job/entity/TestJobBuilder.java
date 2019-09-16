@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.domain.job;
+package getjobin.it.portal.jobservice.domain.job.entity;
 
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.job.control.enums.EmploymentType;
@@ -7,31 +7,34 @@ import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.control.enums.JobType;
 import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
+import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 
+import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TestJobBuilder {
 
-    static String TYPE = JobType.REGULAR.getLiteral();
-    static String TYPE_UPDATE = JobType.FREELANCE.getLiteral();
-    static String TITLE = "Super praca w korpo";
-    static String EXP_LEVEL = ExperienceLevel.SENIOR.getLiteral();
-    static String EXP_LEVEL_UPDATE = ExperienceLevel.MID.getLiteral();
-    static String EMP_TYPE = EmploymentType.EMP_CONTRACT.getLiteral();
-    static String EMP_TYPE_UPDATE = EmploymentType.B2B.getLiteral();
-    static Integer SALARY_MIN = 4000;
-    static Integer SALARY_MIN_UPDATE = 3000;
-    static Integer SALARY_MAX = 6000;
-    static Integer SALARY_MAX_UPDATE = 4000;
-    static String CURRENCY = "PLN";
-    static String CURRENCY_UPDATE = "EU";
-    static String DESCRIPTION = "Super atmosfera, darmowe przekąski.";
-    static String AGREEMENTS = "Przetwarzamy wszystko co się da, sprzedajemy twoje dane.";
-    static Boolean REMOTE = Boolean.FALSE;
-    static String UPDATE = "update";
+    public static String TYPE = JobType.REGULAR.getLiteral();
+    public static String TYPE_UPDATE = JobType.FREELANCE.getLiteral();
+    public static String TITLE = "Super praca w korpo";
+    public static String EXP_LEVEL = ExperienceLevel.SENIOR.getLiteral();
+    public static String EXP_LEVEL_UPDATE = ExperienceLevel.MID.getLiteral();
+    public static String EMP_TYPE = EmploymentType.EMP_CONTRACT.getLiteral();
+    public static String EMP_TYPE_UPDATE = EmploymentType.B2B.getLiteral();
+    public static Integer SALARY_MIN = 4000;
+    public static Integer SALARY_MIN_UPDATE = 3000;
+    public static Integer SALARY_MAX = 6000;
+    public static Integer SALARY_MAX_UPDATE = 4000;
+    public static String CURRENCY = "PLN";
+    public static String CURRENCY_UPDATE = "EU";
+    public static String DESCRIPTION = "Super atmosfera, darmowe przekąski.";
+    public static String AGREEMENTS = "Przetwarzamy wszystko co się da, sprzedajemy twoje dane.";
+    public static Boolean REMOTE = Boolean.FALSE;
+    public static String UPDATE = "update";
+    public static Integer TECH_STACK_RELATION_EXP_LEVEL = 2;
 
-    static Job buildValidJob() {
+    public static Job buildValidJob() {
         return Job.builder()
                 .type(TYPE)
                 .title(TITLE)
@@ -46,7 +49,7 @@ public class TestJobBuilder {
                 .build();
     }
 
-    static Job buildValidUpdatedJob(Job existingJob) {
+    public static Job buildValidUpdatedJob(Job existingJob) {
         return Job.toBuilder(existingJob)
                 .type(TYPE_UPDATE)
                 .title(TITLE + UPDATE)
@@ -61,30 +64,30 @@ public class TestJobBuilder {
                 .build();
     }
 
-    static Job buildJobWithInvalidType() {
+    public static Job buildJobWithInvalidType() {
         return Job.toBuilder(buildValidJob())
                 .type("random")
                 .build();
     }
 
-    static Job buildJobWithInvalidExperienceLevel() {
+    public static Job buildJobWithInvalidExperienceLevel() {
         return Job.toBuilder(buildValidJob())
                 .experienceLevel("random")
                 .build();
     }
 
-    static Job buildJobWithInvalidEmploymentType() {
+    public static Job buildJobWithInvalidEmploymentType() {
         return Job.toBuilder(buildValidJob())
                 .employmentType("random")
                 .build();
     }
 
-    static Job buildJobWithRelationsToNotExistingTechStacks() {
+    public static Job buildJobWithRelationsToNotExistingTechStacks() {
         return Job.toBuilder(buildValidJob())
                 .techStackRelations(Stream.of(-1L, -2L, -3L, -4L)
                         .map(techStackId -> JobTechStackRelation.builder()
                                 .withTechStackId(techStackId)
-                                .withExperienceLevel(1)
+                                .withExperienceLevel(TECH_STACK_RELATION_EXP_LEVEL)
                                 .build())
                         .collect(Collectors.toList()))
                 .build();
@@ -99,6 +102,16 @@ public class TestJobBuilder {
     public static Job buildValidJobWithTechnology(Technology technology) {
         return Job.toBuilder(buildValidJob())
                 .technology(technology)
+                .build();
+    }
+
+    public static Job buildValidJobWithTechStack(TechStack techStack) {
+        return Job.toBuilder(buildValidJob())
+                .techStackRelations(Collections.singletonList(
+                        JobTechStackRelation.builder()
+                                .withTechStackId(techStack.getId())
+                                .withExperienceLevel(TECH_STACK_RELATION_EXP_LEVEL)
+                                .build()))
                 .build();
     }
 }

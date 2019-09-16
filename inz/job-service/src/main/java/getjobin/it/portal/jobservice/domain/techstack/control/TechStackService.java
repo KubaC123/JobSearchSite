@@ -57,17 +57,15 @@ public class TechStackService {
     }
 
     public void removeTechStack(TechStack techStack) {
+        validateTechStackOnRemove(techStack);
         techStackRepository.removeTechStack(techStack);
     }
 
-    public void validateTechStackExistence(List<Long> techStackIds) {
-        List<Long> foundTechStacks = findByIds(techStackIds).stream()
-                .map(TechStack::getId)
-                .collect(Collectors.toList());
-        List<Long> notExistingTechStackIds = new ArrayList<>(techStackIds);
-        notExistingTechStackIds.removeAll(foundTechStacks);
-        JobServicePreconditions.checkArgument(notExistingTechStackIds.isEmpty(),
-                MessageFormat.format("Some of specified tech stacks does not exist or was removed. Ids: {0}", getCommaSeparatedTechStackIds(notExistingTechStackIds)));
+    private void validateTechStackOnRemove(TechStack techStack) {
+        Set<ConstraintViolation<TechStack>> violations = validator.validate(techStack, TechStack.DeleteValidations.class);
+        if(!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
     }
 
     private String getCommaSeparatedTechStackIds(List<Long> notExistingTechStackIds) {
