@@ -35,16 +35,18 @@ public class TechStacksValidator implements ConstraintValidator<TechStacksValida
         List<Long> specifiedTechStackIds = getTechStackIds(techStackRelations);
         Set<Long> duplicatedTechStackIds = findDuplicatedTechStackIds(specifiedTechStackIds);
         List<Long> notExistingTechStackIds = findNotExistingTechStackIds(specifiedTechStackIds);
+        String message = "";
         if(!duplicatedTechStackIds.isEmpty()) {
             isValid = false;
-            context.buildConstraintViolationWithTemplate(MessageFormat.format("Specified duplicated tech stack ids: {0}.", getCommaSeparatedIds(duplicatedTechStackIds.stream())))
-                    .addConstraintViolation();
+            message = MessageFormat.format("Specified duplicated tech stack id(s): {0}.", getCommaSeparatedIds(duplicatedTechStackIds.stream()));
         }
         if(!notExistingTechStackIds.isEmpty()) {
             isValid = false;
-            context.buildConstraintViolationWithTemplate(MessageFormat.format("Given tech stacks does not exist or was removed. Ids: {0}.", getCommaSeparatedIds(notExistingTechStackIds.stream())))
-                    .addConstraintViolation();
+            message = MessageFormat.format("Given tech stack does not exists or was removed, id(s): {0}.", getCommaSeparatedIds(notExistingTechStackIds.stream()));
         }
+        context.disableDefaultConstraintViolation();
+        context.buildConstraintViolationWithTemplate(message)
+                .addConstraintViolation();
         return isValid;
     }
 

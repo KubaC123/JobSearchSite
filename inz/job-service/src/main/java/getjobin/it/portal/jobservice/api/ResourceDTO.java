@@ -1,11 +1,11 @@
 package getjobin.it.portal.jobservice.api;
 
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Value;
 
 import java.net.URI;
 
-@Builder @Getter
+@Builder @Value
 public class ResourceDTO {
 
     private String objectType;

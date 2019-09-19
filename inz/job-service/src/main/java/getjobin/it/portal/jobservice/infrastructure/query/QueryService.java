@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class QueryService {
@@ -19,13 +20,12 @@ public class QueryService {
 
     @Transactional
     public <T extends ManagedEntity> List<T> findEntitiesByIds(Class<T> entityClass, List<Long> ids) {
-        List<T> result = entityManager.unwrap(Session.class)
+        return entityManager.unwrap(Session.class)
                 .byMultipleIds(entityClass)
                 .enableSessionCheck(true)
-                .multiLoad(ids);
-        if(result.stream().allMatch(Objects::isNull)) {
-            return Collections.emptyList();
-        }
-        return result;
+                .multiLoad(ids)
+                .stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }

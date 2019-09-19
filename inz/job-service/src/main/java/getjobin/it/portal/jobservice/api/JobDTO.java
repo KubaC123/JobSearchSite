@@ -1,11 +1,11 @@
 package getjobin.it.portal.jobservice.api;
 
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Value;
 
 import java.util.List;
 
-@Builder @Getter
+@Builder @Value
 public class JobDTO {
 
     private Long id;

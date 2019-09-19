@@ -1,9 +1,9 @@
 package getjobin.it.portal.jobservice.api;
 
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Value;
 
-@Builder @Getter
+@Builder @Value
 public class TechnologyDTO {
 
     private Long id;

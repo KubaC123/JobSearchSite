@@ -67,6 +67,7 @@ public class Job extends ManagedEntity {
     private String currency;
     
     @Column(name = "DESCRIPTION")
+    @NotEmpty(message = "Job description must be provided")
     private String description;
     
     @ManyToOne

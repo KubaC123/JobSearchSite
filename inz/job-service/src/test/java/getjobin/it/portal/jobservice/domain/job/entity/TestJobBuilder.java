@@ -3,9 +3,7 @@ package getjobin.it.portal.jobservice.domain.job.entity;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.job.control.enums.EmploymentType;
 import getjobin.it.portal.jobservice.domain.job.control.enums.ExperienceLevel;
-import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.control.enums.JobType;
-import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 

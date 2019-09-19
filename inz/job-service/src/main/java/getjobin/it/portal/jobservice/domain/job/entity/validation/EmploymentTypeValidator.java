@@ -15,7 +15,7 @@ public class EmploymentTypeValidator implements ConstraintValidator<EmploymentTy
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if(EmploymentType.fromString(value).isEmpty()) {
+        if(value != null && EmploymentType.fromString(value).isEmpty()) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(MessageFormat.format("Allowed employment types: {0}, specified {1}", Arrays.stream(EmploymentType.values())
                     .map(EmploymentType::getLiteral)

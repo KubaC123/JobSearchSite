@@ -27,7 +27,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(ErrorMessageDTO.builder()
                         .timeStamp(CurrentDate.get())
                         .status(HttpStatus.PRECONDITION_FAILED)
-                        .message(exception.getLocalizedMessage())
+                        .message("Validation failed")
                         .validationsByField(validationsByField)
                         .build());
     }
