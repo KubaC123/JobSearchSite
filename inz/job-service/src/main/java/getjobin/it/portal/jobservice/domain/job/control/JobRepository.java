@@ -1,5 +1,9 @@
 package getjobin.it.portal.jobservice.domain.job.control;
 
+import cz.jirutka.rsql.parser.ast.AndNode;
+import cz.jirutka.rsql.parser.ast.ComparisonNode;
+import cz.jirutka.rsql.parser.ast.OrNode;
+import cz.jirutka.rsql.parser.ast.RSQLVisitor;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
@@ -8,6 +12,7 @@ import getjobin.it.portal.jobservice.infrastructure.CurrentDate;
 import getjobin.it.portal.jobservice.infrastructure.query.QueryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.provider.HibernateUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,8 +62,8 @@ public class JobRepository {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Job> criteriaQuery = criteriaBuilder.createQuery(Job.class);
         Root<Job> job = criteriaQuery.from(Job.class);
-        Predicate companyIdPredicate = criteriaBuilder.equal(job.get("company"), company);
-        criteriaQuery.where(criteriaBuilder.and(activeJobPredicate(criteriaBuilder, job), companyIdPredicate));
+        Predicate companyPredicate = JobSpecifications.companySpecification(company).toPredicate(job, criteriaQuery, criteriaBuilder);
+        criteriaQuery.where(criteriaBuilder.and(activeJobPredicate(criteriaBuilder, job), companyPredicate));
         TypedQuery<Job> query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
     }
@@ -67,7 +72,7 @@ public class JobRepository {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Job> criteriaQuery = criteriaBuilder.createQuery(Job.class);
         Root<Job> job = criteriaQuery.from(Job.class);
-        Predicate technologyPredicate = criteriaBuilder.equal(job.get("technology"), technology);
+        Predicate technologyPredicate = JobSpecifications.technologySpecification(technology).toPredicate(job, criteriaQuery, criteriaBuilder);
         criteriaQuery.where(criteriaBuilder.and(activeJobPredicate(criteriaBuilder, job), technologyPredicate));
         TypedQuery<Job> query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
@@ -97,11 +102,6 @@ public class JobRepository {
         return entityManager.merge(job).getId();
     }
 
-    private void updateJobTechStackRelations(Long jobId, List<JobTechStackRelation> jobTechStackRelations) {
-        jobTechStackRelations.forEach(jobTechStackRelation -> jobTechStackRelation.setJobId(jobId));
-        jobTechStackRelations.forEach(jobTechStackRelationRepository::updateJobTechStackRelation);
-    }
-
     public void removeJobById(Long jobId) {
         findById(jobId).ifPresent(entityManager::remove);
     }
@@ -111,4 +111,6 @@ public class JobRepository {
         job.setActive(Boolean.FALSE);
         entityManager.merge(job);
     }
+
+
 }
