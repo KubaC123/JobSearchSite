@@ -14,4 +14,8 @@ public class JobSpecifications {
     public static Specification<Job> technologySpecification(Technology technology) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("technology"), technology));
     }
+
+    public static Specification<Job> activeSpecification(Boolean active) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("active"), active));
+    }
 }

@@ -11,6 +11,10 @@ public class CustomRSQLVisitor<T extends ManagedEntity> implements RSQLVisitor<S
 
     private GenericRSQLSpecificationBuilder<T> builder;
 
+    public CustomRSQLVisitor() {
+        builder = new GenericRSQLSpecificationBuilder<>();
+    }
+
     @Override
     public Specification<T> visit(AndNode andNode, Void aVoid) {
         return builder.createSpecification(andNode);
@@ -23,6 +27,6 @@ public class CustomRSQLVisitor<T extends ManagedEntity> implements RSQLVisitor<S
 
     @Override
     public Specification<T> visit(ComparisonNode comparisonNode, Void aVoid) {
-    return builder.createSpecification(comparisonNode);
+        return builder.createSpecification(comparisonNode);
     }
 }

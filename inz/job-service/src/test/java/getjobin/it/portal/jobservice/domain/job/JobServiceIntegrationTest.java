@@ -65,6 +65,7 @@ public class JobServiceIntegrationTest {
         assertEquals(createdTechnology, createdJob.getTechnology());
     }
 
+    // todo fix this test
     @Test
     public void givenValidJobWithTechStackThenCreatesJobWithTechStackRelation() {
         Long techStackId = techStackService.createTechStack(TestTechStackBuilder.buildValidTechStack());

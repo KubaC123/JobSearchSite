@@ -63,7 +63,8 @@ public class JobRepository {
         CriteriaQuery<Job> criteriaQuery = criteriaBuilder.createQuery(Job.class);
         Root<Job> job = criteriaQuery.from(Job.class);
         Predicate companyPredicate = JobSpecifications.companySpecification(company).toPredicate(job, criteriaQuery, criteriaBuilder);
-        criteriaQuery.where(criteriaBuilder.and(activeJobPredicate(criteriaBuilder, job), companyPredicate));
+        Predicate activePredicate = JobSpecifications.activeSpecification(Boolean.TRUE).toPredicate(job, criteriaQuery, criteriaBuilder);
+        criteriaQuery.where(criteriaBuilder.and(activePredicate, companyPredicate));
         TypedQuery<Job> query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
     }
@@ -73,13 +74,20 @@ public class JobRepository {
         CriteriaQuery<Job> criteriaQuery = criteriaBuilder.createQuery(Job.class);
         Root<Job> job = criteriaQuery.from(Job.class);
         Predicate technologyPredicate = JobSpecifications.technologySpecification(technology).toPredicate(job, criteriaQuery, criteriaBuilder);
-        criteriaQuery.where(criteriaBuilder.and(activeJobPredicate(criteriaBuilder, job), technologyPredicate));
+        Predicate activePredicate = JobSpecifications.activeSpecification(Boolean.TRUE).toPredicate(job, criteriaQuery, criteriaBuilder);
+        criteriaQuery.where(criteriaBuilder.and(activePredicate, technologyPredicate));
         TypedQuery<Job> query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
     }
 
-    private Predicate activeJobPredicate(CriteriaBuilder criteriaBuilder, Root<Job> job) {
-        return criteriaBuilder.equal(job.get("active"), Boolean.TRUE);
+    public List<Job> findBySpecification(Specification<Job> specification) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Job> criteriaQuery = criteriaBuilder.createQuery(Job.class);
+        Root<Job> job = criteriaQuery.from(Job.class);
+        Predicate predicate = specification.toPredicate(job, criteriaQuery, criteriaBuilder);
+        criteriaQuery.where(predicate);
+        TypedQuery<Job> query = entityManager.createQuery(criteriaQuery);
+        return query.getResultList();
     }
 
     public Long saveJob(Job job) {
@@ -103,7 +111,7 @@ public class JobRepository {
     }
 
     public void removeJobById(Long jobId) {
-        findById(jobId).ifPresent(entityManager::remove);
+        findById(jobId).ifPresent(this::removeJob);
     }
 
     public void removeJob(Job job) {
@@ -111,6 +119,4 @@ public class JobRepository {
         job.setActive(Boolean.FALSE);
         entityManager.merge(job);
     }
-
-
 }
