@@ -1,17 +1,18 @@
-package getjobin.it.portal.jobservice.infrastructure.query;
+package getjobin.it.portal.jobservice.infrastructure.query.boundary;
 
 import cz.jirutka.rsql.parser.ast.AndNode;
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
 import cz.jirutka.rsql.parser.ast.OrNode;
 import cz.jirutka.rsql.parser.ast.RSQLVisitor;
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
+import getjobin.it.portal.jobservice.infrastructure.query.control.GenericRSQLSpecificationBuilder;
 import org.springframework.data.jpa.domain.Specification;
 
-public class CustomRSQLVisitor<T extends ManagedEntity> implements RSQLVisitor<Specification<T>, Void> {
+public class ManagedEntityRSQLVisitor<T extends ManagedEntity> implements RSQLVisitor<Specification<T>, Void> {
 
     private GenericRSQLSpecificationBuilder<T> builder;
 
-    public CustomRSQLVisitor() {
+    public ManagedEntityRSQLVisitor() {
         builder = new GenericRSQLSpecificationBuilder<>();
     }
 

@@ -3,7 +3,7 @@ package getjobin.it.portal.jobservice.infrastructure;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyRepository;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.company.entity.TestCompanyBuilder;
-import getjobin.it.portal.jobservice.infrastructure.query.QueryService;
+import getjobin.it.portal.jobservice.infrastructure.query.boundary.QueryService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

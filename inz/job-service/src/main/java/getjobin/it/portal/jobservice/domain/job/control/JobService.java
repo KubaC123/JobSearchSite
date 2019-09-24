@@ -1,8 +1,12 @@
 package getjobin.it.portal.jobservice.domain.job.control;
 
+import cz.jirutka.rsql.parser.RSQLParser;
+import cz.jirutka.rsql.parser.RSQLParserException;
+import cz.jirutka.rsql.parser.ast.Node;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
+import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServiceIllegalArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +47,19 @@ public class JobService {
 
     public List<Job> findByTechnology(Technology technology) {
         return jobRepository.findByTechnology(technology);
+    }
+
+    public List<Job> findByRSQLCondition(String rsqlCondition) {
+        Node node = tryParseRSQLCondition(rsqlCondition);
+        return jobRepository.findByRSQLNode(node);
+    }
+
+    private Node tryParseRSQLCondition(String rsqlCondition) {
+        try {
+            return new RSQLParser().parse(rsqlCondition);
+        } catch (RSQLParserException exception) {
+            throw new JobServiceIllegalArgumentException("Invalid rsql syntax. Please refer to swagger documentation for valid operators.");
+        }
     }
 
     public Long createJob(Job job) {

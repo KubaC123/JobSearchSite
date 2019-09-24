@@ -1,12 +1,17 @@
 package getjobin.it.portal.jobservice.domain.job;
 
+import cz.jirutka.rsql.parser.RSQLParser;
+import cz.jirutka.rsql.parser.ast.Node;
 import getjobin.it.portal.jobservice.domain.job.control.JobRepository;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.entity.TestJobBuilder;
+import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServiceIllegalArgumentException;
+import getjobin.it.portal.jobservice.infrastructure.query.boundary.ManagedEntityRSQLVisitor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
@@ -80,5 +85,11 @@ public class JobRepositoryUnitTest {
         assertEquals(TestJobBuilder.AGREEMENTS + TestJobBuilder.UPDATE, finalJob.getAgreements());
         assertEquals(!TestJobBuilder.REMOTE, finalJob.getRemote());
         assertEquals(Boolean.TRUE, finalJob.getActive());
+    }
+
+    @Test(expected = JobServiceIllegalArgumentException.class)
+    public void givenInvalidRSQLNodeThenThrowsJobServiceIllegalArgumentException() {
+        Node rootNode = new RSQLParser().parse("randomAttr=='test';drugiRandomAttr=='test'");
+        jobRepository.findByRSQLNode(rootNode);
     }
 }

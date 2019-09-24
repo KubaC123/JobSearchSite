@@ -2,7 +2,7 @@ package getjobin.it.portal.jobservice.domain.company.control;
 
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.infrastructure.CurrentDate;
-import getjobin.it.portal.jobservice.infrastructure.query.QueryService;
+import getjobin.it.portal.jobservice.infrastructure.query.boundary.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

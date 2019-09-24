@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.infrastructure.query;
+package getjobin.it.portal.jobservice.infrastructure.query.boundary;
 
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
 import org.hibernate.Session;

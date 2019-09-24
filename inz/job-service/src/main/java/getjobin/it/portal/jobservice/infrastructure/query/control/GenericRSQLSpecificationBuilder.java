@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.infrastructure.query;
+package getjobin.it.portal.jobservice.infrastructure.query.control;
 
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
 import cz.jirutka.rsql.parser.ast.LogicalNode;
@@ -31,10 +31,14 @@ public class GenericRSQLSpecificationBuilder<T extends ManagedEntity> {
 
         Specification<T> result = specifications.get(0);
         if(LogicalOperator.AND.equals(logicalNode.getOperator())) {
-            specifications.forEach(specification -> Specification.where(result).and(specification));
+            for(int i = 0; i < specifications.size(); i++) {
+                result = Specification.where(result).and(specifications.get(i));
+            }
         }
         if(LogicalOperator.OR.equals(logicalNode.getOperator())) {
-            specifications.forEach(specification -> Specification.where(result).or(specification));
+            for(int i = 0; i < specifications.size(); i++) {
+                result = Specification.where(result).or(specifications.get(i));
+            }
         }
         return result;
     }

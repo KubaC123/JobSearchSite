@@ -1,19 +1,17 @@
 package getjobin.it.portal.jobservice.domain.job.control;
 
-import cz.jirutka.rsql.parser.ast.AndNode;
-import cz.jirutka.rsql.parser.ast.ComparisonNode;
-import cz.jirutka.rsql.parser.ast.OrNode;
-import cz.jirutka.rsql.parser.ast.RSQLVisitor;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.infrastructure.CurrentDate;
-import getjobin.it.portal.jobservice.infrastructure.query.QueryService;
+import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServiceIllegalArgumentException;
+import getjobin.it.portal.jobservice.infrastructure.query.boundary.ManagedEntityRSQLVisitor;
+import getjobin.it.portal.jobservice.infrastructure.query.boundary.QueryService;
 import lombok.extern.slf4j.Slf4j;
+import cz.jirutka.rsql.parser.ast.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.provider.HibernateUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,6 +76,14 @@ public class JobRepository {
         criteriaQuery.where(criteriaBuilder.and(activePredicate, technologyPredicate));
         TypedQuery<Job> query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
+    }
+
+    public List<Job> findByRSQLNode(Node node) {
+        try {
+            return findBySpecification(node.accept(new ManagedEntityRSQLVisitor<>()));
+        } catch (Exception exception) {
+            throw new JobServiceIllegalArgumentException("Invalid selector in rsql condition.");
+        }
     }
 
     public List<Job> findBySpecification(Specification<Job> specification) {

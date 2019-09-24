@@ -3,6 +3,7 @@ package getjobin.it.portal.jobservice.domain.job;
 import getjobin.it.portal.jobservice.domain.job.control.JobService;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.entity.TestJobBuilder;
+import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServiceIllegalArgumentException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,11 @@ public class JobServiceUnitTest {
         assertEquals(TestJobBuilder.AGREEMENTS + TestJobBuilder.UPDATE, finalJob.getAgreements());
         assertEquals(!TestJobBuilder.REMOTE, finalJob.getRemote());
         assertEquals(Boolean.TRUE, finalJob.getActive());
+    }
+
+    @Test(expected = JobServiceIllegalArgumentException.class)
+    public void givenInvalidRSQLSyntaxThenThrowsJobServiceIllegalArgumentException() {
+        jobService.findByRSQLCondition("title=lik='test'");
     }
 
     @Test(expected = ConstraintViolationException.class)

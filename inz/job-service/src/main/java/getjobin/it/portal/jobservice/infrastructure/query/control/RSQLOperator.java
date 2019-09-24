@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.infrastructure.query;
+package getjobin.it.portal.jobservice.infrastructure.query.control;
 
 import cz.jirutka.rsql.parser.ast.ComparisonOperator;
 import cz.jirutka.rsql.parser.ast.RSQLOperators;
@@ -18,7 +18,7 @@ public enum RSQLOperator {
 
     private ComparisonOperator operator;
 
-    private RSQLOperator(ComparisonOperator operator) {
+    RSQLOperator(ComparisonOperator operator) {
         this.operator = operator;
     }
 

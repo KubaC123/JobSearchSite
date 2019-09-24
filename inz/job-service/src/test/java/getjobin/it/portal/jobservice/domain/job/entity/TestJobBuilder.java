@@ -91,6 +91,12 @@ public class TestJobBuilder {
                 .build();
     }
 
+    public static Job buildValidJobWithTitle(String title) {
+        return Job.toBuilder(buildValidJob())
+                .title(title)
+                .build();
+    }
+
     public static Job buildValidJobInCompany(Company company) {
         return Job.toBuilder(buildValidJob())
                 .company(company)
