@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.api;
+package getjobin.it.portal.jobservice.api.domain;
 
 import lombok.Builder;
 import lombok.Value;
@@ -7,7 +7,8 @@ import org.springframework.http.HttpStatus;
 import java.util.Date;
 import java.util.Map;
 
-@Builder @Value
+@Builder
+@Value
 public class ErrorMessageDTO {
 
     private Date timeStamp;

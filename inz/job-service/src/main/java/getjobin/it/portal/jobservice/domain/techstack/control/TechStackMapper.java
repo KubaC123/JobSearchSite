@@ -1,6 +1,6 @@
 package getjobin.it.portal.jobservice.domain.techstack.control;
 
-import getjobin.it.portal.jobservice.api.TechStackDTO;
+import getjobin.it.portal.jobservice.api.domain.TechStackDTO;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 import org.springframework.stereotype.Component;
 

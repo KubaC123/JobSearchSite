@@ -1,8 +1,8 @@
 package getjobin.it.portal.jobservice.domain.company.boundary;
 
 
-import getjobin.it.portal.jobservice.api.CompanyDTO;
-import getjobin.it.portal.jobservice.api.ResourceDTO;
+import getjobin.it.portal.jobservice.api.domain.CompanyDTO;
+import getjobin.it.portal.jobservice.api.domain.ResourceDTO;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyMapper;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyService;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;

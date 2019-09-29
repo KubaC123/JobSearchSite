@@ -1,6 +1,6 @@
 package getjobin.it.portal.jobservice.infrastructure;
 
-import getjobin.it.portal.jobservice.api.ErrorMessageDTO;
+import getjobin.it.portal.jobservice.api.domain.ErrorMessageDTO;
 import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServiceIllegalArgumentException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

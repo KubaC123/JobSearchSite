@@ -1,9 +1,10 @@
-package getjobin.it.portal.jobservice.api;
+package getjobin.it.portal.jobservice.api.domain;
 
 import lombok.Builder;
 import lombok.Value;
 
-@Builder @Value
+@Builder
+@Value
 public class CompanyDTO {
 
     private Long id;

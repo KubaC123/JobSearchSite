@@ -18,7 +18,7 @@ import java.util.List;
 
 @Configuration
 @EnableSwagger2
-public class SwaggerConfiguration {
+public class SwaggerConfig {
 
     private static final String PATH_SELECTOR_PATTERN = "/api/*";
     private static final int OK_STATUS_CODE = 200;

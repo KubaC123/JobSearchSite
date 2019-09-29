@@ -1,7 +1,7 @@
 package getjobin.it.portal.jobservice.domain.techstack.boundary;
 
-import getjobin.it.portal.jobservice.api.ResourceDTO;
-import getjobin.it.portal.jobservice.api.TechStackDTO;
+import getjobin.it.portal.jobservice.api.domain.ResourceDTO;
+import getjobin.it.portal.jobservice.api.domain.TechStackDTO;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackMapper;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;

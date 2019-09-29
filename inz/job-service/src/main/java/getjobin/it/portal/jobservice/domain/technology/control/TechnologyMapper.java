@@ -1,6 +1,6 @@
 package getjobin.it.portal.jobservice.domain.technology.control;
 
-import getjobin.it.portal.jobservice.api.TechnologyDTO;
+import getjobin.it.portal.jobservice.api.domain.TechnologyDTO;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import org.springframework.stereotype.Component;
 

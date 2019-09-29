@@ -1,7 +1,7 @@
 package getjobin.it.portal.jobservice.domain.technology.boundary;
 
-import getjobin.it.portal.jobservice.api.ResourceDTO;
-import getjobin.it.portal.jobservice.api.TechnologyDTO;
+import getjobin.it.portal.jobservice.api.domain.ResourceDTO;
+import getjobin.it.portal.jobservice.api.domain.TechnologyDTO;
 import getjobin.it.portal.jobservice.domain.technology.control.TechnologyMapper;
 import getjobin.it.portal.jobservice.domain.technology.control.TechnologyService;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;

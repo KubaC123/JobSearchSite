@@ -1,6 +1,6 @@
 package getjobin.it.portal.jobservice.domain.company.control;
 
-import getjobin.it.portal.jobservice.api.CompanyDTO;
+import getjobin.it.portal.jobservice.api.domain.CompanyDTO;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import org.springframework.stereotype.Component;
 
