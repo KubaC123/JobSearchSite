@@ -1,6 +1,7 @@
 package getjobin.it.portal.jobservice.domain.job.boundary;
 
 import getjobin.it.portal.jobservice.api.domain.JobDTO;
+import getjobin.it.portal.jobservice.api.domain.JobProfileDTO;
 import getjobin.it.portal.jobservice.api.domain.JobTechStackDTO;
 import getjobin.it.portal.jobservice.api.domain.ResourceDTO;
 import getjobin.it.portal.jobservice.domain.category.boundary.CategoryResource;
@@ -124,8 +125,24 @@ public class JobMapper {
                 .employmentType(job.getEmploymentType())
                 .salaryMin(job.getSalaryMin())
                 .salaryMax(job.getSalaryMax())
+                .startDate(job.getStartDate())
+                .contractDuration(job.getContractDuration())
+                .flexibleWorkHours(job.getFlexibleWorkHours())
                 .currency(job.getCurrency())
                 .description(job.getDescription())
+                .projectIndustry(job.getProjectIndustry())
+                .projectTeamSize(job.getProjectTeamSize())
+                .projectDescription(job.getProjectDescription())
+                .jobProfile(JobProfileDTO.builder()
+                        .development(job.getDevelopment())
+                        .testing(job.getTesting())
+                        .maintenance(job.getMaintenance())
+                        .clientSupport(job.getClientSupport())
+                        .meetings(job.getMeetings())
+                        .leading(job.getLeading())
+                        .documentation(job.getDocumentation())
+                        .otherActivities(job.getOtherActivities())
+                        .build())
                 .agreements(job.getAgreements())
                 .applications(job.getApplications())
                 .build();
