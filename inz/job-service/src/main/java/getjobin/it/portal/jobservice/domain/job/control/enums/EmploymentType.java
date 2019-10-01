@@ -6,9 +6,10 @@ import java.util.Optional;
 public enum EmploymentType {
 
     B2B("B2B"),
-    EMP_CONTRACT("EmploymentContract"),
-    FEE_FOR_TASK("FeeForTask"),
-    TASK_CONTRACT("TaskContract");
+    EMPLOYMENT("Employment"),
+    CONTRACT_AGREEMENT("ContractAgreement"),
+    CONTRACT_FOR_SPECIFIC_WORK("ContractForSpecificWork"),
+    INTERN_AGREEMENT("InternAgreement");
 
     private String literal;
 

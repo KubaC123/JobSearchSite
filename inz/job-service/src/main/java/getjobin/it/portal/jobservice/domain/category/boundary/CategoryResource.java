@@ -1,9 +1,9 @@
-package getjobin.it.portal.jobservice.domain.technology.boundary;
+package getjobin.it.portal.jobservice.domain.category.boundary;
 
+import getjobin.it.portal.jobservice.api.domain.CategoryDTO;
 import getjobin.it.portal.jobservice.api.domain.ResourceDTO;
-import getjobin.it.portal.jobservice.api.domain.TechnologyDTO;
-import getjobin.it.portal.jobservice.domain.technology.control.TechnologyService;
-import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
+import getjobin.it.portal.jobservice.domain.category.control.CategoryService;
+import getjobin.it.portal.jobservice.domain.category.entity.Category;
 import getjobin.it.portal.jobservice.infrastructure.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,45 +19,45 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = TechnologyResource.MAIN_PATH)
-public class TechnologyResource {
+@RequestMapping(value = CategoryResource.MAIN_PATH)
+public class CategoryResource {
 
-    static final String MAIN_PATH = "technology";
+    static final String MAIN_PATH = "category";
     private static final String ID_PATH = "{id}";
     private static final String ID = "id";
     private static final String IDS_PATH = "{ids}";
     private static final String IDS = "ids";
 
-    private TechnologyMapper technologyMapper;
-    private TechnologyService technologyService;
+    private CategoryMapper categoryMapper;
+    private CategoryService categoryService;
 
     @Autowired
-    public TechnologyResource(TechnologyMapper technologyMapper, TechnologyService technologyService) {
-        this.technologyMapper = technologyMapper;
-        this.technologyService = technologyService;
+    public CategoryResource(CategoryMapper categoryMapper, CategoryService categoryService) {
+        this.categoryMapper = categoryMapper;
+        this.categoryService = categoryService;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = IDS_PATH)
     @ResponseStatus(value = HttpStatus.OK)
-    public List<TechnologyDTO> browseTechnologies(@PathVariable(IDS)IdsParam ids) {
-        return technologyService.findByIds(ids.asList()).stream()
-                .map(technologyMapper::toDTO)
+    public List<CategoryDTO> browseCategories(@PathVariable(IDS) IdsParam ids) {
+        return categoryService.findByIds(ids.asList()).stream()
+                .map(categoryMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
-    public List<ResourceDTO> createTechnologies(List<TechnologyDTO> technologyDTOs) {
-        return technologyDTOs.stream()
-                .map(technologyMapper::toEntity)
-                .map(technologyService::createTechnology)
+    public List<ResourceDTO> createCategories(List<CategoryDTO> categoryDTOs) {
+        return categoryDTOs.stream()
+                .map(categoryMapper::toEntity)
+                .map(categoryService::createCategory)
                 .map(this::buildResourceDTO)
                 .collect(Collectors.toList());
     }
 
     private ResourceDTO buildResourceDTO(Long technologyId) {
         return ResourceDTO.builder()
-                .objectType(Technology.TECHNOLOGY_TYPE)
+                .objectType(Category.CATEGORY_TYPE)
                 .objectId(technologyId)
                 .resourceURI(ServletUriComponentsBuilder.fromCurrentRequestUri()
                         .path("/" + technologyId)
@@ -68,18 +68,17 @@ public class TechnologyResource {
 
     @RequestMapping(method = RequestMethod.PUT, value = ID_PATH)
     @ResponseStatus(value = HttpStatus.OK)
-    public ResourceDTO updateTechnology(@PathVariable(ID) Long technologyId, @RequestBody TechnologyDTO technologyDTO) {
-        Technology existingTechnology = technologyService.getById(technologyId);
-        Technology updatedTechnology = technologyMapper.updateExistingTechnology(existingTechnology, technologyDTO);
-        technologyService.updateTechnology(updatedTechnology);
-        return buildResourceDTO(updatedTechnology.getId());
+    public ResourceDTO updateCategory(@PathVariable(ID) Long categoryId, @RequestBody CategoryDTO categoryDTO) {
+        Category existingCategory = categoryService.getById(categoryId);
+        Category updatedCategory = categoryMapper.updateExistingCategory(existingCategory, categoryDTO);
+        categoryService.updateCategory(updatedCategory);
+        return buildResourceDTO(updatedCategory.getId());
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = IDS_PATH)
     @ResponseStatus(value = HttpStatus.OK)
-    public void deleteTechnologies(@PathVariable(IDS) IdsParam ids) {
-        technologyService.findByIds(ids.asList())
-                .forEach(technologyService::removeTechnology);
+    public void deleteCategories(@PathVariable(IDS) IdsParam ids) {
+        categoryService.findByIds(ids.asList())
+                .forEach(categoryService::removeCategory);
     }
-
 }

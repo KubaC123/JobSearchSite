@@ -1,10 +1,10 @@
-package getjobin.it.portal.jobservice.infrastructure.exceptions;
+package getjobin.it.portal.jobservice.infrastructure.exception;
 
 public class JobServicePreconditions {
 
     public static void checkArgument(boolean condition, String message) {
         if(!condition) {
-            throw new JobServiceIllegalArgumentException(message);
+            throw new JobServiceException(message);
         }
     }
 }

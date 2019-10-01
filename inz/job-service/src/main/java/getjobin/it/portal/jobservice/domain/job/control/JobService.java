@@ -6,7 +6,7 @@ import cz.jirutka.rsql.parser.ast.Node;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
-import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServiceIllegalArgumentException;
+import getjobin.it.portal.jobservice.infrastructure.exception.JobServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,7 +58,7 @@ public class JobService {
         try {
             return new RSQLParser().parse(rsqlCondition);
         } catch (RSQLParserException exception) {
-            throw new JobServiceIllegalArgumentException("Invalid rsql syntax. Please refer to swagger documentation for valid operators.");
+            throw new JobServiceException("Invalid rsql syntax. Please refer to swagger documentation for valid operators.");
         }
     }
 

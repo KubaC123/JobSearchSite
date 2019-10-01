@@ -5,7 +5,7 @@ import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.infrastructure.CurrentDate;
-import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServiceIllegalArgumentException;
+import getjobin.it.portal.jobservice.infrastructure.exception.JobServiceException;
 import getjobin.it.portal.jobservice.infrastructure.query.boundary.ManagedEntityRSQLVisitor;
 import getjobin.it.portal.jobservice.infrastructure.query.boundary.QueryService;
 import lombok.extern.slf4j.Slf4j;
@@ -82,7 +82,7 @@ public class JobRepository {
         try {
             return findBySpecification(node.accept(new ManagedEntityRSQLVisitor<>()));
         } catch (Exception exception) {
-            throw new JobServiceIllegalArgumentException("Invalid selector in rsql condition.");
+            throw new JobServiceException("Invalid selector in rsql condition.");
         }
     }
 

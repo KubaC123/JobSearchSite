@@ -2,7 +2,7 @@ package getjobin.it.portal.jobservice.infrastructure.query.control;
 
 import cz.jirutka.rsql.parser.ast.ComparisonOperator;
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
-import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServicePreconditions;
+import getjobin.it.portal.jobservice.infrastructure.exception.JobServicePreconditions;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;

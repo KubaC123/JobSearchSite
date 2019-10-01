@@ -25,7 +25,7 @@ public class TechStack extends ManagedEntity {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "NAME")
+    @Column(name = "NAME", unique = true)
     @NotEmpty(message = "Tech stack name must be provided")
     private String name;
 

@@ -1,15 +1,12 @@
 package getjobin.it.portal.jobservice.domain.techstack.control;
 
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
-import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServicePreconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
-import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

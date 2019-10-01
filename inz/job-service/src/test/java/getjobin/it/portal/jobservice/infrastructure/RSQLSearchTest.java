@@ -12,7 +12,7 @@ import getjobin.it.portal.jobservice.domain.job.entity.TestJobBuilder;
 import getjobin.it.portal.jobservice.domain.technology.control.TechnologyRepository;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.domain.technology.entity.TestTechnologyBuilder;
-import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServiceIllegalArgumentException;
+import getjobin.it.portal.jobservice.infrastructure.exception.JobServiceException;
 import getjobin.it.portal.jobservice.infrastructure.query.boundary.ManagedEntityRSQLVisitor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -190,8 +190,8 @@ public class RSQLSearchTest {
         assertEquals(createdJobId, foundJobs.get(0).getId());
     }
 
-    @Test(expected = JobServiceIllegalArgumentException.class)
-    public void givenDoubleNestedPropertyThenThrowsJobServiceIllegalArgumentException() {
+    @Test(expected = JobServiceException.class)
+    public void givenDoubleNestedPropertyThenThrowsJobServiceException() {
         Node rootNode = new RSQLParser().parse("technology.otherattribute.id==1232");
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         jobRepository.findBySpecification(rsqlBasedSpecification);

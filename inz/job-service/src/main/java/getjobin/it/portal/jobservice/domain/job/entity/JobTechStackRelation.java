@@ -26,7 +26,7 @@ public class JobTechStackRelation extends ManagedEntity {
     private Long id;
 
     @Setter
-    @Column(name = "JOB_OFFER_ID")
+    @Column(name = "JOB_ID")
     private Long jobId;
 
     @Column(name = "TECH_STACK_ID")

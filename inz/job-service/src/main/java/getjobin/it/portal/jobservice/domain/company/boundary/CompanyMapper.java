@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.domain.company.control;
+package getjobin.it.portal.jobservice.domain.company.boundary;
 
 import getjobin.it.portal.jobservice.api.domain.CompanyDTO;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;

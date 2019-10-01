@@ -1,6 +1,7 @@
 package getjobin.it.portal.jobservice.domain.job.entity;
 
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
+import getjobin.it.portal.jobservice.domain.category.entity.Category;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.job.entity.validation.EmploymentTypeValidation;
 import getjobin.it.portal.jobservice.domain.job.entity.validation.ExperienceLevelValidation;
@@ -22,7 +23,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "JOB_OFFER")
@@ -49,6 +52,10 @@ public class Job extends ManagedEntity {
     @JoinColumn(name = "COMPANY_ID")
     private Company company;
 
+    @ManyToOne
+    @JoinColumn(name = "CATEGORY_ID")
+    private Category category;
+
     @Column(name = "EXP_LEVEL")
     @ExperienceLevelValidation
     private String experienceLevel;
@@ -63,6 +70,15 @@ public class Job extends ManagedEntity {
     @Column(name = "SALARY_MAX")
     private Integer salaryMax;
 
+    @Column(name = "START_DATE")
+    private String startDate;
+
+    @Column(name = "CONTRACT_DURATION")
+    private String contractDuration;
+
+    @Column(name = "FLEXIBLE_WORK_HOURS")
+    private Boolean flexibleWorkHours;
+
     @Column(name = "CURRENCY")
     private String currency;
     
@@ -73,12 +89,42 @@ public class Job extends ManagedEntity {
     @ManyToOne
     @JoinColumn(name = "TECHNOLOGY_ID")
     private Technology technology;
+
+    @Column(name = "PROJECT_INDUSTRY")
+    private String projectIndustry;
+
+    @Column(name = "PROJECT_TEAM_SIZE")
+    private Integer projectTeamSize;
+
+    @Column(name = "PROJECT_DESCRIPTION")
+    private String projectDescription;
+
+    @Column(name = "DEVELOPMENT")
+    private Integer development;
+
+    @Column(name = "TESTING")
+    private Integer testing;
+
+    @Column(name = "MAINTENANCE")
+    private Integer maintenance;
+
+    @Column(name = "CLIENT_SUPPORT")
+    private Integer clientSupport;
+
+    @Column(name = "MEETINGS")
+    private Integer meetings;
+
+    @Column(name = "LEADINGS")
+    private Integer leading;
     
+    @Column(name = "DOCUMENTATION")
+    private Integer documentation;
+
+    @Column(name = "OTHER_ACTIVITIES")
+    private Integer otherActivities;
+
     @Column(name = "AGREEMENTS")
     private String agreements;
-    
-    @Column(name = "REMOTE")
-    private Boolean remote;
 
     @Setter
     @Column(name = "ACTIVE")
@@ -118,15 +164,29 @@ public class Job extends ManagedEntity {
         this.type = builder.type;
         this.title = builder.title;
         this.company = builder.company;
+        this.category = builder.category;
         this.experienceLevel = builder.experienceLevel;
         this.employmentType = builder.employmentType;
         this.salaryMin = builder.salaryMin;
         this.salaryMax = builder.salaryMax;
+        this.startDate = builder.startDate;
+        this.contractDuration = builder.contractDuration;
+        this.flexibleWorkHours = builder.flexibleWorkHours;
         this.currency = builder.currency;
         this.description = builder.description;
         this.technology = builder.technology;
+        this.projectIndustry = builder.projectIndustry;
+        this.projectTeamSize = builder.projectTeamSize;
+        this.projectDescription = builder.projectDescription;
+        this.development = builder.development;
+        this.testing = builder.testing;
+        this.maintenance = builder.maintenance;
+        this.clientSupport = builder.clientSupport;
+        this.meetings = builder.meetings;
+        this.leading = builder.leading;
+        this.documentation = builder.documentation;
+        this.otherActivities = builder.otherActivities;
         this.agreements = builder.agreements;
-        this.remote = builder.remote;
         this.active = builder.active;
         this.applications = builder.applications;
         this.createDate = builder.createDate;
@@ -141,15 +201,29 @@ public class Job extends ManagedEntity {
                 .type(job.getType())
                 .title(job.getTitle())
                 .company(job.getCompany())
+                .category(job.getCategory())
                 .experienceLevel(job.getExperienceLevel())
                 .employmentType(job.getEmploymentType())
                 .salaryMin(job.getSalaryMin())
                 .salaryMax(job.getSalaryMax())
+                .startDate(job.getStartDate())
+                .contractDuration(job.getContractDuration())
+                .flexibleWorkHours(job.getFlexibleWorkHours())
                 .currency(job.getCurrency())
                 .description(job.getDescription())
                 .technology(job.getTechnology())
+                .projectIndustry(job.getProjectIndustry())
+                .projectTeamSize(job.getProjectTeamSize())
+                .projectDescription(job.getProjectDescription())
+                .development(job.getDevelopment())
+                .testing(job.getTesting())
+                .maintenance(job.getMaintenance())
+                .clientSupport(job.getClientSupport())
+                .meetings(job.getMeetings())
+                .leading(job.getLeading())
+                .documentation(job.getDocumentation())
+                .otherActivities(job.getOtherActivities())
                 .agreements(job.getAgreements())
-                .remote(job.getRemote())
                 .active(job.getActive())
                 .applications(job.getApplications())
                 .createDate(job.getCreateDate())
@@ -164,15 +238,29 @@ public class Job extends ManagedEntity {
         private String type;
         private String title;
         private Company company;
+        private Category category;
         private String experienceLevel;
         private String employmentType;
         private Integer salaryMin;
         private Integer salaryMax;
+        private String startDate;
+        private String contractDuration;
+        private Boolean flexibleWorkHours;
         private String currency;
         private String description;
         private Technology technology;
+        private String projectIndustry;
+        private Integer projectTeamSize;
+        private String projectDescription;
+        private Integer development;
+        private Integer testing;
+        private Integer maintenance;
+        private Integer clientSupport;
+        private Integer meetings;
+        private Integer leading;
+        private Integer documentation;
+        private Integer otherActivities;
         private String agreements;
-        private Boolean remote;
         private Boolean active;
         private Integer applications;
         private Date createDate;
@@ -200,6 +288,11 @@ public class Job extends ManagedEntity {
             return this;
         }
 
+        public JobOfferEntityBuilder category(Category category) {
+            this.category = category;
+            return this;
+        }
+
         public JobOfferEntityBuilder experienceLevel(String experienceLevel) {
             this.experienceLevel = experienceLevel;
             return this;
@@ -220,6 +313,21 @@ public class Job extends ManagedEntity {
             return this;
         }
 
+        public JobOfferEntityBuilder startDate(String startDate) {
+            this.startDate = startDate;
+            return this;
+        }
+
+        public JobOfferEntityBuilder contractDuration(String contractDuration) {
+            this.contractDuration = contractDuration;
+            return this;
+        }
+
+        public JobOfferEntityBuilder flexibleWorkHours(Boolean flexibleWorkHours) {
+            this.flexibleWorkHours = flexibleWorkHours;
+            return this;
+        }
+
         public JobOfferEntityBuilder currency(String currency) {
             this.currency = currency;
             return this;
@@ -235,13 +343,64 @@ public class Job extends ManagedEntity {
             return this;
         }
 
-        public JobOfferEntityBuilder agreements(String agreements) {
-            this.agreements = agreements;
+        public JobOfferEntityBuilder projectIndustry(String projectIndustry) {
+            this.projectIndustry = projectIndustry;
             return this;
         }
 
-        public JobOfferEntityBuilder remote(Boolean remote) {
-            this.remote = remote;
+        public JobOfferEntityBuilder projectTeamSize(Integer projectTeamSize) {
+            this.projectTeamSize = projectTeamSize;
+            return this;
+        }
+
+        public JobOfferEntityBuilder projectDescription(String projectDescription) {
+            this.projectDescription = projectDescription;
+            return this;
+        }
+
+        public JobOfferEntityBuilder development(Integer development) {
+            this.development = development;
+            return this;
+        }
+
+        public JobOfferEntityBuilder testing(Integer testing) {
+            this.testing = testing;
+            return this;
+        }
+
+        public JobOfferEntityBuilder maintenance(Integer maintenance) {
+            this.maintenance = maintenance;
+            return this;
+        }
+
+        public JobOfferEntityBuilder clientSupport(Integer clientSupport) {
+            this.clientSupport = clientSupport;
+            return this;
+        }
+
+        public JobOfferEntityBuilder meetings(Integer meetings) {
+            this.meetings = meetings;
+            return this;
+        }
+
+        public JobOfferEntityBuilder leading(Integer leading) {
+            this.leading = leading;
+            return this;
+        }
+
+        public JobOfferEntityBuilder documentation(Integer documentation) {
+            this.documentation = documentation;
+            return this;
+        }
+
+        public JobOfferEntityBuilder otherActivities(Integer otherActivities) {
+            this.otherActivities = otherActivities;
+            return this;
+        }
+
+
+        public JobOfferEntityBuilder agreements(String agreements) {
+            this.agreements = agreements;
             return this;
         }
 
@@ -276,7 +435,19 @@ public class Job extends ManagedEntity {
         }
 
         public Job build() {
+            if(otherActivities == null) {
+                otherActivities = getOtherActivities();
+            }
             return new Job(this);
+        }
+
+        private Integer getOtherActivities() {
+            Integer usedPercent = Stream.of(development, testing, maintenance,
+                    clientSupport, meetings, leading, documentation)
+                    .filter(Objects::nonNull)
+                    .mapToInt(Integer::intValue)
+                    .sum();
+            return 100 - usedPercent;
         }
     }
 }

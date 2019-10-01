@@ -44,16 +44,16 @@ public class TechnologyRepository {
         return technology.getId();
     }
 
-    public Long updateTechnology(Technology techStack) {
-        return entityManager.merge(techStack).getId();
+    public Long updateTechnology(Technology technology) {
+        return entityManager.merge(technology).getId();
     }
 
-    public void removeTechnologyById(Long techStackId) {
-        findById(techStackId).ifPresent(entityManager::remove);
+    public void removeTechnologyById(Long technologyId) {
+        findById(technologyId).ifPresent(entityManager::remove);
     }
 
-    public void removeTechnology(Technology techStack) {
-        entityManager.remove(techStack);
+    public void removeTechnology(Technology technology) {
+        entityManager.remove(technology);
     }
 
 }

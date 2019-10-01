@@ -1,28 +1,19 @@
 package getjobin.it.portal.jobservice.domain.search;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class ElasticSearchMappingProvider {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     public String getCompanyMapping() {
-        Map<String, String> properties = new HashMap<>();
-        properties.put("name", JSONMappingType.TEXT.getValue());
-        properties.put("size", JSONMappingType.INTEGER.getValue());
-        properties.put("description", JSONMappingType.TEXT.getValue());
-        try {
-            return objectMapper.writeValueAsString(ImmutableMap.of("properties", properties));
-        } catch (JsonProcessingException exception) {
-            return null;
-        }
+        return "{\n"
+                + "\"properties\":"
+                + "{\n"
+                + "\"name\":" + JSONMappingType.TEXT.getValue() + ","
+                + "\"description\":" + JSONMappingType.TEXT.getValue() + ","
+                + "\"size\":" + JSONMappingType.INTEGER.getValue()
+                + "}\n"
+                + "}\n";
     }
 
     private enum JSONMappingType {
@@ -38,7 +29,7 @@ public class ElasticSearchMappingProvider {
         }
 
         public String getValue() {
-            return "{ \"type\": \"" + dataType + "\" } ";
+            return "{ \"type\": \"" + dataType + "\" } \n";
         }
     }
 }

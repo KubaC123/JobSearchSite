@@ -1,7 +1,7 @@
-package getjobin.it.portal.jobservice.infrastructure;
+package getjobin.it.portal.jobservice.infrastructure.exception;
 
 import getjobin.it.portal.jobservice.api.domain.ErrorMessageDTO;
-import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServiceIllegalArgumentException;
+import getjobin.it.portal.jobservice.infrastructure.CurrentDate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -32,8 +32,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                         .build());
     }
 
-    @ExceptionHandler({JobServiceIllegalArgumentException.class})
-    public ResponseEntity<ErrorMessageDTO> handleJobServiceIllegalArgumentException(JobServiceIllegalArgumentException exception, WebRequest request) {
+    @ExceptionHandler({JobServiceException.class})
+    public ResponseEntity<ErrorMessageDTO> handleJobServiceIllegalArgumentException(JobServiceException exception, WebRequest request) {
         return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED)
                 .body(ErrorMessageDTO.builder()
                         .timeStamp(CurrentDate.get())
@@ -41,5 +41,4 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                         .message(exception.getLocalizedMessage())
                         .build());
     }
-
 }

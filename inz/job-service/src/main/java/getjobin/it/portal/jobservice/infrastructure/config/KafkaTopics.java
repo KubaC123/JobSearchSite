@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice;
+package getjobin.it.portal.jobservice.infrastructure.config;
 
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;

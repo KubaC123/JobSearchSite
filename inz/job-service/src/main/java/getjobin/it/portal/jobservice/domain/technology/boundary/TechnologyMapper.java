@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.domain.technology.control;
+package getjobin.it.portal.jobservice.domain.technology.boundary;
 
 import getjobin.it.portal.jobservice.api.domain.TechnologyDTO;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;

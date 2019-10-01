@@ -1,6 +1,6 @@
 package getjobin.it.portal.jobservice.domain.search;
 
-import getjobin.it.portal.jobservice.KafkaTopics;
+import getjobin.it.portal.jobservice.infrastructure.config.KafkaTopics;
 import getjobin.it.portal.jobservice.api.client.IndexMappingDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +15,9 @@ public class IndexationService {
 
     private final KafkaTopics kafkaTopics;
 
-    private ElasticSearchMappingProvider mappingProvider;
-
     @Autowired
-    public IndexationService(KafkaTopics kafkaTopics, ElasticSearchMappingProvider mappingProvider) {
+    public IndexationService(KafkaTopics kafkaTopics) {
         this.kafkaTopics = kafkaTopics;
-        this.mappingProvider = mappingProvider;
     }
 
     public void sendMappingOnTopic(IndexMappingDTO indexMapping) {

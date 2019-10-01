@@ -38,14 +38,14 @@ public class TechnologyServiceUnitTest {
     }
 
     @Test
-    public void givenExistingTechStackThenFindsItById() {
+    public void givenExistingTechnologyThenFindsItById() {
         Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
         Optional<Technology> foundTechnology = technologyService.findById(technologyId);
         assertTrue(foundTechnology.isPresent());
     }
 
     @Test
-    public void givenValidDataOnUpdateThenUpdatesTechStack() {
+    public void givenValidDataOnUpdateThenUpdatesTechnology() {
         Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
         Technology createdTechnology = technologyService.getById(technologyId);
         Technology updatedTechnology = TestTechnologyBuilder.buildValidUpdatedTechnology(createdTechnology);

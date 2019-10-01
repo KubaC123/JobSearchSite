@@ -2,11 +2,10 @@ package getjobin.it.portal.jobservice.domain.job.boundary;
 
 import getjobin.it.portal.jobservice.api.domain.JobDTO;
 import getjobin.it.portal.jobservice.api.domain.ResourceDTO;
-import getjobin.it.portal.jobservice.domain.job.control.JobMapper;
 import getjobin.it.portal.jobservice.domain.job.control.JobService;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.infrastructure.IdsParam;
-import getjobin.it.portal.jobservice.infrastructure.exceptions.JobServicePreconditions;
+import getjobin.it.portal.jobservice.infrastructure.exception.JobServicePreconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
