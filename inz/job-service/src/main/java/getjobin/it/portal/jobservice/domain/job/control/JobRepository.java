@@ -4,7 +4,7 @@ import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
-import getjobin.it.portal.jobservice.infrastructure.CurrentDate;
+import getjobin.it.portal.jobservice.infrastructure.util.CurrentDate;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServiceException;
 import getjobin.it.portal.jobservice.infrastructure.query.boundary.ManagedEntityRSQLVisitor;
 import getjobin.it.portal.jobservice.infrastructure.query.boundary.QueryService;
@@ -96,31 +96,31 @@ public class JobRepository {
         return query.getResultList();
     }
 
-    public Long saveJob(Job job) {
+    public Long save(Job job) {
         job.setCreateDate(CurrentDate.get());
         job.setActive(Boolean.TRUE);
         entityManager.persist(job);
         Long createdJobId = job.getId();
-        job.getTechStackRelations().ifPresent(jobTechStackRelations -> createJobTechStackRelations(createdJobId, jobTechStackRelations));
+        job.getTechStackRelations().ifPresent(jobTechStackRelations -> createTechStackRelations(createdJobId, jobTechStackRelations));
         return createdJobId;
     }
 
-    public void createJobTechStackRelations(Long createdJobId, List<JobTechStackRelation> jobTechStackRelations) {
+    public void createTechStackRelations(Long createdJobId, List<JobTechStackRelation> jobTechStackRelations) {
         jobTechStackRelations.forEach(jobTechStackRelation -> jobTechStackRelation.setJobId(createdJobId));
         jobTechStackRelations.forEach(jobTechStackRelationRepository::saveJobTechStackRelation);
     }
 
-    public Long updateJob(Job job) {
+    public Long update(Job job) {
         job.setModifyDate(CurrentDate.get());
-        job.getTechStackRelations().ifPresent(jobTechStackRelations -> createJobTechStackRelations(job.getId(), jobTechStackRelations));
+        job.getTechStackRelations().ifPresent(jobTechStackRelations -> createTechStackRelations(job.getId(), jobTechStackRelations));
         return entityManager.merge(job).getId();
     }
 
-    public void removeJobById(Long jobId) {
-        findById(jobId).ifPresent(this::removeJob);
+    public void removeById(Long jobId) {
+        findById(jobId).ifPresent(this::remove);
     }
 
-    public void removeJob(Job job) {
+    public void remove(Job job) {
         job.setModifyDate(CurrentDate.get());
         job.setActive(Boolean.FALSE);
         entityManager.merge(job);

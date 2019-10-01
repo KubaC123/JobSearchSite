@@ -1,10 +1,10 @@
 package getjobin.it.portal.jobservice.domain.category.boundary;
 
-import getjobin.it.portal.jobservice.api.domain.CategoryDTO;
-import getjobin.it.portal.jobservice.api.domain.ResourceDTO;
+import getjobin.it.portal.jobservice.api.domain.rest.CategoryDTO;
+import getjobin.it.portal.jobservice.api.domain.rest.ResourceDTO;
 import getjobin.it.portal.jobservice.domain.category.control.CategoryService;
 import getjobin.it.portal.jobservice.domain.category.entity.Category;
-import getjobin.it.portal.jobservice.infrastructure.IdsParam;
+import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,7 +50,7 @@ public class CategoryResource {
     public List<ResourceDTO> createCategories(List<CategoryDTO> categoryDTOs) {
         return categoryDTOs.stream()
                 .map(categoryMapper::toEntity)
-                .map(categoryService::createCategory)
+                .map(categoryService::create)
                 .map(this::buildResourceDTO)
                 .collect(Collectors.toList());
     }
@@ -71,7 +71,7 @@ public class CategoryResource {
     public ResourceDTO updateCategory(@PathVariable(ID) Long categoryId, @RequestBody CategoryDTO categoryDTO) {
         Category existingCategory = categoryService.getById(categoryId);
         Category updatedCategory = categoryMapper.updateExistingCategory(existingCategory, categoryDTO);
-        categoryService.updateCategory(updatedCategory);
+        categoryService.update(updatedCategory);
         return buildResourceDTO(updatedCategory.getId());
     }
 
@@ -79,6 +79,6 @@ public class CategoryResource {
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteCategories(@PathVariable(IDS) IdsParam ids) {
         categoryService.findByIds(ids.asList())
-                .forEach(categoryService::removeCategory);
+                .forEach(categoryService::remove);
     }
 }

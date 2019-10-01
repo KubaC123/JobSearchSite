@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.infrastructure;
+package getjobin.it.portal.jobservice.infrastructure.util;
 
 import java.util.Arrays;
 import java.util.List;

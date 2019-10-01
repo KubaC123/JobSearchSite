@@ -34,13 +34,13 @@ public class CompanyRepositoryUnitTest {
 
     @Test
     public void givenValidDataThenCreatesCompany() {
-        Long companyId = companyRepository.saveCompany(TestCompanyBuilder.buildValidCompany());
+        Long companyId = companyRepository.save(TestCompanyBuilder.buildValidCompany());
         assertNotNull(companyId);
     }
 
     @Test
     public void givenExistingCompanyThenFindsItById() {
-        Long companyId = companyRepository.saveCompany(TestCompanyBuilder.buildValidCompany());
+        Long companyId = companyRepository.save(TestCompanyBuilder.buildValidCompany());
         Company foundCompany = companyRepository.getById(companyId);
         Long foundCompanyId = foundCompany.getId();
         assertEquals(companyId, foundCompanyId);
@@ -48,18 +48,18 @@ public class CompanyRepositoryUnitTest {
 
     @Test
     public void givenExistingCompanyRemovesIt() {
-        Long companyId = companyRepository.saveCompany(TestCompanyBuilder.buildValidCompany());
-        companyRepository.removeCompanyById(companyId);
+        Long companyId = companyRepository.save(TestCompanyBuilder.buildValidCompany());
+        companyRepository.removeById(companyId);
         Optional<Company> removedCompany = companyRepository.findById(companyId);
         assertTrue(removedCompany.isEmpty());
     }
 
     @Test
     public void givenValidDataOnUpdateThenUpdatesCompany() {
-        Long companyId = companyRepository.saveCompany(TestCompanyBuilder.buildValidCompany());
+        Long companyId = companyRepository.save(TestCompanyBuilder.buildValidCompany());
         Company createdCompany = companyRepository.getById(companyId);
         Company updatedCompany = TestCompanyBuilder.buildValidUpdatedCompany(createdCompany);
-        companyRepository.updateCompany(updatedCompany);
+        companyRepository.update(updatedCompany);
         Company finalCompany = companyRepository.getById(companyId);
         assertEquals(TestCompanyBuilder.NAME + UPDATE, finalCompany.getName());
         assertEquals(TestCompanyBuilder.WEBSITE + UPDATE, finalCompany.getWebSiteUrl());

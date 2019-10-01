@@ -39,20 +39,20 @@ public class TechStackRepository {
                 .orElseThrow(() -> new RuntimeException(MessageFormat.format("Tech Stack with id: {0} does not exist or was removed", String.valueOf(techStackId))));
     }
 
-    public Long saveTechStack(TechStack techStack) {
+    public Long save(TechStack techStack) {
         entityManager.persist(techStack);
         return techStack.getId();
     }
 
-    public Long updateTechStack(TechStack techStack) {
+    public Long update(TechStack techStack) {
         return entityManager.merge(techStack).getId();
     }
 
-    public void removeTechStackById(Long techStackId) {
+    public void removeById(Long techStackId) {
         findById(techStackId).ifPresent(entityManager::remove);
     }
 
-    public void removeTechStack(TechStack techStack) {
+    public void remove(TechStack techStack) {
         entityManager.remove(techStack);
     }
 

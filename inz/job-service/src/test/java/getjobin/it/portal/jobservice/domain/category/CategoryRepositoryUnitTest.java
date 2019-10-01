@@ -34,21 +34,21 @@ public class CategoryRepositoryUnitTest {
 
     @Test
     public void givenValidDataThenCreatesCategory() {
-        Long categoryId = categoryRepository.saveCategory(TestCategoryBuilder.buildValidCategory());
+        Long categoryId = categoryRepository.save(TestCategoryBuilder.buildValidCategory());
         assertNotNull(categoryId);
     }
 
     @Test
     public void givenExistingCategoryThenFindsItById() {
-        Long categoryId = categoryRepository.saveCategory(TestCategoryBuilder.buildValidCategory());
+        Long categoryId = categoryRepository.save(TestCategoryBuilder.buildValidCategory());
         Optional<Category> foundCategory = categoryRepository.findById(categoryId);
         assertTrue(foundCategory.isPresent());
     }
 
     @Test
     public void givenExistingCategoryThenRemovesIt() {
-        Long categoryId = categoryRepository.saveCategory(TestCategoryBuilder.buildValidCategory());
-        categoryRepository.removeCategoryById(categoryId);
+        Long categoryId = categoryRepository.save(TestCategoryBuilder.buildValidCategory());
+        categoryRepository.removeById(categoryId);
         Optional<Category> removedTechnology = categoryRepository.findById(categoryId);
         assertTrue(removedTechnology.isEmpty());
     }
@@ -56,10 +56,10 @@ public class CategoryRepositoryUnitTest {
 
     @Test
     public void givenValidDataOnUpdateThenUpdatesCategory() {
-        Long categoryId = categoryRepository.saveCategory(TestCategoryBuilder.buildValidCategory());
+        Long categoryId = categoryRepository.save(TestCategoryBuilder.buildValidCategory());
         Category foundCategory = categoryRepository.getById(categoryId);
         Category updatedCategory = TestCategoryBuilder.buildValidUpdatedCategory(foundCategory);
-        categoryRepository.updateCategory(updatedCategory);
+        categoryRepository.update(updatedCategory);
         Category finalCategory = categoryRepository.getById(categoryId);
         assertEquals(TestCategoryBuilder.NAME + UPDATE, finalCategory.getName());
     }

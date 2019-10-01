@@ -40,18 +40,18 @@ public class CompanyIntegrationTest {
     public void givenCompanyWithActiveJobsOnRemoveThenThrowsConstraintViolationException() {
         Long companyId = companyService.createCompany(TestCompanyBuilder.buildValidCompany());
         Company createdCompany = companyService.getById(companyId);
-        jobService.createJob(TestJobBuilder.buildValidJobInCompany(createdCompany));
-        companyService.removeCompany(createdCompany);
+        jobService.create(TestJobBuilder.buildValidJobInCompany(createdCompany));
+        companyService.remove(createdCompany);
     }
 
     @Test
     public void givenCompanyWithInactiveJobsThenRemovesIt() {
         Long companyId = companyService.createCompany(TestCompanyBuilder.buildValidCompany());
         Company createdCompany = companyService.getById(companyId);
-        Long companyJobId = jobService.createJob(TestJobBuilder.buildValidJobInCompany(createdCompany));
+        Long companyJobId = jobService.create(TestJobBuilder.buildValidJobInCompany(createdCompany));
         Job companyJob = jobService.getById(companyJobId);
-        jobService.removeJob(companyJob);
-        companyService.removeCompany(createdCompany);
+        jobService.remove(companyJob);
+        companyService.remove(createdCompany);
         Optional<Company> removedCompany = companyService.findById(companyId);
         assertTrue(removedCompany.isEmpty());
     }

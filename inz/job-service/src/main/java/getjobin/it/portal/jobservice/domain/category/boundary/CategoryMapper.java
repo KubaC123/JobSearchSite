@@ -1,6 +1,6 @@
 package getjobin.it.portal.jobservice.domain.category.boundary;
 
-import getjobin.it.portal.jobservice.api.domain.CategoryDTO;
+import getjobin.it.portal.jobservice.api.domain.rest.CategoryDTO;
 import getjobin.it.portal.jobservice.domain.category.entity.Category;
 import org.springframework.stereotype.Component;
 

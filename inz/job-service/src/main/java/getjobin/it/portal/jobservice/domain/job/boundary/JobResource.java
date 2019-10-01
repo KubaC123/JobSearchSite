@@ -1,12 +1,14 @@
 package getjobin.it.portal.jobservice.domain.job.boundary;
 
-import getjobin.it.portal.jobservice.api.domain.JobDTO;
-import getjobin.it.portal.jobservice.api.domain.ResourceDTO;
+import getjobin.it.portal.jobservice.api.domain.rest.JobDTO;
+import getjobin.it.portal.jobservice.api.domain.rest.ResourceDTO;
+import getjobin.it.portal.jobservice.domain.event.OperationType;
 import getjobin.it.portal.jobservice.domain.job.control.JobService;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
-import getjobin.it.portal.jobservice.infrastructure.IdsParam;
+import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServicePreconditions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,11 +31,13 @@ public class JobResource {
 
     private JobMapper jobMapper;
     private JobService jobService;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    public JobResource(JobMapper jobMapper, JobService jobService) {
+    public JobResource(JobMapper jobMapper, JobService jobService, ApplicationEventPublisher applicationEventPublisher) {
         this.jobMapper = jobMapper;
         this.jobService = jobService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = IdsParam.IDS_PATH)
@@ -56,7 +60,8 @@ public class JobResource {
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResourceDTO createJob(@RequestBody JobDTO jobDTO) {
         Job job = jobMapper.toEntity(jobDTO);
-        Long createdJobId = jobService.createJob(job);
+        Long createdJobId = jobService.create(job);
+        applicationEventPublisher.publishEvent(jobMapper.toEvent(createdJobId, OperationType.CREATE));
         return buildResourceDTO(createdJobId);
     }
 
@@ -77,7 +82,8 @@ public class JobResource {
         JobServicePreconditions.checkArgument(jobDTO.getId() != null, "Job id must be specified in DTO order to update it");
         Job existingJob = jobService.getById(jobDTO.getId());
         Job updatedJob = jobMapper.updateExistingJobOffer(existingJob, jobDTO);
-        jobService.updateJob(updatedJob);
+        jobService.update(updatedJob);
+        applicationEventPublisher.publishEvent(jobMapper.toEvent(jobDTO.getId(), OperationType.UPDATE));
         return buildResourceDTO(jobDTO.getId());
     }
 
@@ -85,6 +91,9 @@ public class JobResource {
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteJob(@PathParam(IdsParam.IDS) IdsParam ids) {
         jobService.findByIds(ids.asList())
-                .forEach(jobService::removeJob);
+                .forEach(job -> {
+                    jobService.remove(job);
+                    applicationEventPublisher.publishEvent(jobMapper.toEvent(job.getId(), OperationType.DELETE));
+                });
     }
 }

@@ -39,20 +39,20 @@ public class TechnologyRepository {
                 .orElseThrow(() -> new RuntimeException(MessageFormat.format("Technology with id: {0} does not exist or was removed", String.valueOf(technologyId))));
     }
 
-    public Long saveTechnology(Technology technology) {
+    public Long save(Technology technology) {
         entityManager.persist(technology);
         return technology.getId();
     }
 
-    public Long updateTechnology(Technology technology) {
+    public Long update(Technology technology) {
         return entityManager.merge(technology).getId();
     }
 
-    public void removeTechnologyById(Long technologyId) {
+    public void removeById(Long technologyId) {
         findById(technologyId).ifPresent(entityManager::remove);
     }
 
-    public void removeTechnology(Technology technology) {
+    public void remove(Technology technology) {
         entityManager.remove(technology);
     }
 

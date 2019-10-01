@@ -1,10 +1,10 @@
 package getjobin.it.portal.jobservice.domain.technology.boundary;
 
-import getjobin.it.portal.jobservice.api.domain.ResourceDTO;
-import getjobin.it.portal.jobservice.api.domain.TechnologyDTO;
+import getjobin.it.portal.jobservice.api.domain.rest.ResourceDTO;
+import getjobin.it.portal.jobservice.api.domain.rest.TechnologyDTO;
 import getjobin.it.portal.jobservice.domain.technology.control.TechnologyService;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
-import getjobin.it.portal.jobservice.infrastructure.IdsParam;
+import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,7 +71,7 @@ public class TechnologyResource {
     public ResourceDTO updateTechnology(@PathVariable(ID) Long technologyId, @RequestBody TechnologyDTO technologyDTO) {
         Technology existingTechnology = technologyService.getById(technologyId);
         Technology updatedTechnology = technologyMapper.updateExistingTechnology(existingTechnology, technologyDTO);
-        technologyService.updateTechnology(updatedTechnology);
+        technologyService.update(updatedTechnology);
         return buildResourceDTO(updatedTechnology.getId());
     }
 
@@ -79,7 +79,7 @@ public class TechnologyResource {
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteTechnologies(@PathVariable(IDS) IdsParam ids) {
         technologyService.findByIds(ids.asList())
-                .forEach(technologyService::removeTechnology);
+                .forEach(technologyService::remove);
     }
 
 }

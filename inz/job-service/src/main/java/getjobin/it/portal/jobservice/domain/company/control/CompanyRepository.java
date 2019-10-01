@@ -1,7 +1,7 @@
 package getjobin.it.portal.jobservice.domain.company.control;
 
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
-import getjobin.it.portal.jobservice.infrastructure.CurrentDate;
+import getjobin.it.portal.jobservice.infrastructure.util.CurrentDate;
 import getjobin.it.portal.jobservice.infrastructure.query.boundary.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -40,22 +40,22 @@ public class CompanyRepository {
                 .orElseThrow(() -> new RuntimeException(MessageFormat.format("Company with id: {0} does not exist or was removed", String.valueOf(companyId))));
     }
 
-    public Long saveCompany(Company company) {
+    public Long save(Company company) {
         company.setCreateDate(CurrentDate.get());
         entityManager.persist(company);
         return company.getId();
     }
 
-    public Long updateCompany(Company company) {
+    public Long update(Company company) {
         company.setModifyDate(CurrentDate.get());
         return entityManager.merge(company).getId();
     }
 
-    public void removeCompanyById(Long companyId) {
+    public void removeById(Long companyId) {
         findById(companyId).ifPresent(entityManager::remove);
     }
 
-    public void removeCompany(Company company) {
+    public void remove(Company company) {
         entityManager.remove(company);
     }
 }

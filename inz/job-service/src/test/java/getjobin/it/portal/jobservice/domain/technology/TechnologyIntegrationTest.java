@@ -40,18 +40,18 @@ public class TechnologyIntegrationTest {
     public void givenTechnologyWithActiveJobsOnRemoveThenThrowsConstraintViolationException() {
         Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
         Technology createdTechnology = technologyService.getById(technologyId);
-        jobService.createJob(TestJobBuilder.buildValidJobWithTechnology(createdTechnology));
-        technologyService.removeTechnology(createdTechnology);
+        jobService.create(TestJobBuilder.buildValidJobWithTechnology(createdTechnology));
+        technologyService.remove(createdTechnology);
     }
 
     @Test
     public void givenTechnologyWithInactiveJobsThenRemovesIt() {
         Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
         Technology createdTechnology = technologyService.getById(technologyId);
-        Long createdJobId = jobService.createJob(TestJobBuilder.buildValidJobWithTechnology(createdTechnology));
+        Long createdJobId = jobService.create(TestJobBuilder.buildValidJobWithTechnology(createdTechnology));
         Job createdJob = jobService.getById(createdJobId);
-        jobService.removeJob(createdJob);
-        technologyService.removeTechnology(createdTechnology);
+        jobService.remove(createdJob);
+        technologyService.remove(createdTechnology);
         Optional<Technology> removedTechnology = technologyService.findById(technologyId);
         assertTrue(removedTechnology.isEmpty());
     }

@@ -34,7 +34,7 @@ public class JobServiceUnitTest {
 
     @Test
     public void givenValidDataThenCreatesJob(){
-        Long createdJobId = jobService.createJob(TestJobBuilder.buildValidJob());
+        Long createdJobId = jobService.create(TestJobBuilder.buildValidJob());
         Job createdJob = jobService.getById(createdJobId);
         assertNotNull(createdJobId);
         assertEquals(TestJobBuilder.TYPE, createdJob.getType());
@@ -63,25 +63,25 @@ public class JobServiceUnitTest {
 
     @Test
     public void givenExistingJobThenFindsItById() {
-        Long createdJobId = jobService.createJob(TestJobBuilder.buildValidJob());
+        Long createdJobId = jobService.create(TestJobBuilder.buildValidJob());
         Optional<Job> createdJob = jobService.findById(createdJobId);
         assertTrue(createdJob.isPresent());
     }
 
     @Test
     public void givenExistingJobThenRemovesIt() {
-        Long createdJobId = jobService.createJob(TestJobBuilder.buildValidJob());
+        Long createdJobId = jobService.create(TestJobBuilder.buildValidJob());
         Job createdJob = jobService.getById(createdJobId);
-        jobService.removeJob(createdJob);
+        jobService.remove(createdJob);
         assertEquals(Boolean.FALSE, createdJob.getActive());
     }
 
     @Test
     public void givenValidDataOnUpdateThenUpdatesJob() {
-        Long createdJobId = jobService.createJob(TestJobBuilder.buildValidJob());
+        Long createdJobId = jobService.create(TestJobBuilder.buildValidJob());
         Job createdJob = jobService.getById(createdJobId);
         Job updatedJob = TestJobBuilder.buildValidUpdatedJob(createdJob);
-        jobService.updateJob(updatedJob);
+        jobService.update(updatedJob);
         Job finalJob = jobService.getById(createdJobId);
         assertEquals(TestJobBuilder.TYPE_UPDATE, finalJob.getType());
         assertEquals(TestJobBuilder.TITLE + TestJobBuilder.UPDATE, finalJob.getTitle());
@@ -108,21 +108,21 @@ public class JobServiceUnitTest {
 
     @Test(expected = ConstraintViolationException.class)
     public void givenInvalidJobTypeThenThrowsConstraintViolationException() {
-        jobService.createJob(TestJobBuilder.buildJobWithInvalidType());
+        jobService.create(TestJobBuilder.buildJobWithInvalidType());
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void givenInvalidExperienceLevelThenThrowsConstraintViolationException() {
-        jobService.createJob(TestJobBuilder.buildJobWithInvalidExperienceLevel());
+        jobService.create(TestJobBuilder.buildJobWithInvalidExperienceLevel());
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void givenInvalidEmploymentTypeThenThrowsConstraintViolationException() {
-        jobService.createJob(TestJobBuilder.buildJobWithInvalidEmploymentType());
+        jobService.create(TestJobBuilder.buildJobWithInvalidEmploymentType());
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void givenNotExistingTechStacksThenThrowsConstraintViolationException() {
-        jobService.createJob(TestJobBuilder.buildJobWithRelationsToNotExistingTechStacks());
+        jobService.create(TestJobBuilder.buildJobWithRelationsToNotExistingTechStacks());
     }
 }

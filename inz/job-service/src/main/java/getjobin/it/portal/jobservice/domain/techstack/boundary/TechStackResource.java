@@ -1,10 +1,10 @@
 package getjobin.it.portal.jobservice.domain.techstack.boundary;
 
-import getjobin.it.portal.jobservice.api.domain.ResourceDTO;
-import getjobin.it.portal.jobservice.api.domain.TechStackDTO;
+import getjobin.it.portal.jobservice.api.domain.rest.ResourceDTO;
+import getjobin.it.portal.jobservice.api.domain.rest.TechStackDTO;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
-import getjobin.it.portal.jobservice.infrastructure.IdsParam;
+import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServicePreconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,7 +49,7 @@ public class TechStackResource {
     @ResponseStatus(value = HttpStatus.CREATED)
     public List<ResourceDTO> createTechStacks(@RequestBody List<TechStackDTO> techStackDTOs) {
         return techStackMapper.toEntities(techStackDTOs).stream()
-                .map(techStackService::createTechStack)
+                .map(techStackService::create)
                 .map(this::buildResourceDTO)
                 .collect(Collectors.toList());
     }
@@ -71,7 +71,7 @@ public class TechStackResource {
         JobServicePreconditions.checkArgument(allTechStackDTOsContainUniqueIds(techStackDTOs),
                 "Specify unique id in each DTO in order to update tech stacks");
         return getUpdatedTechStacks(techStackDTOs).stream()
-                .map(techStackService::updateTechStack)
+                .map(techStackService::update)
                 .map(this::buildResourceDTO)
                 .collect(Collectors.toList());
     }
@@ -97,7 +97,7 @@ public class TechStackResource {
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteTechStacks(@PathVariable(IDS) IdsParam ids) {
         techStackService.findByIds(ids.asList())
-                .forEach(techStackService::removeTechStack);
+                .forEach(techStackService::remove);
     }
 
 }

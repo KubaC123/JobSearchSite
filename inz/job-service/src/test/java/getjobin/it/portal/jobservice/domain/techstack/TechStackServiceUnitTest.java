@@ -34,38 +34,38 @@ public class TechStackServiceUnitTest {
 
     @Test
     public void givenValidDataThenCreatesTechStacks() {
-        Long createdTechStackId = techStackService.createTechStack(TestTechStackBuilder.buildValidTechStack());
+        Long createdTechStackId = techStackService.create(TestTechStackBuilder.buildValidTechStack());
         TechStack createdTechStack = techStackService.getById(createdTechStackId);
-        techStackService.removeTechStack(createdTechStack);
+        techStackService.remove(createdTechStack);
         assertEquals(createdTechStackId, createdTechStack.getId());
     }
 
     @Test
     public void givenExistingTechStackThenFindsItById() {
-        Long techStackId = techStackService.createTechStack(TestTechStackBuilder.buildValidTechStack());
+        Long techStackId = techStackService.create(TestTechStackBuilder.buildValidTechStack());
         Optional<TechStack> foundTechStack = techStackService.findById(techStackId);
-        techStackService.removeTechStack(foundTechStack.orElseThrow());
+        techStackService.remove(foundTechStack.orElseThrow());
         assertTrue(foundTechStack.isPresent());
     }
 
     @Test
     public void givenValidDataOnUpdateThenUpdatedTechStack() {
-        Long techStackId = techStackService.createTechStack(TestTechStackBuilder.buildValidTechStack());
+        Long techStackId = techStackService.create(TestTechStackBuilder.buildValidTechStack());
         TechStack foundTechStack = techStackService.getById(techStackId);
         TechStack updatedTechStack = TestTechStackBuilder.buildValidUpdatedTechStack(foundTechStack);
-        techStackService.updateTechStack(updatedTechStack);
+        techStackService.update(updatedTechStack);
         TechStack finalTechStack = techStackService.getById(techStackId);
-        techStackService.removeTechStack(finalTechStack);
+        techStackService.remove(finalTechStack);
         assertEquals(TestTechStackBuilder.NAME + UPDATE, finalTechStack.getName());
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void givenEmptyNameOnCreateThenThrowsConstraintViolationException() {
-        techStackService.createTechStack(TestTechStackBuilder.buildTechStackWithEmptyName());
+        techStackService.create(TestTechStackBuilder.buildTechStackWithEmptyName());
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void givenNullNameOnCreateThenThrowsConstraintViolationException() {
-        techStackService.createTechStack(TestTechStackBuilder.buildTechStackWithNullName());
+        techStackService.create(TestTechStackBuilder.buildTechStackWithNullName());
     }
 }

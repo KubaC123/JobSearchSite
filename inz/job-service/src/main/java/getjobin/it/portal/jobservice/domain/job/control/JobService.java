@@ -62,9 +62,9 @@ public class JobService {
         }
     }
 
-    public Long createJob(Job job) {
+    public Long create(Job job) {
         validate(job);
-        return jobRepository.saveJob(job);
+        return jobRepository.save(job);
     }
 
     private void validate(Job job) {
@@ -74,12 +74,12 @@ public class JobService {
         }
     }
 
-    public Long updateJob(Job job) {
+    public Long update(Job job) {
         validate(job);
-        return jobRepository.updateJob(job);
+        return jobRepository.update(job);
     }
 
-    public void removeJob(Job job) {
-        jobRepository.removeJob(job);
+    public void remove(Job job) {
+        jobRepository.remove(job);
     }
 }

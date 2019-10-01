@@ -37,7 +37,7 @@ public class TechnologyService {
 
     public Long createTechnology(Technology technology) {
         validate(technology);
-        return technologyRepository.saveTechnology(technology);
+        return technologyRepository.save(technology);
     }
 
     private void validate(Technology technology) {
@@ -47,14 +47,26 @@ public class TechnologyService {
         }
     }
 
-    public Long updateTechnology(Technology technology) {
+    public Long update(Technology technology) {
         validate(technology);
-        return technologyRepository.updateTechnology(technology);
+        return technologyRepository.update(technology);
     }
 
-    public void removeTechnology(Technology technology) {
+    public void incrementJobCounter(Technology technology) {
+        Integer currentCount = technology.getJobCounter();
+        technology.setJobCounter(++currentCount);
+        technologyRepository.update(technology);
+    }
+
+    public void decrementJobCounter(Technology technology) {
+        Integer currentCount = technology.getJobCounter();
+        technology.setJobCounter(--currentCount);
+        technologyRepository.update(technology);
+    }
+
+    public void remove(Technology technology) {
         validateOnRemove(technology);
-        technologyRepository.removeTechnology(technology);
+        technologyRepository.remove(technology);
     }
 
     private void validateOnRemove(Technology technology) {

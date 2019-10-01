@@ -1,20 +1,21 @@
 package getjobin.it.portal.jobservice.domain.job.boundary;
 
-import getjobin.it.portal.jobservice.api.domain.JobDTO;
-import getjobin.it.portal.jobservice.api.domain.JobProfileDTO;
-import getjobin.it.portal.jobservice.api.domain.JobTechStackDTO;
-import getjobin.it.portal.jobservice.api.domain.ResourceDTO;
+import getjobin.it.portal.jobservice.api.domain.rest.JobDTO;
+import getjobin.it.portal.jobservice.api.domain.rest.JobProfileDTO;
+import getjobin.it.portal.jobservice.api.domain.rest.JobTechStackDTO;
+import getjobin.it.portal.jobservice.api.domain.rest.ResourceDTO;
 import getjobin.it.portal.jobservice.domain.category.boundary.CategoryResource;
 import getjobin.it.portal.jobservice.domain.category.entity.Category;
 import getjobin.it.portal.jobservice.domain.company.boundary.CompanyResource;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
+import getjobin.it.portal.jobservice.domain.event.OperationType;
 import getjobin.it.portal.jobservice.domain.job.control.JobTechStackRelationMapper;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.technology.boundary.TechnologyResource;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.domain.techstack.boundary.TechStackMapper;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
-import getjobin.it.portal.jobservice.infrastructure.IdsParam;
+import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.stereotype.Component;
@@ -92,6 +93,13 @@ public class JobMapper {
                 .leading(jobProfile.getLeading())
                 .documentation(jobProfile.getDocumentation())
                 .otherActivities(jobProfile.getOtherActivities()));
+    }
+
+    public JobEvent toEvent(Long jobId, OperationType operationType) {
+        return JobEvent.builder()
+                .jobId(jobId)
+                .operationType(operationType)
+                .build();
     }
 
     public JobDTO toDTO(Job job) {

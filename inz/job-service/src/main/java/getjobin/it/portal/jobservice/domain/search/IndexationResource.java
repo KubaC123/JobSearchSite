@@ -30,7 +30,7 @@ public class IndexationResource {
     public IndexMappingDTO getCompanyMapping() {
         return IndexMappingDTO.builder()
                 .indexName("company")
-                .mapping(mappingProvider.getCompanyMapping())
+                .mapping(mappingProvider.buildCompanyMapping())
                 .build();
     }
 
@@ -39,7 +39,7 @@ public class IndexationResource {
     public void putCompanyMapping() {
         indexationService.sendMappingOnTopic(IndexMappingDTO.builder()
                 .indexName("company")
-                .mapping(mappingProvider.getCompanyMapping())
+                .mapping(mappingProvider.buildCompanyMapping())
                 .build());
     }
 

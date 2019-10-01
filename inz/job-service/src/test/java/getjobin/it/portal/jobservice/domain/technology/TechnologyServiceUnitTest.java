@@ -49,7 +49,7 @@ public class TechnologyServiceUnitTest {
         Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
         Technology createdTechnology = technologyService.getById(technologyId);
         Technology updatedTechnology = TestTechnologyBuilder.buildValidUpdatedTechnology(createdTechnology);
-        technologyService.updateTechnology(updatedTechnology);
+        technologyService.update(updatedTechnology);
         Technology finalTechnology = technologyService.getById(technologyId);
         assertEquals(TestTechnologyBuilder.NAME + TestTechnologyBuilder.UPDATE, finalTechnology.getName());
         assertEquals(TestTechnologyBuilder.IMAGE_URL + TestTechnologyBuilder.UPDATE, finalTechnology.getImageUrl());

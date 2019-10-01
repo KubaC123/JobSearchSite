@@ -34,7 +34,7 @@ public class JobRepositoryUnitTest {
 
     @Test
     public void givenValidDataThenCreatesJob() {
-        Long createdJobId = jobRepository.saveJob(TestJobBuilder.buildValidJob());
+        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJob());
         Job createdJob = jobRepository.getById(createdJobId);
         assertNotNull(createdJobId);
         assertEquals(TestJobBuilder.TYPE, createdJob.getType());
@@ -63,25 +63,25 @@ public class JobRepositoryUnitTest {
 
     @Test
     public void givenExistingJobThenFindsItById() {
-        Long createdJobId = jobRepository.saveJob(TestJobBuilder.buildValidJob());
+        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJob());
         Optional<Job> createdJob = jobRepository.findById(createdJobId);
         assertTrue(createdJob.isPresent());
     }
 
     @Test
     public void givenExistingJobThenRemovesIt() {
-        Long createdJobId = jobRepository.saveJob(TestJobBuilder.buildValidJob());
+        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJob());
         Job createdJob = jobRepository.getById(createdJobId);
-        jobRepository.removeJob(createdJob);
+        jobRepository.remove(createdJob);
         assertEquals(Boolean.FALSE, createdJob.getActive());
     }
 
     @Test
     public void givenValidDataOnUpdateThenUpdatesJob() {
-        Long createdJobId = jobRepository.saveJob(TestJobBuilder.buildValidJob());
+        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJob());
         Job createdJob = jobRepository.getById(createdJobId);
         Job updatedJob = TestJobBuilder.buildValidUpdatedJob(createdJob);
-        jobRepository.updateJob(updatedJob);
+        jobRepository.update(updatedJob);
         Job finalJob = jobRepository.getById(createdJobId);
         assertEquals(TestJobBuilder.TYPE_UPDATE, finalJob.getType());
         assertEquals(TestJobBuilder.TITLE + TestJobBuilder.UPDATE, finalJob.getTitle());

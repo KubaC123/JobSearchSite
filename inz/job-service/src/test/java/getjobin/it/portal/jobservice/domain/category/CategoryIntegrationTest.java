@@ -35,9 +35,9 @@ public class CategoryIntegrationTest {
 
     @Test(expected = ConstraintViolationException.class)
     public void givenCategoryWithActiveJobsOnRemoveThenThrowsConstraintViolationException() {
-        Long categoryId = categoryService.createCategory(TestCategoryBuilder.buildValidCategory());
+        Long categoryId = categoryService.create(TestCategoryBuilder.buildValidCategory());
         Category createdCategory = categoryService.getById(categoryId);
-        jobService.createJob(TestJobBuilder.buildValidJobWithCategory(createdCategory));
-        categoryService.removeCategory(createdCategory);
+        jobService.create(TestJobBuilder.buildValidJobWithCategory(createdCategory));
+        categoryService.remove(createdCategory);
     }
 }

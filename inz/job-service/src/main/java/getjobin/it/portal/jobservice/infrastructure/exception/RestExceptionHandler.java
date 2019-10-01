@@ -1,7 +1,7 @@
 package getjobin.it.portal.jobservice.infrastructure.exception;
 
-import getjobin.it.portal.jobservice.api.domain.ErrorMessageDTO;
-import getjobin.it.portal.jobservice.infrastructure.CurrentDate;
+import getjobin.it.portal.jobservice.api.domain.rest.ErrorMessageDTO;
+import getjobin.it.portal.jobservice.infrastructure.util.CurrentDate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

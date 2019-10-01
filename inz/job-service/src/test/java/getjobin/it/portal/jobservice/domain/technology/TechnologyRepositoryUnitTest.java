@@ -33,21 +33,21 @@ public class TechnologyRepositoryUnitTest {
 
     @Test
     public void givenValidDataThenCreatesTechnology() {
-        Long technologyId = technologyRepository.saveTechnology(TestTechnologyBuilder.buildValidTechnology());
+        Long technologyId = technologyRepository.save(TestTechnologyBuilder.buildValidTechnology());
         assertNotNull(technologyId);
     }
 
     @Test
     public void givenExistingTechnologyThenFindsItById() {
-        Long technologyId = technologyRepository.saveTechnology(TestTechnologyBuilder.buildValidTechnology());
+        Long technologyId = technologyRepository.save(TestTechnologyBuilder.buildValidTechnology());
         Optional<Technology> foundTechnology = technologyRepository.findById(technologyId);
         assertTrue(foundTechnology.isPresent());
     }
 
     @Test
     public void givenExistingTechnologyThenRemovesIt() {
-        Long technologyId = technologyRepository.saveTechnology(TestTechnologyBuilder.buildValidTechnology());
-        technologyRepository.removeTechnologyById(technologyId);
+        Long technologyId = technologyRepository.save(TestTechnologyBuilder.buildValidTechnology());
+        technologyRepository.removeById(technologyId);
         Optional<Technology> removedTechnology = technologyRepository.findById(technologyId);
         assertTrue(removedTechnology.isEmpty());
     }
@@ -55,10 +55,10 @@ public class TechnologyRepositoryUnitTest {
 
     @Test
     public void givenValidDataOnUpdateThenUpdatesTechnology() {
-        Long technologyId = technologyRepository.saveTechnology(TestTechnologyBuilder.buildValidTechnology());
+        Long technologyId = technologyRepository.save(TestTechnologyBuilder.buildValidTechnology());
         Technology foundTechnology = technologyRepository.getById(technologyId);
         Technology updatedTechnology = TestTechnologyBuilder.buildValidUpdatedTechnology(foundTechnology);
-        technologyRepository.updateTechnology(updatedTechnology);
+        technologyRepository.update(updatedTechnology);
         Technology finalTechnology = technologyRepository.getById(technologyId);
         assertEquals(TestTechnologyBuilder.NAME + UPDATE, finalTechnology.getName());
         assertEquals(TestTechnologyBuilder.IMAGE_URL + UPDATE, finalTechnology.getImageUrl());

@@ -39,20 +39,20 @@ public class CategoryRepository {
                 .orElseThrow(() -> new RuntimeException(MessageFormat.format("Category with id: {0} does not exist or was removed", String.valueOf(categoryId))));
     }
 
-    public Long saveCategory(Category category) {
+    public Long save(Category category) {
         entityManager.persist(category);
         return category.getId();
     }
 
-    public Long updateCategory(Category category) {
+    public Long update(Category category) {
         return entityManager.merge(category).getId();
     }
 
-    public void removeCategoryById(Long categoryId) {
+    public void removeById(Long categoryId) {
         findById(categoryId).ifPresent(entityManager::remove);
     }
 
-    public void removeCategory(Category category) {
+    public void remove(Category category) {
         entityManager.remove(category);
     }
 

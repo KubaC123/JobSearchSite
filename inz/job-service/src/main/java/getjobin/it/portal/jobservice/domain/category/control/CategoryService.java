@@ -35,9 +35,9 @@ public class CategoryService {
         return categoryRepository.getById(categoryId);
     }
 
-    public Long createCategory(Category category) {
+    public Long create(Category category) {
         validate(category);
-        return categoryRepository.saveCategory(category);
+        return categoryRepository.save(category);
     }
 
     private void validate(Category technology) {
@@ -47,14 +47,26 @@ public class CategoryService {
         }
     }
 
-    public Long updateCategory(Category technology) {
+    public Long update(Category technology) {
         validate(technology);
-        return categoryRepository.updateCategory(technology);
+        return categoryRepository.update(technology);
     }
 
-    public void removeCategory(Category technology) {
+    public void incrementJobCounter(Category category) {
+        Integer currentCount = category.getJobCounter();
+        category.setJobCounter(++currentCount);
+        categoryRepository.update(category);
+    }
+
+    public void decrementJobCounter(Category category) {
+        Integer currentCount = category.getJobCounter();
+        category.setJobCounter(--currentCount);
+        categoryRepository.update(category);
+    }
+
+    public void remove(Category technology) {
         validateOnRemove(technology);
-        categoryRepository.removeCategory(technology);
+        categoryRepository.remove(technology);
     }
 
     private void validateOnRemove(Category category) {

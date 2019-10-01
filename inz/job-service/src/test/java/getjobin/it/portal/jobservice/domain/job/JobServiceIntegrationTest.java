@@ -51,7 +51,7 @@ public class JobServiceIntegrationTest {
     public void givenValidJobWithCompanyThenCreatesIt() {
         Long companyId = companyService.createCompany(TestCompanyBuilder.buildValidCompany());
         Company createdCompany = companyService.getById(companyId);
-        Long jobId = jobService.createJob(TestJobBuilder.buildValidJobInCompany(createdCompany));
+        Long jobId = jobService.create(TestJobBuilder.buildValidJobInCompany(createdCompany));
         Job createdJob = jobService.getById(jobId);
         assertEquals(createdCompany, createdJob.getCompany());
     }
@@ -60,7 +60,7 @@ public class JobServiceIntegrationTest {
     public void givenValidJobWithTechnologyThenCreatesIt() {
         Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
         Technology createdTechnology = technologyService.getById(technologyId);
-        Long jobId = jobService.createJob(TestJobBuilder.buildValidJobWithTechnology(createdTechnology));
+        Long jobId = jobService.create(TestJobBuilder.buildValidJobWithTechnology(createdTechnology));
         Job createdJob = jobService.getById(jobId);
         assertEquals(createdTechnology, createdJob.getTechnology());
     }
@@ -68,9 +68,9 @@ public class JobServiceIntegrationTest {
     // todo fix this test
     @Test
     public void givenValidJobWithTechStackThenCreatesJobWithTechStackRelation() {
-        Long techStackId = techStackService.createTechStack(TestTechStackBuilder.buildValidTechStack());
+        Long techStackId = techStackService.create(TestTechStackBuilder.buildValidTechStack());
         TechStack createdTechStack = techStackService.getById(techStackId);
-        Long jobId = jobService.createJob(TestJobBuilder.buildValidJobWithTechStack(createdTechStack));
+        Long jobId = jobService.create(TestJobBuilder.buildValidJobWithTechStack(createdTechStack));
         Job createdJob = jobService.getById(jobId);
         assertTrue(createdJob.getTechStackRelations().isPresent());
         assertEquals(1, createdJob.getTechStackRelations().get().size());

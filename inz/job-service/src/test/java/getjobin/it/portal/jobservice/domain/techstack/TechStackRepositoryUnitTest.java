@@ -33,21 +33,21 @@ public class TechStackRepositoryUnitTest {
 
     @Test
     public void givenValidDataThenCreatesTechStack() {
-        Long techStackId = techStackRepository.saveTechStack(TestTechStackBuilder.buildValidTechStack());
+        Long techStackId = techStackRepository.save(TestTechStackBuilder.buildValidTechStack());
         assertNotNull(techStackId);
     }
 
     @Test
     public void givenExistingTechStackThenFindsItById() {
-        Long techStackId = techStackRepository.saveTechStack(TestTechStackBuilder.buildValidTechStack());
+        Long techStackId = techStackRepository.save(TestTechStackBuilder.buildValidTechStack());
         TechStack foundTechStack = techStackRepository.getById(techStackId);
         assertEquals(techStackId, foundTechStack.getId());
     }
 
     @Test
     public void givenExistingTechStackThenRemovesIt() {
-        Long techStackId = techStackRepository.saveTechStack(TestTechStackBuilder.buildValidTechStack());
-        techStackRepository.removeTechStackById(techStackId);
+        Long techStackId = techStackRepository.save(TestTechStackBuilder.buildValidTechStack());
+        techStackRepository.removeById(techStackId);
         Optional<TechStack> removedTechStack = techStackRepository.findById(techStackId);
         assertTrue(removedTechStack.isEmpty());
     }
@@ -55,10 +55,10 @@ public class TechStackRepositoryUnitTest {
 
     @Test
     public void givenValidDataOnUpdateThenUpdatesTechStack() {
-        Long techStackId = techStackRepository.saveTechStack(TestTechStackBuilder.buildValidTechStack());
+        Long techStackId = techStackRepository.save(TestTechStackBuilder.buildValidTechStack());
         TechStack foundTechStack = techStackRepository.getById(techStackId);
         TechStack updatedTechStack = TestTechStackBuilder.buildValidUpdatedTechStack(foundTechStack);
-        techStackRepository.updateTechStack(updatedTechStack);
+        techStackRepository.update(updatedTechStack);
         TechStack finalTechStack = techStackRepository.getById(techStackId);
         assertEquals(TestTechStackBuilder.NAME + UPDATE, finalTechStack.getName());
     }

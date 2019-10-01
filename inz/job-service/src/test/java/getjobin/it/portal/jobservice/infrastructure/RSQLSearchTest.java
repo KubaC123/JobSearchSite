@@ -49,7 +49,7 @@ public class RSQLSearchTest {
 
     @Test
     public void givenJobTitleThenFindsIt() {
-        jobRepository.saveJob(TestJobBuilder.buildValidJob());
+        jobRepository.save(TestJobBuilder.buildValidJob());
         Node rootNode = new RSQLParser().parse("title=='" + TestJobBuilder.TITLE + "'");
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
@@ -58,7 +58,7 @@ public class RSQLSearchTest {
 
     @Test
     public void givenJobSalaryInRangeThenFindsIt() {
-        Long createdJobId = jobRepository.saveJob(TestJobBuilder.buildValidJob());
+        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJob());
         Node rootNode = new RSQLParser().parse("salaryMin>=" + TestJobBuilder.SALARY_MIN + ";salaryMax<=" + TestJobBuilder.SALARY_MAX);
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
@@ -70,7 +70,7 @@ public class RSQLSearchTest {
 
     @Test
     public void givenJobSalaryInSetThenFindsIt() {
-        Long createdJobId = jobRepository.saveJob(TestJobBuilder.buildValidJob());
+        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJob());
         Node rootNode = new RSQLParser().parse("salaryMin=in=(" + TestJobBuilder.SALARY_MIN + ",100,3200,4200)");
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
@@ -81,7 +81,7 @@ public class RSQLSearchTest {
 
     @Test
     public void givenJobSalaryInOutSetThenNotReturnIt() {
-        Long createdJobId = jobRepository.saveJob(TestJobBuilder.buildValidJob());
+        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJob());
         Node rootNode = new RSQLParser().parse("salaryMin=out=(" + TestJobBuilder.SALARY_MIN + ",100,3200,4200)");
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
@@ -91,9 +91,9 @@ public class RSQLSearchTest {
 
     @Test
     public void givenJobTechnologyIdThenFindsIt() {
-        Long technologyId = technologyRepository.saveTechnology(TestTechnologyBuilder.buildValidTechnology());
+        Long technologyId = technologyRepository.save(TestTechnologyBuilder.buildValidTechnology());
         Technology technology = technologyRepository.getById(technologyId);
-        Long jobWithTechnologyId = jobRepository.saveJob(TestJobBuilder.buildValidJobWithTechnology(technology));
+        Long jobWithTechnologyId = jobRepository.save(TestJobBuilder.buildValidJobWithTechnology(technology));
         Node rootNode = new RSQLParser().parse("technology.id==" + technologyId);
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
@@ -106,9 +106,9 @@ public class RSQLSearchTest {
 
     @Test
     public void givenJobTechnologyNameThenFindsIt() {
-        Long technologyId = technologyRepository.saveTechnology(TestTechnologyBuilder.buildValidTechnology());
+        Long technologyId = technologyRepository.save(TestTechnologyBuilder.buildValidTechnology());
         Technology technology = technologyRepository.getById(technologyId);
-        Long jobWithTechnologyId = jobRepository.saveJob(TestJobBuilder.buildValidJobWithTechnology(technology));
+        Long jobWithTechnologyId = jobRepository.save(TestJobBuilder.buildValidJobWithTechnology(technology));
         Node rootNode = new RSQLParser().parse("technology.name==" + technology.getName());
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
@@ -121,9 +121,9 @@ public class RSQLSearchTest {
 
     @Test
     public void givenJobCompanyIdThenFindsIt() {
-        Long companyId = companyRepository.saveCompany(TestCompanyBuilder.buildValidCompany());
+        Long companyId = companyRepository.save(TestCompanyBuilder.buildValidCompany());
         Company company = companyRepository.getById(companyId);
-        Long jobWithCompanyId = jobRepository.saveJob(TestJobBuilder.buildValidJobInCompany(company));
+        Long jobWithCompanyId = jobRepository.save(TestJobBuilder.buildValidJobInCompany(company));
         Node rootNode = new RSQLParser().parse("company.id==" + companyId);
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
@@ -136,9 +136,9 @@ public class RSQLSearchTest {
 
     @Test
     public void givenJobCompanyNameThenFindsIt() {
-        Long companyId = companyRepository.saveCompany(TestCompanyBuilder.buildValidCompany());
+        Long companyId = companyRepository.save(TestCompanyBuilder.buildValidCompany());
         Company company = companyRepository.getById(companyId);
-        Long jobWithCompanyId = jobRepository.saveJob(TestJobBuilder.buildValidJobInCompany(company));
+        Long jobWithCompanyId = jobRepository.save(TestJobBuilder.buildValidJobInCompany(company));
         Node rootNode = new RSQLParser().parse("company.name=='" + company.getName() + "'");
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
@@ -151,8 +151,8 @@ public class RSQLSearchTest {
 
     @Test
     public void givenInactiveJobIdAndActiveTrueConditionThenReturnsEmptyList() {
-        Long createdJobId = jobRepository.saveJob(TestJobBuilder.buildValidJob());
-        jobRepository.removeJobById(createdJobId);
+        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJob());
+        jobRepository.removeById(createdJobId);
         Node rootNode = new RSQLParser().parse("active==true;id==" + createdJobId);
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
@@ -161,7 +161,7 @@ public class RSQLSearchTest {
 
     @Test
     public void givenJobTitleMatchingWithDoubleWildcardThenFindsIt() {
-        Long createdJobId = jobRepository.saveJob(TestJobBuilder.buildValidJobWithTitle("Here java is present"));
+        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJobWithTitle("Here java is present"));
         Node rootNode = new RSQLParser().parse("title=='*java*'");
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
@@ -171,7 +171,7 @@ public class RSQLSearchTest {
 
     @Test
     public void givenJobTitleMatchingWithSingleWildcardThenFindsIt() {
-        Long createdJobId = jobRepository.saveJob(TestJobBuilder.buildValidJobWithTitle("Junior dev java"));
+        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJobWithTitle("Junior dev java"));
         Node rootNode = new RSQLParser().parse("title=='*java'");
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
@@ -181,8 +181,8 @@ public class RSQLSearchTest {
 
     @Test
     public void givenInactiveJobIdThenFindsIt() {
-        Long createdJobId = jobRepository.saveJob(TestJobBuilder.buildValidJob());
-        jobRepository.removeJobById(createdJobId);
+        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJob());
+        jobRepository.removeById(createdJobId);
         Node rootNode = new RSQLParser().parse("id==" + createdJobId);
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);

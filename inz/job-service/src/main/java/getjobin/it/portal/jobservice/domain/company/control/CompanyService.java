@@ -37,7 +37,7 @@ public class CompanyService {
 
     public Long createCompany(Company company) {
         validate(company);
-        return companyRepository.saveCompany(company);
+        return companyRepository.save(company);
     }
 
     private void validate(Company company) {
@@ -47,14 +47,14 @@ public class CompanyService {
         }
     }
 
-    public Long updateCompany(Company company) {
+    public Long update(Company company) {
         validate(company);
-        return companyRepository.updateCompany(company);
+        return companyRepository.update(company);
     }
 
-    public void removeCompany(Company company) {
+    public void remove(Company company) {
         validateOnRemove(company);
-        companyRepository.removeCompany(company);
+        companyRepository.remove(company);
     }
 
     private void validateOnRemove(Company company) {

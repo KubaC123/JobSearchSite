@@ -35,35 +35,35 @@ public class CategoryServiceUnitTest {
 
     @Test
     public void givenValidDataThenCreatesCategory() {
-        Long createdCategoryId = categoryService.createCategory(TestCategoryBuilder.buildValidCategory());
+        Long createdCategoryId = categoryService.create(TestCategoryBuilder.buildValidCategory());
         Category createdCategory = categoryService.getById(createdCategoryId);
         assertEquals(createdCategoryId, createdCategory.getId());
     }
 
     @Test
     public void givenExistingCategoryThenFindsItById() {
-        Long categoryId = categoryService.createCategory(TestCategoryBuilder.buildValidCategory());
+        Long categoryId = categoryService.create(TestCategoryBuilder.buildValidCategory());
         Optional<Category> foundCategory = categoryService.findById(categoryId);
         assertTrue(foundCategory.isPresent());
     }
 
     @Test
     public void givenValidDataOnUpdateThenUpdatesCategory() {
-        Long categoryId = categoryService.createCategory(TestCategoryBuilder.buildValidCategory());
+        Long categoryId = categoryService.create(TestCategoryBuilder.buildValidCategory());
         Category foundCategory = categoryService.getById(categoryId);
         Category updatedCategory = TestCategoryBuilder.buildValidUpdatedCategory(foundCategory);
-        categoryService.updateCategory(updatedCategory);
+        categoryService.update(updatedCategory);
         Category finalCategory = categoryService.getById(categoryId);
         assertEquals(TestCategoryBuilder.NAME + UPDATE, finalCategory.getName());
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void givenEmptyNameOnCreateThenThrowsConstraintViolationException() {
-        categoryService.createCategory(TestCategoryBuilder.buildCategoryWithEmptyName());
+        categoryService.create(TestCategoryBuilder.buildCategoryWithEmptyName());
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void givenNullNameOnCreateThenThrowsConstraintViolationException() {
-        categoryService.createCategory(TestCategoryBuilder.buildCategoryWithNullName());
+        categoryService.create(TestCategoryBuilder.buildCategoryWithNullName());
     }
 }

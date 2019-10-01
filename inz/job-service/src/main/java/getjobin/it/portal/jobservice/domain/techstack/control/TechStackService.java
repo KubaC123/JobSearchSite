@@ -10,7 +10,6 @@ import javax.validation.Validator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class TechStackService {
@@ -36,9 +35,9 @@ public class TechStackService {
         return techStackRepository.getById(techStackId);
     }
 
-    public Long createTechStack(TechStack techStack) {
+    public Long create(TechStack techStack) {
         validate(techStack);
-        return techStackRepository.saveTechStack(techStack);
+        return techStackRepository.save(techStack);
     }
 
     private void validate(TechStack techStack) {
@@ -48,26 +47,20 @@ public class TechStackService {
         }
     }
 
-    public Long updateTechStack(TechStack techStack) {
+    public Long update(TechStack techStack) {
         validate(techStack);
-        return techStackRepository.updateTechStack(techStack);
+        return techStackRepository.update(techStack);
     }
 
-    public void removeTechStack(TechStack techStack) {
-        validateTechStackOnRemove(techStack);
-        techStackRepository.removeTechStack(techStack);
+    public void remove(TechStack techStack) {
+        validateOnRemove(techStack);
+        techStackRepository.remove(techStack);
     }
 
-    private void validateTechStackOnRemove(TechStack techStack) {
+    private void validateOnRemove(TechStack techStack) {
         Set<ConstraintViolation<TechStack>> violations = validator.validate(techStack, TechStack.DeleteValidations.class);
         if(!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
-    }
-
-    private String getCommaSeparatedTechStackIds(List<Long> notExistingTechStackIds) {
-        return notExistingTechStackIds.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(", "));
     }
 }

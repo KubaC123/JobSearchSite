@@ -28,9 +28,9 @@ public class TechStackIntegrationTest {
     // todo fix this test
     @Test(expected = ConstraintViolationException.class)
     public void givenTechStackAssignedToJobOnRemoveThenThrowsConstraintViolationException() {
-        Long techStackId = techStackService.createTechStack(TestTechStackBuilder.buildValidTechStack());
+        Long techStackId = techStackService.create(TestTechStackBuilder.buildValidTechStack());
         TechStack createdTechStack = techStackService.getById(techStackId);
-        jobService.createJob(TestJobBuilder.buildValidJobWithTechStack(createdTechStack));
-        techStackService.removeTechStack(createdTechStack);
+        jobService.create(TestJobBuilder.buildValidJobWithTechStack(createdTechStack));
+        techStackService.remove(createdTechStack);
     }
 }

@@ -38,7 +38,7 @@ public class CompanyServiceUnitTest {
     public void givenExistingCompanyThenRemovesIt() {
         Long companyId = companyService.createCompany(TestCompanyBuilder.buildValidCompany());
         Company createdCompany = companyService.getById(companyId);
-        companyService.removeCompany(createdCompany);
+        companyService.remove(createdCompany);
         Optional<Company> removedCompany = companyService.findById(companyId);
         assertTrue(removedCompany.isEmpty());
     }
@@ -48,7 +48,7 @@ public class CompanyServiceUnitTest {
         Long companyId = companyService.createCompany(TestCompanyBuilder.buildValidCompany());
         Company createdCompany = companyService.getById(companyId);
         Company updatedCompany = TestCompanyBuilder.buildValidUpdatedCompany(createdCompany);
-        companyService.updateCompany(updatedCompany);
+        companyService.update(updatedCompany);
         Company finalCompany = companyService.getById(companyId);
         assertEquals(TestCompanyBuilder.NAME + TestCompanyBuilder.UPDATE, finalCompany.getName());
         assertEquals(TestCompanyBuilder.WEBSITE + TestCompanyBuilder.UPDATE, finalCompany.getWebSiteUrl());

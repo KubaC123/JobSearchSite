@@ -1,11 +1,11 @@
 package getjobin.it.portal.jobservice.domain.company.boundary;
 
 
-import getjobin.it.portal.jobservice.api.domain.CompanyDTO;
-import getjobin.it.portal.jobservice.api.domain.ResourceDTO;
+import getjobin.it.portal.jobservice.api.domain.rest.CompanyDTO;
+import getjobin.it.portal.jobservice.api.domain.rest.ResourceDTO;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyService;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
-import getjobin.it.portal.jobservice.infrastructure.IdsParam;
+import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -68,7 +68,7 @@ public class CompanyResource {
     public ResourceDTO updateCompany(@PathVariable(IdsParam.ID) Long companyId, @RequestBody CompanyDTO companyDTO) {
         Company foundCompany = companyService.getById(companyId);
         Company updatedCompany = companyMapper.updateExistingEntity(foundCompany, companyDTO);
-        companyService.updateCompany(updatedCompany);
+        companyService.update(updatedCompany);
         return buildResourceDTO(updatedCompany.getId());
     }
 
@@ -77,7 +77,7 @@ public class CompanyResource {
     public void deleteCompanies(@PathVariable(IdsParam.IDS) IdsParam ids) {
         List<Company> foundCompanies = companyService.findByIds(ids.asList());
         log.info(MessageFormat.format("[COMPANY] removing companies with ids: {0}", getCommaSeparatedIds(foundCompanies)));
-        foundCompanies.forEach(companyService::removeCompany);
+        foundCompanies.forEach(companyService::remove);
     }
 
     private String getCommaSeparatedIds(List<Company> companies) {
