@@ -2,7 +2,6 @@ package getjobin.it.portal.jobservice.domain.job.boundary;
 
 import getjobin.it.portal.jobservice.api.domain.rest.JobDTO;
 import getjobin.it.portal.jobservice.api.domain.rest.ResourceDTO;
-import getjobin.it.portal.jobservice.domain.event.OperationType;
 import getjobin.it.portal.jobservice.domain.job.control.JobService;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
@@ -24,10 +23,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = JobResource.MAIN_PATH)
+@RequestMapping(value = JobResource.JOB_PATH)
 public class JobResource {
 
-    static final String MAIN_PATH = "job";
+    public static final String JOB_PATH = "job";
 
     private JobMapper jobMapper;
     private JobService jobService;
@@ -67,7 +66,7 @@ public class JobResource {
 
     private ResourceDTO buildResourceDTO(Long jobId) {
         return ResourceDTO.builder()
-                .objectType(Job.JOB_OFFER_TYPE)
+                .objectType(Job.JOB_TYPE)
                 .objectId(jobId)
                 .resourceURI(ServletUriComponentsBuilder.fromCurrentRequestUri()
                         .path("/" + jobId)

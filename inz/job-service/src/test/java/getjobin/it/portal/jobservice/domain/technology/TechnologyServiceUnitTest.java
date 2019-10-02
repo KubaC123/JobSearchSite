@@ -32,21 +32,21 @@ public class TechnologyServiceUnitTest {
 
     @Test
     public void givenValidDataThenCreatesTechnology() {
-        Long createdTechnologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
+        Long createdTechnologyId = technologyService.create(TestTechnologyBuilder.buildValidTechnology());
         Technology createdTechnology = technologyService.getById(createdTechnologyId);
         assertEquals(createdTechnologyId, createdTechnology.getId());
     }
 
     @Test
     public void givenExistingTechnologyThenFindsItById() {
-        Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
+        Long technologyId = technologyService.create(TestTechnologyBuilder.buildValidTechnology());
         Optional<Technology> foundTechnology = technologyService.findById(technologyId);
         assertTrue(foundTechnology.isPresent());
     }
 
     @Test
     public void givenValidDataOnUpdateThenUpdatesTechnology() {
-        Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
+        Long technologyId = technologyService.create(TestTechnologyBuilder.buildValidTechnology());
         Technology createdTechnology = technologyService.getById(technologyId);
         Technology updatedTechnology = TestTechnologyBuilder.buildValidUpdatedTechnology(createdTechnology);
         technologyService.update(updatedTechnology);
@@ -57,11 +57,11 @@ public class TechnologyServiceUnitTest {
 
     @Test(expected = ConstraintViolationException.class)
     public void givenEmptyNameOnCreateThenThrowsConstraintViolationException() {
-        technologyService.createTechnology(TestTechnologyBuilder.buildTechnologyWithEmptyName());
+        technologyService.create(TestTechnologyBuilder.buildTechnologyWithEmptyName());
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void givenNullNameOnCreateThenThrowsConstraintViolationException() {
-        technologyService.createTechnology(TestTechnologyBuilder.buildTechnologyWithNullName());
+        technologyService.create(TestTechnologyBuilder.buildTechnologyWithNullName());
     }
 }

@@ -30,13 +30,13 @@ public class CompanyServiceUnitTest {
 
     @Test
     public void givenValidDataThenCreatesCompany() {
-        Long companyId = companyService.createCompany(TestCompanyBuilder.buildValidCompany());
+        Long companyId = companyService.create(TestCompanyBuilder.buildValidCompany());
         assertNotNull(companyId);
     }
 
     @Test
     public void givenExistingCompanyThenRemovesIt() {
-        Long companyId = companyService.createCompany(TestCompanyBuilder.buildValidCompany());
+        Long companyId = companyService.create(TestCompanyBuilder.buildValidCompany());
         Company createdCompany = companyService.getById(companyId);
         companyService.remove(createdCompany);
         Optional<Company> removedCompany = companyService.findById(companyId);
@@ -45,7 +45,7 @@ public class CompanyServiceUnitTest {
 
     @Test
     public void givenValidDataOnUpdateThenUpdatesCompany() {
-        Long companyId = companyService.createCompany(TestCompanyBuilder.buildValidCompany());
+        Long companyId = companyService.create(TestCompanyBuilder.buildValidCompany());
         Company createdCompany = companyService.getById(companyId);
         Company updatedCompany = TestCompanyBuilder.buildValidUpdatedCompany(createdCompany);
         companyService.update(updatedCompany);
@@ -57,11 +57,11 @@ public class CompanyServiceUnitTest {
 
     @Test(expected = ConstraintViolationException.class)
     public void givenNullNameOnCreateThenThrowsConstraintViolationException() {
-        companyService.createCompany(TestCompanyBuilder.buildCompanyWithNullName());
+        companyService.create(TestCompanyBuilder.buildCompanyWithNullName());
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void givenEmptyNameOnCreateThenThrowsConstraintViolationException() {
-        companyService.createCompany(TestCompanyBuilder.buildCompanyWithEmptyName());
+        companyService.create(TestCompanyBuilder.buildCompanyWithEmptyName());
     }
 }

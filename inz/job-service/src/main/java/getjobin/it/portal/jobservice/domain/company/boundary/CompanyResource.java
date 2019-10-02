@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = CompanyResource.MAIN_PATH)
+@RequestMapping(value = CompanyResource.COMPANY_PATH)
 @Slf4j
 public class CompanyResource {
 
-    public static final String MAIN_PATH = "company";
+    public static final String COMPANY_PATH = "company";
 
     private CompanyMapper companyMapper;
     private CompanyService companyService;
@@ -48,7 +48,7 @@ public class CompanyResource {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(code = HttpStatus.CREATED)
     public ResourceDTO createCompany(@RequestBody CompanyDTO companyDTO) {
-        Long newCompanyId = companyService.createCompany(companyMapper.toEntity(companyDTO));
+        Long newCompanyId = companyService.create(companyMapper.toEntity(companyDTO));
         return buildResourceDTO(newCompanyId);
     }
 

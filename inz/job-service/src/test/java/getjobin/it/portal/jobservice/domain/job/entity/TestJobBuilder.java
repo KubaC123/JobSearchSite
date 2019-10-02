@@ -9,6 +9,7 @@ import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -112,10 +113,7 @@ public class TestJobBuilder {
     public static Job buildJobWithRelationsToNotExistingTechStacks() {
         return Job.toBuilder(buildValidJob())
                 .techStackRelations(Stream.of(-1L, -2L, -3L, -4L)
-                        .map(techStackId -> JobTechStackRelation.builder()
-                                .withTechStackId(techStackId)
-                                .withExperienceLevel(TECH_STACK_RELATION_EXP_LEVEL)
-                                .build())
+                        .map(techStackId -> buildJobTechStackRelation(techStackId))
                         .collect(Collectors.toList()))
                 .build();
     }
@@ -147,10 +145,26 @@ public class TestJobBuilder {
     public static Job buildValidJobWithTechStack(TechStack techStack) {
         return Job.toBuilder(buildValidJob())
                 .techStackRelations(Collections.singletonList(
-                        JobTechStackRelation.builder()
-                                .withTechStackId(techStack.getId())
-                                .withExperienceLevel(TECH_STACK_RELATION_EXP_LEVEL)
-                                .build()))
+                        buildJobTechStackRelation(techStack.getId())))
+                .build();
+    }
+
+    private static JobTechStackRelation buildJobTechStackRelation(Long techStackId) {
+        return JobTechStackRelation.builder()
+                .withTechStackId(techStackId)
+                .withExperienceLevel(TECH_STACK_RELATION_EXP_LEVEL)
+                .build();
+    }
+
+    public static Job buildValidJobWith(Company company, Category category, Technology technology, List<TechStack> techStacks) {
+        return Job.toBuilder(buildValidJob())
+                .company(company)
+                .category(category)
+                .technology(technology)
+                .techStackRelations(techStacks.stream()
+                        .map(TechStack::getId)
+                        .map(techStackId -> buildJobTechStackRelation(techStackId))
+                        .collect(Collectors.toList()))
                 .build();
     }
 }

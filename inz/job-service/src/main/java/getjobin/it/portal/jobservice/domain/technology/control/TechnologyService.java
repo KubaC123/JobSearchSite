@@ -35,7 +35,7 @@ public class TechnologyService {
         return technologyRepository.getById(technologyId);
     }
 
-    public Long createTechnology(Technology technology) {
+    public Long create(Technology technology) {
         validate(technology);
         return technologyRepository.save(technology);
     }

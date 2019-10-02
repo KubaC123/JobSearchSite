@@ -1,11 +1,19 @@
-package getjobin.it.portal.jobservice.domain.search;
+package getjobin.it.portal.jobservice.domain.indexation.boundary;
 
+import getjobin.it.portal.jobservice.api.client.IndexMappingDTO;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ElasticSearchMappingProvider {
 
-    public String buildCompanyMapping() {
+    IndexMappingDTO buildCompanyIndexMapping() {
+        return IndexMappingDTO.builder()
+                .indexName("company")
+                .mapping(buildCompanyMapping())
+                .build();
+    }
+
+    private String buildCompanyMapping() {
         return
             "{\n"
             + "\"properties\":"
@@ -17,7 +25,14 @@ public class ElasticSearchMappingProvider {
             + "}\n";
     }
 
-    public String buildJobMapping() {
+    IndexMappingDTO buildJobIndexMapping() {
+        return IndexMappingDTO.builder()
+                .indexName("job")
+                .mapping(buildJobMapping())
+                .build();
+    }
+
+    private String buildJobMapping() {
         return
             "{\n"
             + "\"properties\":"

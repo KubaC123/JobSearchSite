@@ -19,10 +19,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = TechnologyResource.MAIN_PATH)
+@RequestMapping(value = TechnologyResource.TECHNOLOGY_PATH)
 public class TechnologyResource {
 
-    static final String MAIN_PATH = "technology";
+    static final String TECHNOLOGY_PATH = "technology";
     private static final String ID_PATH = "{id}";
     private static final String ID = "id";
     private static final String IDS_PATH = "{ids}";
@@ -50,7 +50,7 @@ public class TechnologyResource {
     public List<ResourceDTO> createTechnologies(List<TechnologyDTO> technologyDTOs) {
         return technologyDTOs.stream()
                 .map(technologyMapper::toEntity)
-                .map(technologyService::createTechnology)
+                .map(technologyService::create)
                 .map(this::buildResourceDTO)
                 .collect(Collectors.toList());
     }

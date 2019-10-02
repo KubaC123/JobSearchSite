@@ -34,7 +34,7 @@ public class QueryServiceUnitTest {
         List<Long> companiesIds = companies.stream()
                 .map(companyRepository::save)
                 .collect(Collectors.toList());
-        List<Long> foundCompaniesIds = queryService.findEntitiesByIds(Company.class, companiesIds).stream()
+        List<Long> foundCompaniesIds = queryService.queryByIds(Company.class, companiesIds).stream()
                 .map(Company::getId)
                 .collect(Collectors.toList());
         companiesIds.forEach(id -> assertTrue(foundCompaniesIds.contains(id)));
@@ -43,7 +43,7 @@ public class QueryServiceUnitTest {
     @Test
     public void givenIdsOfNonExistingEntitiesThenReturnsEmptyList() {
         List<Long> unusedIds = Stream.of(-1L, -2L, -3L, -4L).collect(Collectors.toList());
-        List<Company> foundCompanies = queryService.findEntitiesByIds(Company.class, unusedIds);
+        List<Company> foundCompanies = queryService.queryByIds(Company.class, unusedIds);
         assertTrue(foundCompanies.isEmpty());
     }
 }

@@ -38,7 +38,7 @@ public class TechnologyIntegrationTest {
 
     @Test(expected = ConstraintViolationException.class)
     public void givenTechnologyWithActiveJobsOnRemoveThenThrowsConstraintViolationException() {
-        Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
+        Long technologyId = technologyService.create(TestTechnologyBuilder.buildValidTechnology());
         Technology createdTechnology = technologyService.getById(technologyId);
         jobService.create(TestJobBuilder.buildValidJobWithTechnology(createdTechnology));
         technologyService.remove(createdTechnology);
@@ -46,7 +46,7 @@ public class TechnologyIntegrationTest {
 
     @Test
     public void givenTechnologyWithInactiveJobsThenRemovesIt() {
-        Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
+        Long technologyId = technologyService.create(TestTechnologyBuilder.buildValidTechnology());
         Technology createdTechnology = technologyService.getById(technologyId);
         Long createdJobId = jobService.create(TestJobBuilder.buildValidJobWithTechnology(createdTechnology));
         Job createdJob = jobService.getById(createdJobId);

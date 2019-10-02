@@ -19,10 +19,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = CategoryResource.MAIN_PATH)
+@RequestMapping(value = CategoryResource.CATEGORY_PATH)
 public class CategoryResource {
 
-    static final String MAIN_PATH = "category";
+    static final String CATEGORY_PATH = "category";
     private static final String ID_PATH = "{id}";
     private static final String ID = "id";
     private static final String IDS_PATH = "{ids}";

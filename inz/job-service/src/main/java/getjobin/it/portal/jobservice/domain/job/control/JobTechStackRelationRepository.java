@@ -19,19 +19,13 @@ public class JobTechStackRelationRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Long saveJobTechStackRelation(JobTechStackRelation jobTechStackRelation) {
+    public Long save(JobTechStackRelation jobTechStackRelation) {
         entityManager.persist(jobTechStackRelation);
         return jobTechStackRelation.getId();
     }
 
-    public Long updateJobTechStackRelation(JobTechStackRelation jobTechStackRelation) {
+    public Long update(JobTechStackRelation jobTechStackRelation) {
         return entityManager.merge(jobTechStackRelation).getId();
-    }
-
-    public List<JobTechStackRelation> queryByJobId(Long jobOfferId) {
-        return entityManager.createQuery("SELECT relation FROM JobTechStackRelation relation WHERE relation.jobOfferId = :jobId", JobTechStackRelation.class)
-                .setParameter("jobId", jobOfferId)
-                .getResultList();
     }
 
     public List<JobTechStackRelation> findByTechStackId(Long techStackId) {
@@ -40,7 +34,6 @@ public class JobTechStackRelationRepository {
         Root<JobTechStackRelation> jobTechStackRelation = criteriaQuery.from(JobTechStackRelation.class);
         Predicate techStackIdPredicate = criteriaBuilder.equal(jobTechStackRelation.get("techStackId"), techStackId);
         criteriaQuery.where(techStackIdPredicate);
-        return entityManager.createQuery(criteriaQuery)
-                .getResultList();
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 }

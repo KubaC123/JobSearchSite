@@ -32,7 +32,7 @@ public class CompanyRepository {
     }
 
     public List<Company> findByIds(List<Long> companyIds) {
-        return queryService.findEntitiesByIds(Company.class, companyIds);
+        return queryService.queryByIds(Company.class, companyIds);
     }
 
     public Company getById(Long companyId) {

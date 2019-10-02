@@ -48,7 +48,7 @@ public class JobRepository {
     }
 
     public List<Job> findByIds(List<Long> jobIds) {
-        return queryService.findEntitiesByIds(Job.class, jobIds);
+        return queryService.queryByIds(Job.class, jobIds);
     }
 
     public Job getById(Long jobId) {
@@ -107,7 +107,7 @@ public class JobRepository {
 
     public void createTechStackRelations(Long createdJobId, List<JobTechStackRelation> jobTechStackRelations) {
         jobTechStackRelations.forEach(jobTechStackRelation -> jobTechStackRelation.setJobId(createdJobId));
-        jobTechStackRelations.forEach(jobTechStackRelationRepository::saveJobTechStackRelation);
+        jobTechStackRelations.forEach(jobTechStackRelationRepository::save);
     }
 
     public Long update(Job job) {

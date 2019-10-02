@@ -49,7 +49,7 @@ public class JobServiceIntegrationTest {
 
     @Test
     public void givenValidJobWithCompanyThenCreatesIt() {
-        Long companyId = companyService.createCompany(TestCompanyBuilder.buildValidCompany());
+        Long companyId = companyService.create(TestCompanyBuilder.buildValidCompany());
         Company createdCompany = companyService.getById(companyId);
         Long jobId = jobService.create(TestJobBuilder.buildValidJobInCompany(createdCompany));
         Job createdJob = jobService.getById(jobId);
@@ -58,14 +58,13 @@ public class JobServiceIntegrationTest {
 
     @Test
     public void givenValidJobWithTechnologyThenCreatesIt() {
-        Long technologyId = technologyService.createTechnology(TestTechnologyBuilder.buildValidTechnology());
+        Long technologyId = technologyService.create(TestTechnologyBuilder.buildValidTechnology());
         Technology createdTechnology = technologyService.getById(technologyId);
         Long jobId = jobService.create(TestJobBuilder.buildValidJobWithTechnology(createdTechnology));
         Job createdJob = jobService.getById(jobId);
         assertEquals(createdTechnology, createdJob.getTechnology());
     }
 
-    // todo fix this test
     @Test
     public void givenValidJobWithTechStackThenCreatesJobWithTechStackRelation() {
         Long techStackId = techStackService.create(TestTechStackBuilder.buildValidTechStack());

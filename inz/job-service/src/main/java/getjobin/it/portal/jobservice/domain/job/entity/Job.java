@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 @Getter
 public class Job extends ManagedEntity {
 
-    public static final String JOB_OFFER_TYPE = "Job";
+    public static final String JOB_TYPE = "Job";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -145,7 +145,7 @@ public class Job extends ManagedEntity {
     private Date expireDate;
 
     @OneToMany
-    @JoinColumn(name = "JOB_OFFER_ID")
+    @JoinColumn(name = "JOB_ID")
     @TechStacksValidation
     private List<JobTechStackRelation> techStackRelations;
 

@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = TechStackResource.MAIN_PATH)
+@RequestMapping(value = TechStackResource.TECH_STACK_PATH)
 public class TechStackResource {
 
-    static final String MAIN_PATH = "techStack";
+    static final String TECH_STACK_PATH = "techStack";
     private static final String IDS_PATH = "{ids}";
     private static final String IDS = "ids";
 

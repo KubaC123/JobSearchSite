@@ -35,7 +35,7 @@ public class CompanyService {
         return companyRepository.getById(companyId);
     }
 
-    public Long createCompany(Company company) {
+    public Long create(Company company) {
         validate(company);
         return companyRepository.save(company);
     }

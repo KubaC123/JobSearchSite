@@ -9,6 +9,7 @@ import java.util.List;
 @Value
 public class JobIndexationDTO {
 
+    private Long id;
     private String type;
     private String title;
     private Long companyId;

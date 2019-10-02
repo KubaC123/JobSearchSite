@@ -1,5 +1,6 @@
 package getjobin.it.portal.jobservice.domain.job.boundary;
 
+import getjobin.it.portal.jobservice.api.domain.event.JobEvent;
 import getjobin.it.portal.jobservice.api.domain.rest.JobDTO;
 import getjobin.it.portal.jobservice.api.domain.rest.JobProfileDTO;
 import getjobin.it.portal.jobservice.api.domain.rest.JobTechStackDTO;
@@ -8,8 +9,6 @@ import getjobin.it.portal.jobservice.domain.category.boundary.CategoryResource;
 import getjobin.it.portal.jobservice.domain.category.entity.Category;
 import getjobin.it.portal.jobservice.domain.company.boundary.CompanyResource;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
-import getjobin.it.portal.jobservice.domain.event.OperationType;
-import getjobin.it.portal.jobservice.domain.job.control.JobTechStackRelationMapper;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.technology.boundary.TechnologyResource;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;

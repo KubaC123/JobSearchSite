@@ -3,10 +3,14 @@ package getjobin.it.portal.jobservice.infrastructure.config;
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;
 
-public interface KafkaTopics {
+public interface KafkaTopic {
 
     String MAPPING_TOPIC = "mappings";
+    String INDEXATION_TOPIC = "indexation";
 
     @Output(MAPPING_TOPIC)
-    MessageChannel mappingTopic();
+    MessageChannel mappings();
+
+    @Output(INDEXATION_TOPIC)
+    MessageChannel indexation();
 }

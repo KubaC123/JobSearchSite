@@ -1,8 +1,8 @@
-package getjobin.it.portal.jobservice.domain.event;
+package getjobin.it.portal.jobservice.domain.job.control;
 
 import getjobin.it.portal.jobservice.domain.category.control.CategoryService;
-import getjobin.it.portal.jobservice.domain.job.boundary.JobEvent;
-import getjobin.it.portal.jobservice.domain.job.control.JobService;
+import getjobin.it.portal.jobservice.api.domain.event.JobEvent;
+import getjobin.it.portal.jobservice.domain.job.boundary.OperationType;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.technology.control.TechnologyService;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +50,7 @@ public class JobEventListener {
                     break;
             }
         } catch (Exception exception) {
-            log.warn("Exception during processing job event", exception);
+            log.warn("Exception during processing job event {}.\n {}", event, exception);
         }
     }
 
