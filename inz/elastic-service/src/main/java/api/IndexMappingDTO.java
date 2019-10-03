@@ -1,15 +1,18 @@
 package api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
-import lombok.NonNull;
-import lombok.Value;
+import lombok.Data;
 
-@Builder
-@Value
+@Builder(builderClassName = "IndexMappingDTOBuilder")
+@Data
+@JsonDeserialize(builder = IndexMappingDTO.IndexMappingDTOBuilder.class)
 public class IndexMappingDTO {
 
-    @NonNull
     private String indexName;
-    @NonNull
     private String mapping;
+
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class IndexMappingDTOBuilder { }
 }

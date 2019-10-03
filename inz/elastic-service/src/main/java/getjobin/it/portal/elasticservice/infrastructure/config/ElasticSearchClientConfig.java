@@ -1,4 +1,4 @@
-package getjobin.it.portal.elasticservice.client;
+package getjobin.it.portal.elasticservice.infrastructure.config;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class ElasticSearchConfig {
+public class ElasticSearchClientConfig {
 
     @Value("${elasticsearch.host}")
     private String elasticSearchHost;

@@ -1,15 +1,16 @@
-package getjobin.it.portal.elasticservice.client.management;
+package getjobin.it.portal.elasticservice.client.index.boundary;
 
 import api.IndexMappingDTO;
-import getjobin.it.portal.elasticservice.client.management.control.ElasticManagementMapper;
-import getjobin.it.portal.elasticservice.client.management.control.ElasticManagementService;
+import getjobin.it.portal.elasticservice.client.index.control.ElasticManagementMapper;
+import getjobin.it.portal.elasticservice.client.index.control.IndexManagementService;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
@@ -25,20 +26,20 @@ public class ElasticManagementResource {
     private static final String INDEX_PATH = "index";
     private static final String INDEX_NAME_PARAM = "name";
 
-    private ElasticManagementService elasticManagementService;
+    private IndexManagementService indexManagementService;
 
     private ElasticManagementMapper elasticManagementMapper;
 
     @Autowired
-    public ElasticManagementResource(ElasticManagementService elasticManagementService, ElasticManagementMapper elasticManagementMapper) {
-        this.elasticManagementService = elasticManagementService;
+    public ElasticManagementResource(IndexManagementService indexManagementService, ElasticManagementMapper elasticManagementMapper) {
+        this.indexManagementService = indexManagementService;
         this.elasticManagementMapper = elasticManagementMapper;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = INDEX_PATH)
     public List<IndexMappingDTO> getMappings(@RequestParam(INDEX_NAME_PARAM) String commaSeparatedIndexesNames) {
-        Map<String, MappingMetaData> mappings = elasticManagementService.getMappings(getIndexesAsList(commaSeparatedIndexesNames));
-        return elasticManagementMapper.toIndexMappingsDTO(mappings);
+        Map<String, MappingMetaData> mappings = indexManagementService.getMappings(getIndexesAsList(commaSeparatedIndexesNames));
+        return elasticManagementMapper.toIndexMappingDTOs(mappings);
     }
 
     private List<String> getIndexesAsList(String commaSeparatedIndexesNames) {
@@ -47,14 +48,14 @@ public class ElasticManagementResource {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = INDEX_PATH)
-    public ResponseEntity createIndex(@RequestParam(INDEX_NAME_PARAM) String indexName) {
-        elasticManagementService.createIndex(indexName);
-        return new ResponseEntity(HttpStatus.CREATED);
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public void createIndex(@RequestBody IndexMappingDTO indexMapping) {
+        indexManagementService.createIndex(indexMapping);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = INDEX_PATH)
-    public ResponseEntity deleteIndex(@RequestParam(INDEX_NAME_PARAM) String indexName) {
-        elasticManagementService.deleteIndex(indexName);
-        return new ResponseEntity(HttpStatus.OK);
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteIndex(@RequestParam(INDEX_NAME_PARAM) String indexName) {
+        indexManagementService.deleteIndex(indexName);
     }
 }

@@ -1,4 +1,4 @@
-package getjobin.it.portal.elasticservice.client.management.control;
+package getjobin.it.portal.elasticservice.client.index.control;
 
 import api.IndexMappingDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,7 +17,7 @@ public class ElasticManagementMapper {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<IndexMappingDTO> toIndexMappingsDTO(Map<String, MappingMetaData> mappings) {
+    public List<IndexMappingDTO> toIndexMappingDTOs(Map<String, MappingMetaData> mappings) {
         return mappings.entrySet()
                 .stream()
                 .map(mapping -> IndexMappingDTO.builder()

@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.infrastructure;
+package getjobin.it.portal.elasticservice.infrastructure;
 
 import java.util.Calendar;
 import java.util.Date;
