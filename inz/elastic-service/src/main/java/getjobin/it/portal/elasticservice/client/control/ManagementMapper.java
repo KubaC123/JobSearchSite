@@ -1,6 +1,6 @@
-package getjobin.it.portal.elasticservice.client.index.control;
+package getjobin.it.portal.elasticservice.client.control;
 
-import api.IndexMappingDTO;
+import api.MappingEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -13,14 +13,14 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class ElasticManagementMapper {
+public class ManagementMapper {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<IndexMappingDTO> toIndexMappingDTOs(Map<String, MappingMetaData> mappings) {
+    public List<MappingEvent> toIndexMappingDTOs(Map<String, MappingMetaData> mappings) {
         return mappings.entrySet()
                 .stream()
-                .map(mapping -> IndexMappingDTO.builder()
+                .map(mapping -> MappingEvent.builder()
                         .indexName(mapping.getKey())
                         .mapping(tryParseMapping(mapping.getValue()))
                         .build())

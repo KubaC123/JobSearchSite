@@ -7,8 +7,8 @@ import lombok.Data;
 
 @Builder(builderClassName = "IndexationEventDTOBuilder")
 @Data
-@JsonDeserialize(builder = IndexationEventDTO.IndexationEventDTOBuilder.class)
-public class IndexationEventDTO {
+@JsonDeserialize(builder = DocumentEvent.IndexationEventDTOBuilder.class)
+public class DocumentEvent {
 
     private Long objectId;
     private String index;
