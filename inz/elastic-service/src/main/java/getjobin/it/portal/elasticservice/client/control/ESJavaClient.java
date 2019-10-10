@@ -1,10 +1,9 @@
 package getjobin.it.portal.elasticservice.client.control;
 
-import api.DocumentDTO;
-import api.DocumentEvent;
-import api.MappingEvent;
-import api.SearchResult;
-import getjobin.it.portal.elasticservice.client.control.ESRequestBuilder;
+import getjobin.it.portal.elasticservice.api.DocumentEventDto;
+import getjobin.it.portal.elasticservice.api.FoundDocumentDto;
+import getjobin.it.portal.elasticservice.api.MappingEventDto;
+import getjobin.it.portal.elasticservice.api.SearchResultDto;
 import getjobin.it.portal.elasticservice.infrastructure.exception.ElasticSearchRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -47,15 +46,16 @@ public class ESJavaClient {
 
     }
 
-    public void indexDocument(DocumentEvent documentEvent) {
+    public void indexDocument(DocumentEventDto documentEvent) {
         indexDocument().unchecked(requestBuilder.indexRequest(documentEvent));
+        log.info("[DOCUMENT] Indexed document with id: {}, on index: {}", documentEvent.getObjectId(), documentEvent.getIndex());
     }
 
     private ElasticSearchRequest<IndexRequest, IndexResponse> indexDocument() {
         return indexRequest -> client.index(indexRequest, RequestOptions.DEFAULT);
     }
 
-    public void updateDocument(DocumentEvent documentEvent) {
+    public void updateDocument(DocumentEventDto documentEvent) {
         updateDocument().unchecked(requestBuilder.updateRequest(documentEvent));
     }
 
@@ -63,8 +63,9 @@ public class ESJavaClient {
         return updateRequest -> client.update(updateRequest, RequestOptions.DEFAULT);
     }
 
-    public void createIndex(MappingEvent mappingEvent) {
+    public void createIndex(MappingEventDto mappingEvent) {
         createIndex().unchecked(requestBuilder.createIndexRequest(mappingEvent));
+        log.info("[INDEX] Index {} has been created.", mappingEvent.getIndexName());
     }
 
     private ElasticSearchRequest<CreateIndexRequest, CreateIndexResponse> createIndex() {
@@ -79,8 +80,9 @@ public class ESJavaClient {
         return deleteIndexRequest -> client.indices().delete(deleteIndexRequest, RequestOptions.DEFAULT);
     }
 
-    public void putMapping(MappingEvent mappingEvent) {
+    public void putMapping(MappingEventDto mappingEvent) {
         putMapping().unchecked(requestBuilder.putMappingRequest(mappingEvent));
+        log.info("[INDEX] Mapping for index {} has been updated.", mappingEvent.getIndexName());
     }
 
     private ElasticSearchRequest<PutMappingRequest, AcknowledgedResponse> putMapping() {
@@ -103,29 +105,33 @@ public class ESJavaClient {
         return getIndexRequest -> client.indices().exists(getIndexRequest, RequestOptions.DEFAULT);
     }
 
-    public SearchResult fullTextSearch(String indexName, String searchText, List<String> fields) {
+    public SearchResultDto fullTextSearch(String indexName, String searchText, List<String> fields) {
         SearchResponse response = search().unchecked(requestBuilder.fullTextSearch(indexName, searchText, fields));
-        logSearchDetails(response);
-        List<DocumentDTO> foundDocuments = new ArrayList<>();
-        for(SearchHit hit : response.getHits().getHits()) {
-            foundDocuments.add(DocumentDTO.builder()
-                    .score(hit.getScore())
-                    .objectId(Long.valueOf(hit.getId()))
-                    .data(hit.getSourceAsMap())
-                    .build());
-        }
-        return SearchResult.builder()
-                .count(foundDocuments.size())
-                .documents(foundDocuments)
-                .build();
+        List<FoundDocumentDto> foundDocuments = getFoundDocuments(response);
+        logSearchDetails(indexName, searchText, fields, response, foundDocuments.size());
+        return buildSearchResult(foundDocuments);
     }
 
     private ElasticSearchRequest<SearchRequest, SearchResponse> search() {
         return searchRequest -> client.search(searchRequest, RequestOptions.DEFAULT);
     }
 
-    private void logSearchDetails(SearchResponse response) {
-        log.info("Search request details: \n" +
+    private List<FoundDocumentDto> getFoundDocuments(SearchResponse response) {
+        List<FoundDocumentDto> foundDocuments = new ArrayList<>();
+        for(SearchHit hit : response.getHits().getHits()) {
+            foundDocuments.add(FoundDocumentDto.builder()
+                    .score(hit.getScore())
+                    .objectId(Long.valueOf(hit.getId()))
+                    .data(hit.getSourceAsMap())
+                    .build());
+        }
+        return foundDocuments;
+    }
+
+    private void logSearchDetails(String indexName, String searchText, List<String> fields, SearchResponse response, int foundDocumentsCount) {
+        log.info("[SEARCH] Searched for index name: {}, text: {}, fields {}. \n" +
+                        "Search response details: \n" +
+                        "Found documents: {} \n" +
                         "Response status: {} \n" +
                         "Time took: {} \n" +
                         "Terminated early: {} \n" +
@@ -133,6 +139,10 @@ public class ESJavaClient {
                         "Total shards: {} \n" +
                         "Successful shards: {} \n" +
                         "Failed shard: {} \n",
+                indexName,
+                searchText,
+                fields,
+                foundDocumentsCount,
                 response.status(),
                 response.getTook(),
                 response.isTerminatedEarly(),
@@ -142,4 +152,12 @@ public class ESJavaClient {
                 response.getFailedShards());
         // todo handle failed shards
     }
+
+    private SearchResultDto buildSearchResult(List<FoundDocumentDto> foundDocuments) {
+        return SearchResultDto.builder()
+                .count(foundDocuments.size())
+                .documents(foundDocuments)
+                .build();
+    }
+
 }

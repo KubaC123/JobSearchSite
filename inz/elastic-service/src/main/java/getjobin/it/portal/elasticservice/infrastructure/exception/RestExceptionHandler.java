@@ -1,7 +1,7 @@
 package getjobin.it.portal.elasticservice.infrastructure.exception;
 
-import api.ErrorMessageDTO;
 import getjobin.it.portal.elasticservice.infrastructure.CurrentDate;
+import getjobin.it.portal.jobservice.api.ErrorMessageDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,11 +13,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({ElasticServiceException.class})
-    public ResponseEntity<ErrorMessageDTO> handleElasticServiceException(ElasticServiceException exception, WebRequest request) {
+    public ResponseEntity<ErrorMessageDto> handleElasticServiceException(ElasticServiceException exception, WebRequest request) {
         return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED)
-                .body(ErrorMessageDTO.builder()
+                .body(ErrorMessageDto.builder()
                         .timeStamp(CurrentDate.get())
-                        .status(HttpStatus.PRECONDITION_FAILED)
                         .message(exception.getMessage())
                         .build());
     }

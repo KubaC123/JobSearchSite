@@ -1,6 +1,6 @@
 package getjobin.it.portal.elasticservice.client.boundary;
 
-import api.MappingEvent;
+import getjobin.it.portal.elasticservice.api.MappingEventDto;
 import getjobin.it.portal.elasticservice.client.control.ESJavaClient;
 import getjobin.it.portal.elasticservice.client.control.ManagementMapper;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
@@ -36,7 +36,7 @@ public class ManagementResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = INDEX_PATH)
-    public List<MappingEvent> getMappings(@RequestParam(INDEX_NAME_PARAM) String commaSeparatedIndexesNames) {
+    public List<MappingEventDto> getMappings(@RequestParam(INDEX_NAME_PARAM) String commaSeparatedIndexesNames) {
         Map<String, MappingMetaData> mappings = esJavaClient.getMapping(getIndexesAsList(commaSeparatedIndexesNames));
         return managementMapper.toIndexMappingDTOs(mappings);
     }
@@ -48,7 +48,7 @@ public class ManagementResource {
 
     @RequestMapping(method = RequestMethod.POST, value = INDEX_PATH)
     @ResponseStatus(value = HttpStatus.CREATED)
-    public void createIndex(@RequestBody MappingEvent indexMapping) {
+    public void createIndex(@RequestBody MappingEventDto indexMapping) {
         esJavaClient.createIndex(indexMapping);
     }
 

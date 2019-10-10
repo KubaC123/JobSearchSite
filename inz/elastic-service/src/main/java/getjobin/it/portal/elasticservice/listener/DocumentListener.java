@@ -1,6 +1,6 @@
 package getjobin.it.portal.elasticservice.listener;
 
-import api.DocumentEvent;
+import getjobin.it.portal.elasticservice.api.DocumentEventDto;
 import getjobin.it.portal.elasticservice.client.control.ESJavaClient;
 import getjobin.it.portal.elasticservice.infrastructure.config.KafkaTopic;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class DocumentListener {
     }
 
     @StreamListener(KafkaTopic.INDEXATION_TOPIC)
-    public void handleIndexationEvent(@Payload DocumentEvent documentEvent) {
+    public void handleIndexationEvent(@Payload DocumentEventDto documentEvent) {
         log.info("Received indexation event {}", documentEvent);
 
         OpType operationType = OpType.fromString(documentEvent.getOperationType());

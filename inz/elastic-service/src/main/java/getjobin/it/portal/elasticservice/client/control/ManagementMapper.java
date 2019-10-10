@@ -1,8 +1,8 @@
 package getjobin.it.portal.elasticservice.client.control;
 
-import api.MappingEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import getjobin.it.portal.elasticservice.api.MappingEventDto;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.springframework.stereotype.Component;
@@ -17,10 +17,10 @@ public class ManagementMapper {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<MappingEvent> toIndexMappingDTOs(Map<String, MappingMetaData> mappings) {
+    public List<MappingEventDto> toIndexMappingDTOs(Map<String, MappingMetaData> mappings) {
         return mappings.entrySet()
                 .stream()
-                .map(mapping -> MappingEvent.builder()
+                .map(mapping -> MappingEventDto.builder()
                         .indexName(mapping.getKey())
                         .mapping(tryParseMapping(mapping.getValue()))
                         .build())
