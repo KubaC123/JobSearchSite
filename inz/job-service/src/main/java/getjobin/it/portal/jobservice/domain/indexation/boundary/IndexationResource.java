@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -64,7 +65,8 @@ public class IndexationResource {
 
     @RequestMapping(method = RequestMethod.POST, value = JobResource.JOB_PATH)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
-    public void performAsynchronousJobIndexation(@PathVariable(IdsParam.IDS) IdsParam ids) {
-        indexationService.indexObjectsAsync(ids.asList(), Job.JOB_TYPE, OperationType.UPDATE);
+    public void performAsynchronousJobIndexation(@RequestParam("ids") IdsParam ids) {
+        // todo change this logic a bit
+        indexationService.indexObjectsAsync(ids.asList(), Job.JOB_TYPE, OperationType.CREATE);
     }
 }

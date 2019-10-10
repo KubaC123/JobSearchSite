@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.websocket.server.PathParam;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,10 +50,17 @@ public class JobResource {
 
     @RequestMapping(method = RequestMethod.GET, value = "search")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<JobDto> browseJobs(@RequestParam("rsql") String rsql) {
+    public List<JobDto> searchByRsql(@RequestParam("rsql") String rsql) {
         return jobService.findByRSQLCondition(rsql).stream()
                 .map(jobMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "search/fullText")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<JobDto> searchByText(@RequestParam("searchText") String searchText) {
+        // todo, which fields should have boost ?
+        return Collections.emptyList();
     }
 
     @RequestMapping(method = RequestMethod.POST)

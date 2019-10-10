@@ -3,8 +3,12 @@ package getjobin.it.portal.jobservice.domain.indexation.boundary;
 import getjobin.it.portal.elasticservice.api.MappingEventDto;
 import org.springframework.stereotype.Component;
 
+import javax.json.Json;
+
 @Component
 public class ElasticSearchMappingProvider {
+
+    static final String TYPE = "type";
 
     MappingEventDto buildCompanyIndexMapping() {
         return MappingEventDto.builder()
@@ -14,15 +18,20 @@ public class ElasticSearchMappingProvider {
     }
 
     private String buildCompanyMapping() {
-        return
-            "{\n"
-            + "\"properties\":"
-                + "{\n"
-                    + "\"name\":" + "{ " + FieldType.TEXT.value() + "},\n"
-                    + "\"description\":" + "{ " + FieldType.TEXT.value() + "},\n"
-                    + "\"size\":" + "{ " + FieldType.INTEGER.value() + "}\n"
-                + "}\n"
-            + "}\n";
+        return Json.createObjectBuilder()
+                .add("properties", Json.createObjectBuilder()
+                        .add("name", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.TEXT.value())
+                                .build())
+                        .add("description", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.TEXT.value())
+                                .build())
+                        .add("size", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.INTEGER.value())
+                                .build())
+                        .build())
+                .build()
+                .toString();
     }
 
     MappingEventDto buildJobIndexMapping() {
@@ -33,44 +42,97 @@ public class ElasticSearchMappingProvider {
     }
 
     private String buildJobMapping() {
-        return
-            "{\n"
-            + "\"properties\":"
-                + "{\n"
-                    + "\"type\":" + "{ " + FieldType.KEYWORD.value() + "},\n"
-                    + "\"title\":" + "{ " + FieldType.TEXT.value() + "},\n"
-                    + "\"companyId\":" + "{ " + FieldType.INTEGER.value() + "},\n"
-                    + "\"companyName\":" + "{ " + FieldType.TEXT.value() + "},\n"
-                    + "\"categoryId\":" + "{ " + FieldType.INTEGER.value() + "},\n"
-                    + "\"categoryName\":" + "{ " + FieldType.TEXT.value() + "},\n"
-                    + "\"experienceLevel\":" + "{ " + FieldType.KEYWORD.value() + "},\n"
-                    + "\"employmentType\":" + "{ " + FieldType.KEYWORD.value() + "},\n"
-                    + "\"salaryMin\":" + "{ " + FieldType.INTEGER.value() + "},\n"
-                    + "\"salaryMax\":" + "{ " + FieldType.INTEGER.value() + "},\n"
-                    + "\"flexibleWorkHours\":" + "{ " + FieldType.BOOLEAN.value() + "},\n"
-                    + "\"description\":" + "{ " + FieldType.TEXT.value() + "},\n"
-                    + "\"technologyId\":" + "{ " + FieldType.INTEGER.value() + "},\n"
-                    + "\"technologyName\":" + "{ " + FieldType.TEXT.value() + "},\n"
-                    + "\"projectDescription\":" + "{ " + FieldType.TEXT.value() + "},\n"
-                    + "\"development\":" + "{ " + FieldType.INTEGER.value() + "},\n"
-                    + "\"testing\":" + "{ " + FieldType.INTEGER.value() + "},\n"
-                    + "\"maintenance\":" + "{ " + FieldType.INTEGER.value() + "},\n"
-                    + "\"clientSupport\":" + "{ " + FieldType.INTEGER.value() + "},\n"
-                    + "\"meetings\":" + "{ " + FieldType.INTEGER.value() + "},\n"
-                    + "\"leading\":" + "{ " + FieldType.INTEGER.value() + "},\n"
-                    + "\"documentation\":" + "{ " + FieldType.INTEGER.value() + "},\n"
-                    + "\"otherActivities\":" + "{ " + FieldType.INTEGER.value() + "},\n"
-                    + "\"active\":" + "{ " + FieldType.BOOLEAN.value() + "},\n"
-                    + "\"techStacks\":" + "{ " + FieldType.NESTED.value() + ",\n"
-                        + "\"properties\":"
-                            + "{\n"
-                                + "\"techStackId\":" + "{ " +  FieldType.INTEGER.value() + "},\n"
-                                + "\"techStackName\":" + "{ " +  FieldType.TEXT.value() + "},\n"
-                                + "\"techStackExperienceLevel\":" + "{ " +  FieldType.INTEGER.value() + "}\n"
-                            + "}\n"
-                        + "}\n"
-                + "}\n"
-            + "}\n";
+        return Json.createObjectBuilder()
+                .add("properties", Json.createObjectBuilder()
+                        .add("type", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.TEXT.value())
+                                .build())
+                        .add("title", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.TEXT.value())
+                                .build())
+                        .add("companyId", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.INTEGER.value())
+                                .build())
+                        .add("companyName", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.TEXT.value())
+                                .build())
+                        .add("categoryId", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.INTEGER.value())
+                                .build())
+                        .add("categoryName", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.TEXT.value())
+                                .build())
+                        .add("experienceLevel", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.KEYWORD.value())
+                                .build())
+                        .add("employmentType", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.KEYWORD.value())
+                                .build())
+                        .add("salaryMin", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.INTEGER.value())
+                                .build())
+                        .add("salaryMax", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.INTEGER.value())
+                                .build())
+                        .add("flexibleWorkHours", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.BOOLEAN.value())
+                                .build())
+                        .add("description", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.TEXT.value())
+                                .build())
+                        .add("technologyId", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.INTEGER.value())
+                                .build())
+                        .add("technologyName", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.TEXT.value())
+                                .build())
+                        .add("projectDescription", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.TEXT.value())
+                                .build())
+                        .add("development", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.INTEGER.value())
+                                .build())
+                        .add("testing", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.INTEGER.value())
+                                .build())
+                        .add("maintenance", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.INTEGER.value())
+                                .build())
+                        .add("clientSupport", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.INTEGER.value())
+                                .build())
+                        .add("meetings", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.INTEGER.value())
+                                .build())
+                        .add("leading", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.INTEGER.value())
+                                .build())
+                        .add("documentation", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.INTEGER.value())
+                                .build())
+                        .add("otherActivities", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.INTEGER.value())
+                                .build())
+                        .add("active", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.BOOLEAN.value())
+                                .build())
+                        .add("techStacks", Json.createObjectBuilder()
+                                .add(TYPE, FieldType.NESTED.value())
+                                .add("properties", Json.createObjectBuilder()
+                                        .add("techStackId", Json.createObjectBuilder()
+                                                .add(TYPE, FieldType.INTEGER.value())
+                                                .build())
+                                        .add("techStackName", Json.createObjectBuilder()
+                                                .add(TYPE, FieldType.TEXT.value())
+                                                .build())
+                                        .add("techStackExperienceLevel", Json.createObjectBuilder()
+                                                .add(TYPE, FieldType.INTEGER.value())
+                                                .build())
+                                        .build())
+                                .build())
+                        .build())
+                .build()
+                .toString();
     }
 
 
@@ -89,7 +151,7 @@ public class ElasticSearchMappingProvider {
         }
 
         public String value() {
-            return "\"type\": \"" + literal + "\"";
+            return literal;
         }
     }
 }

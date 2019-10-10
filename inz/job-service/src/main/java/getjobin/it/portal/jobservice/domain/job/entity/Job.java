@@ -11,8 +11,10 @@ import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -144,7 +146,7 @@ public class Job extends ManagedEntity {
     @Column(name = "EXPIRE_DATE")
     private Date expireDate;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "JOB_ID")
     @TechStacksValidation
     private List<JobTechStackRelation> techStackRelations;

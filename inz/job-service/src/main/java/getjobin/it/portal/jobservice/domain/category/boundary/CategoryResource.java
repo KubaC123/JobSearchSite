@@ -47,7 +47,7 @@ public class CategoryResource {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
-    public List<ResourceDto> createCategories(List<CategoryDto> categoryDTOs) {
+    public List<ResourceDto> createCategories(@RequestBody List<CategoryDto> categoryDTOs) {
         return categoryDTOs.stream()
                 .map(categoryMapper::toEntity)
                 .map(categoryService::create)

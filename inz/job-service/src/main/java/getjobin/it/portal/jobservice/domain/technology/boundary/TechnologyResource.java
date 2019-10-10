@@ -47,8 +47,8 @@ public class TechnologyResource {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
-    public List<ResourceDto> createTechnologies(List<TechnologyDto> technologyDTOs) {
-        return technologyDTOs.stream()
+    public List<ResourceDto> createTechnologies(@RequestBody List<TechnologyDto> technologyDtos) {
+        return technologyDtos.stream()
                 .map(technologyMapper::toEntity)
                 .map(technologyService::create)
                 .map(this::buildResourceDTO)

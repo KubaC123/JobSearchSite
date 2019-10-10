@@ -67,7 +67,7 @@ public class TechStackResource {
 
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseStatus(value = HttpStatus.OK)
-    public List<ResourceDto> updateTechStacks(List<TechStackDto> techStackDtos) {
+    public List<ResourceDto> updateTechStacks(@RequestBody List<TechStackDto> techStackDtos) {
         JobServicePreconditions.checkArgument(allTechStackDtosContainUniqueIds(techStackDtos),
                 "Specify unique id in each Dto in order to update tech stacks");
         return getUpdatedTechStacks(techStackDtos).stream()

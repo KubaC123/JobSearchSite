@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
 
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,12 +79,12 @@ public class IndexationService {
     }
 
     private void logSuccess(DocumentEventDto event) {
-        log.info("Event with id {} and operation type {} has been send on kafka topic",
+        log.info("[INDEXATION] Event for object with id {}, operation type {} has been send on kafka topic",
                 event.getObjectId(), event.getOperationType());
     }
 
     private void logException(DocumentEventDto event, Exception exception) {
-        log.info("Exception during sending event with id {} and operation type {} on kafka topic. {}",
+        log.info("[INDEXATION] Exception during sending event with id {} and operation type {} on kafka topic. {}",
                 event.getObjectId(), event.getOperationType(), exception);
     }
 
@@ -95,14 +96,14 @@ public class IndexationService {
 
         CompletableFuture.allOf(futurePartitionsToIndex.toArray(new CompletableFuture[futurePartitionsToIndex.size()]))
                 .exceptionally(exception -> {
-                    log.warn("Exception during partition indexation", exception);
+                    log.warn("[INDEXATION] Exception during partition indexation", exception);
                     return null;
                 });
     }
 
     private BiConsumer<List<Long>, OperationType> getProperConsumer(String objectType) {
         if(!indexationConsumers.containsKey(objectType)) {
-            throw new JobServiceException("No indexation consumer specified for type " + objectType);
+            throw new JobServiceException("[INDEXATION] No indexation consumer specified for type " + objectType);
         }
         return indexationConsumers.get(objectType);
     }
