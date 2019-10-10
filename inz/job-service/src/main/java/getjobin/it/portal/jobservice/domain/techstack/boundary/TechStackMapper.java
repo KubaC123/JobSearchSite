@@ -1,6 +1,6 @@
 package getjobin.it.portal.jobservice.domain.techstack.boundary;
 
-import getjobin.it.portal.jobservice.api.domain.rest.TechStackDTO;
+import getjobin.it.portal.jobservice.api.TechStackDto;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 import org.springframework.stereotype.Component;
 
@@ -10,33 +10,33 @@ import java.util.stream.Collectors;
 @Component
 public class TechStackMapper {
 
-    public List<TechStack> toEntities(List<TechStackDTO> techStackDTOs) {
-        return techStackDTOs.stream()
+    public List<TechStack> toEntities(List<TechStackDto> techStackDtos) {
+        return techStackDtos.stream()
                 .map(this::toEntity)
                 .collect(Collectors.toList());
     }
 
-    public TechStack toEntity(TechStackDTO techStackDTO) {
+    public TechStack toEntity(TechStackDto techStackDTO) {
         return TechStack.builder()
                 .withId(techStackDTO.getId())
                 .withName(techStackDTO.getName())
                 .build();
     }
 
-    public List<TechStackDTO> toDTOs(List<TechStack> techStacks) {
+    public List<TechStackDto> toDTOs(List<TechStack> techStacks) {
         return techStacks.stream()
-                .map(this::toDTO)
+                .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
-    public TechStackDTO toDTO(TechStack techStack) {
-        return TechStackDTO.builder()
+    public TechStackDto toDto(TechStack techStack) {
+        return TechStackDto.builder()
                 .id(techStack.getId())
                 .name(techStack.getName())
                 .build();
     }
 
-    public TechStack updateExistingTechStack(TechStack existingTechStack, TechStackDTO techStackDTO) {
+    public TechStack updateExistingTechStack(TechStack existingTechStack, TechStackDto techStackDTO) {
         return TechStack.toBuilder(existingTechStack)
                 .withName(techStackDTO.getName())
                 .build();

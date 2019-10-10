@@ -1,10 +1,10 @@
 package getjobin.it.portal.jobservice.domain.job.boundary;
 
-import getjobin.it.portal.jobservice.api.domain.event.JobEvent;
-import getjobin.it.portal.jobservice.api.domain.rest.JobDTO;
-import getjobin.it.portal.jobservice.api.domain.rest.JobProfileDTO;
-import getjobin.it.portal.jobservice.api.domain.rest.JobTechStackDTO;
-import getjobin.it.portal.jobservice.api.domain.rest.ResourceDTO;
+import getjobin.it.portal.jobservice.api.JobDto;
+import getjobin.it.portal.jobservice.api.JobEventDto;
+import getjobin.it.portal.jobservice.api.JobProfileDto;
+import getjobin.it.portal.jobservice.api.JobTechStackDto;
+import getjobin.it.portal.jobservice.api.ResourceDto;
 import getjobin.it.portal.jobservice.domain.category.boundary.CategoryResource;
 import getjobin.it.portal.jobservice.domain.category.entity.Category;
 import getjobin.it.portal.jobservice.domain.company.boundary.CompanyResource;
@@ -37,52 +37,52 @@ public class JobMapper {
         this.techStackService = techStackService;
     }
 
-    public Job toEntity(JobDTO jobDTO) {
+    public Job toEntity(JobDto jobDto) {
         Job.JobOfferEntityBuilder builder = Job.builder();
-        addCompany(jobDTO, builder);
-        addCategory(jobDTO, builder);
-        addTechnology(jobDTO, builder);
-        addJobProfile(jobDTO, builder);
+        addCompany(jobDto, builder);
+        addCategory(jobDto, builder);
+        addTechnology(jobDto, builder);
+        addJobProfile(jobDto, builder);
         return builder
-                .id(jobDTO.getId())
-                .type(jobDTO.getType())
-                .title(jobDTO.getTitle())
-                .experienceLevel(jobDTO.getExperienceLevel())
-                .employmentType(jobDTO.getEmploymentType())
-                .salaryMin(jobDTO.getSalaryMin())
-                .salaryMax(jobDTO.getSalaryMax())
-                .startDate(jobDTO.getStartDate())
-                .contractDuration(jobDTO.getContractDuration())
-                .flexibleWorkHours(jobDTO.getFlexibleWorkHours())
-                .currency(jobDTO.getCurrency())
-                .description(jobDTO.getDescription())
-                .projectIndustry(jobDTO.getProjectIndustry())
-                .projectTeamSize(jobDTO.getProjectTeamSize())
-                .projectDescription(jobDTO.getProjectDescription())
-                .agreements(jobDTO.getAgreements())
-                .techStackRelations(techStackRelationMapper.toEntities(jobDTO.getId(), jobDTO.getTechStacks()))
+                .id(jobDto.getId())
+                .type(jobDto.getType())
+                .title(jobDto.getTitle())
+                .experienceLevel(jobDto.getExperienceLevel())
+                .employmentType(jobDto.getEmploymentType())
+                .salaryMin(jobDto.getSalaryMin())
+                .salaryMax(jobDto.getSalaryMax())
+                .startDate(jobDto.getStartDate())
+                .contractDuration(jobDto.getContractDuration())
+                .flexibleWorkHours(jobDto.getFlexibleWorkHours())
+                .currency(jobDto.getCurrency())
+                .description(jobDto.getDescription())
+                .projectIndustry(jobDto.getProjectIndustry())
+                .projectTeamSize(jobDto.getProjectTeamSize())
+                .projectDescription(jobDto.getProjectDescription())
+                .agreements(jobDto.getAgreements())
+                .techStackRelations(techStackRelationMapper.toEntities(jobDto.getId(), jobDto.getTechStacks()))
                 .build();
     }
 
-    private void addCompany(JobDTO jobDTO, Job.JobOfferEntityBuilder builder) {
+    private void addCompany(JobDto jobDTO, Job.JobOfferEntityBuilder builder) {
         Optional.ofNullable(jobDTO.getCompany()).ifPresent(company -> builder.company(Company.builder()
                 .withId(company.getObjectId())
                 .build()));
     }
 
-    private void addCategory(JobDTO jobDTO, Job.JobOfferEntityBuilder builder) {
+    private void addCategory(JobDto jobDTO, Job.JobOfferEntityBuilder builder) {
         Optional.ofNullable(jobDTO.getCategory()).ifPresent(category -> builder.category(Category.builder()
                 .withId(category.getObjectId())
                 .build()));
     }
 
-    private void addTechnology(JobDTO jobDTO, Job.JobOfferEntityBuilder builder) {
+    private void addTechnology(JobDto jobDTO, Job.JobOfferEntityBuilder builder) {
         Optional.ofNullable(jobDTO.getTechnology()).ifPresent(technology -> builder.technology(Technology.builder()
                 .withId(technology.getObjectId())
                 .build()));
     }
 
-    private void addJobProfile(JobDTO jobDTO, Job.JobOfferEntityBuilder builder) {
+    private void addJobProfile(JobDto jobDTO, Job.JobOfferEntityBuilder builder) {
         Optional.ofNullable(jobDTO.getJobProfile()).ifPresent(jobProfile -> builder
                 .development(jobProfile.getDevelopment())
                 .testing(jobProfile.getTesting())
@@ -94,33 +94,33 @@ public class JobMapper {
                 .otherActivities(jobProfile.getOtherActivities()));
     }
 
-    public JobEvent toEvent(Long jobId, OperationType operationType) {
-        return JobEvent.builder()
+    public JobEventDto toEvent(Long jobId, OperationType operationType) {
+        return JobEventDto.builder()
                 .jobId(jobId)
-                .operationType(operationType)
+                .operationType(operationType.getLiteral())
                 .build();
     }
 
-    public JobDTO toDTO(Job job) {
-        JobDTO.JobDTOBuilder builder = JobDTO.builder();
-        Optional.ofNullable(job.getCompany()).ifPresent(company -> builder.company(ResourceDTO.builder()
+    public JobDto toDto(Job job) {
+        JobDto.JobDtoBuilder builder = JobDto.builder();
+        Optional.ofNullable(job.getCompany()).ifPresent(company -> builder.company(ResourceDto.builder()
                 .objectId(company.getId())
                 .objectType(Company.COMPANY_TYPE)
                 .resourceURI(getCompanyResourceURI(company.getId()))
                 .build()));
-        Optional.ofNullable(job.getCategory()).ifPresent(category -> builder.category(ResourceDTO.builder()
+        Optional.ofNullable(job.getCategory()).ifPresent(category -> builder.category(ResourceDto.builder()
                 .objectId(category.getId())
                 .objectType(Category.CATEGORY_TYPE)
                 .resourceURI(getCategoryResourceURI(category.getId()))
                 .build()));
-        Optional.ofNullable(job.getTechnology()).ifPresent(technology -> builder.technology(ResourceDTO.builder()
+        Optional.ofNullable(job.getTechnology()).ifPresent(technology -> builder.technology(ResourceDto.builder()
                 .objectId(technology.getId())
                 .objectType(Technology.TECHNOLOGY_TYPE)
                 .resourceURI(getTechnologyResourceURI(technology.getId()))
                 .build()));
         job.getTechStackRelations().ifPresent(techStackRelations -> builder.techStacks(techStackRelations.stream()
-                .map(techStackRelation -> JobTechStackDTO.builder()
-                        .techStack(techStackMapper.toDTO(techStackService.getById(techStackRelation.getTechStackId())))
+                .map(techStackRelation -> JobTechStackDto.builder()
+                        .techStack(techStackMapper.toDto(techStackService.getById(techStackRelation.getTechStackId())))
                         .experienceLevel(techStackRelation.getExperienceLevel())
                         .build())
                 .collect(Collectors.toList())));
@@ -140,7 +140,7 @@ public class JobMapper {
                 .projectIndustry(job.getProjectIndustry())
                 .projectTeamSize(job.getProjectTeamSize())
                 .projectDescription(job.getProjectDescription())
-                .jobProfile(JobProfileDTO.builder()
+                .jobProfile(JobProfileDto.builder()
                         .development(job.getDevelopment())
                         .testing(job.getTesting())
                         .maintenance(job.getMaintenance())
@@ -176,7 +176,7 @@ public class JobMapper {
                 .toUri();
     }
 
-    public Job updateExistingJobOffer(Job existingJob, JobDTO jobDTO) {
+    public Job updateExistingJobOffer(Job existingJob, JobDto jobDTO) {
         Job.JobOfferEntityBuilder builder = Job.toBuilder(existingJob)
                 .title(jobDTO.getTitle())
                 .experienceLevel(jobDTO.getExperienceLevel())

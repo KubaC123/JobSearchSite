@@ -2,10 +2,10 @@ package getjobin.it.portal.jobservice.domain.indexation.control;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import getjobin.it.portal.jobservice.api.client.IndexationEventDTO;
+import getjobin.it.portal.elasticservice.api.DocumentEventDto;
+import getjobin.it.portal.jobservice.domain.indexation.boundary.IndexationMapper;
 import getjobin.it.portal.jobservice.domain.job.boundary.OperationType;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
-import getjobin.it.portal.jobservice.domain.indexation.boundary.IndexationMapper;
 import getjobin.it.portal.jobservice.infrastructure.config.KafkaTopic;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServiceException;
 import getjobin.it.portal.jobservice.infrastructure.query.boundary.QueryService;
@@ -63,7 +63,7 @@ public class IndexationService {
                 .forEach(this::sendIndexationEvent);
     };
 
-    private void sendIndexationEvent(IndexationEventDTO event) {
+    private void sendIndexationEvent(DocumentEventDto event) {
         try {
             kafkaTopic.indexation()
                     .send(MessageBuilder
@@ -77,12 +77,12 @@ public class IndexationService {
         }
     }
 
-    private void logSuccess(IndexationEventDTO event) {
+    private void logSuccess(DocumentEventDto event) {
         log.info("Event with id {} and operation type {} has been send on kafka topic",
                 event.getObjectId(), event.getOperationType());
     }
 
-    private void logException(IndexationEventDTO event, Exception exception) {
+    private void logException(DocumentEventDto event, Exception exception) {
         log.info("Exception during sending event with id {} and operation type {} on kafka topic. {}",
                 event.getObjectId(), event.getOperationType(), exception);
     }

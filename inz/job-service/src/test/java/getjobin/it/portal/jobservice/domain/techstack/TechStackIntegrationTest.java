@@ -25,7 +25,6 @@ public class TechStackIntegrationTest {
     @Autowired
     private JobService jobService;
 
-    // todo fix this test
     @Test(expected = ConstraintViolationException.class)
     public void givenTechStackAssignedToJobOnRemoveThenThrowsConstraintViolationException() {
         Long techStackId = techStackService.create(TestTechStackBuilder.buildValidTechStack());

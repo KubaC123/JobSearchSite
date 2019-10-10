@@ -1,11 +1,11 @@
 package getjobin.it.portal.jobservice.domain.techstack.boundary;
 
-import getjobin.it.portal.jobservice.api.domain.rest.ResourceDTO;
-import getjobin.it.portal.jobservice.api.domain.rest.TechStackDTO;
+import getjobin.it.portal.jobservice.api.ResourceDto;
+import getjobin.it.portal.jobservice.api.TechStackDto;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
-import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServicePreconditions;
+import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,23 +39,23 @@ public class TechStackResource {
 
     @RequestMapping(method = RequestMethod.GET, value = IDS_PATH)
     @ResponseStatus(value = HttpStatus.OK)
-    public List<TechStackDTO> browseTechStacks(@PathVariable(IDS) IdsParam ids) {
+    public List<TechStackDto> browseTechStacks(@PathVariable(IDS) IdsParam ids) {
         return techStackService.findByIds(ids.asList()).stream()
-                .map(techStackMapper::toDTO)
+                .map(techStackMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
-    public List<ResourceDTO> createTechStacks(@RequestBody List<TechStackDTO> techStackDTOs) {
-        return techStackMapper.toEntities(techStackDTOs).stream()
+    public List<ResourceDto> createTechStacks(@RequestBody List<TechStackDto> techStackDtos) {
+        return techStackMapper.toEntities(techStackDtos).stream()
                 .map(techStackService::create)
-                .map(this::buildResourceDTO)
+                .map(this::buildResourceDto)
                 .collect(Collectors.toList());
     }
 
-    private ResourceDTO buildResourceDTO(Long techStackId) {
-        return ResourceDTO.builder()
+    private ResourceDto buildResourceDto(Long techStackId) {
+        return ResourceDto.builder()
                 .objectType(TechStack.TECH_STACK_TYPE)
                 .objectId(techStackId)
                 .resourceURI(ServletUriComponentsBuilder.fromCurrentRequestUri()
@@ -67,27 +67,27 @@ public class TechStackResource {
 
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseStatus(value = HttpStatus.OK)
-    public List<ResourceDTO> updateTechStacks(List<TechStackDTO> techStackDTOs) {
-        JobServicePreconditions.checkArgument(allTechStackDTOsContainUniqueIds(techStackDTOs),
-                "Specify unique id in each DTO in order to update tech stacks");
-        return getUpdatedTechStacks(techStackDTOs).stream()
+    public List<ResourceDto> updateTechStacks(List<TechStackDto> techStackDtos) {
+        JobServicePreconditions.checkArgument(allTechStackDtosContainUniqueIds(techStackDtos),
+                "Specify unique id in each Dto in order to update tech stacks");
+        return getUpdatedTechStacks(techStackDtos).stream()
                 .map(techStackService::update)
-                .map(this::buildResourceDTO)
+                .map(this::buildResourceDto)
                 .collect(Collectors.toList());
     }
 
-    private boolean allTechStackDTOsContainUniqueIds(List<TechStackDTO> techStackDTOs) {
-        return techStackDTOs.stream()
-                .map(TechStackDTO::getId)
+    private boolean allTechStackDtosContainUniqueIds(List<TechStackDto> techStackDtos) {
+        return techStackDtos.stream()
+                .map(TechStackDto::getId)
                 .distinct()
-                .count() == techStackDTOs.size();
+                .count() == techStackDtos.size();
     }
 
-    private List<TechStack> getUpdatedTechStacks(List<TechStackDTO> techStackDTOs) {
+    private List<TechStack> getUpdatedTechStacks(List<TechStackDto> techStackDtos) {
         List<TechStack> updatedTechStacks = new ArrayList<>();
-        techStackDTOs.forEach(techStackDTO -> {
-            techStackService.findById(techStackDTO.getId())
-                    .map(foundTechStack -> techStackMapper.updateExistingTechStack(foundTechStack, techStackDTO))
+        techStackDtos.forEach(techStackDto -> {
+            techStackService.findById(techStackDto.getId())
+                    .map(foundTechStack -> techStackMapper.updateExistingTechStack(foundTechStack, techStackDto))
                     .ifPresent(updatedTechStacks::add);
         });
         return updatedTechStacks;

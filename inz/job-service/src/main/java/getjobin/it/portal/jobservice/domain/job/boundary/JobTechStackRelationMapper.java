@@ -1,6 +1,6 @@
 package getjobin.it.portal.jobservice.domain.job.boundary;
 
-import getjobin.it.portal.jobservice.api.domain.rest.JobTechStackDTO;
+import getjobin.it.portal.jobservice.api.JobTechStackDto;
 import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
 import org.springframework.stereotype.Component;
 
@@ -11,17 +11,17 @@ import java.util.stream.Collectors;
 @Component
 public class JobTechStackRelationMapper {
 
-    public List<JobTechStackRelation> toEntities(Long jobOfferId, List<JobTechStackDTO> jobTechStackDTOs) {
-        return jobTechStackDTOs.stream()
+    public List<JobTechStackRelation> toEntities(Long jobOfferId, List<JobTechStackDto> jobTechStackDtos) {
+        return jobTechStackDtos.stream()
                 .map(jobTechStackDTO -> toEntity(Optional.ofNullable(jobOfferId), jobTechStackDTO))
                 .collect(Collectors.toList());
     }
 
-    private JobTechStackRelation toEntity(Optional<Long> jobOfferId, JobTechStackDTO jobTechStackDTO) {
+    private JobTechStackRelation toEntity(Optional<Long> jobOfferId, JobTechStackDto jobTechStackDto) {
         return JobTechStackRelation.builder()
                 .withJobId(jobOfferId.orElse(null))
-                .withTechStackId(jobTechStackDTO.getTechStack().getId())
-                .withExperienceLevel(jobTechStackDTO.getExperienceLevel())
+                .withTechStackId(jobTechStackDto.getTechStack().getId())
+                .withExperienceLevel(jobTechStackDto.getExperienceLevel())
                 .build();
     }
 }

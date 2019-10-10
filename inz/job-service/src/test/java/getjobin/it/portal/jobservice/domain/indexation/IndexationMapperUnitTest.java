@@ -69,7 +69,7 @@ public class IndexationMapperUnitTest {
     @Test
     public void givenJobIndexationDTOThenParseToJSON() {
         ObjectMapper objectMapper = new ObjectMapper();
-        Assertions.assertThatCode(() -> objectMapper.writeValueAsString(indexationMapper.toJobIndexationDTO(job)))
+        Assertions.assertThatCode(() -> objectMapper.writeValueAsString(indexationMapper.toJobDocumentDto(job)))
                 .doesNotThrowAnyException();
     }
 }

@@ -1,6 +1,6 @@
 package getjobin.it.portal.jobservice.infrastructure.exception;
 
-import getjobin.it.portal.jobservice.api.domain.rest.ErrorMessageDTO;
+import getjobin.it.portal.jobservice.api.ErrorMessageDto;
 import getjobin.it.portal.jobservice.infrastructure.util.CurrentDate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,27 +17,25 @@ import java.util.stream.Collectors;
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({ConstraintViolationException.class})
-    public ResponseEntity<ErrorMessageDTO> handleConstraintViolation(ConstraintViolationException exception, WebRequest request) {
+    public ResponseEntity<ErrorMessageDto> handleConstraintViolation(ConstraintViolationException exception, WebRequest request) {
         Map<String, String> validationsByField = exception.getConstraintViolations().stream()
                 .collect(Collectors.toMap(
                         constraintViolation -> constraintViolation.getPropertyPath().toString(),
                         constraintViolation -> constraintViolation.getMessage()));
 
         return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED)
-                .body(ErrorMessageDTO.builder()
+                .body(ErrorMessageDto.builder()
                         .timeStamp(CurrentDate.get())
-                        .status(HttpStatus.PRECONDITION_FAILED)
                         .message("Validation failed")
                         .validationsByField(validationsByField)
                         .build());
     }
 
     @ExceptionHandler({JobServiceException.class})
-    public ResponseEntity<ErrorMessageDTO> handleJobServiceIllegalArgumentException(JobServiceException exception, WebRequest request) {
+    public ResponseEntity<ErrorMessageDto> handleJobServiceIllegalArgumentException(JobServiceException exception, WebRequest request) {
         return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED)
-                .body(ErrorMessageDTO.builder()
+                .body(ErrorMessageDto.builder()
                         .timeStamp(CurrentDate.get())
-                        .status(HttpStatus.PRECONDITION_FAILED)
                         .message(exception.getLocalizedMessage())
                         .build());
     }

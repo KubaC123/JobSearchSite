@@ -1,7 +1,7 @@
 package getjobin.it.portal.jobservice.domain.technology.boundary;
 
-import getjobin.it.portal.jobservice.api.domain.rest.ResourceDTO;
-import getjobin.it.portal.jobservice.api.domain.rest.TechnologyDTO;
+import getjobin.it.portal.jobservice.api.ResourceDto;
+import getjobin.it.portal.jobservice.api.TechnologyDto;
 import getjobin.it.portal.jobservice.domain.technology.control.TechnologyService;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
@@ -39,15 +39,15 @@ public class TechnologyResource {
 
     @RequestMapping(method = RequestMethod.GET, value = IDS_PATH)
     @ResponseStatus(value = HttpStatus.OK)
-    public List<TechnologyDTO> browseTechnologies(@PathVariable(IDS)IdsParam ids) {
+    public List<TechnologyDto> browseTechnologies(@PathVariable(IDS)IdsParam ids) {
         return technologyService.findByIds(ids.asList()).stream()
-                .map(technologyMapper::toDTO)
+                .map(technologyMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
-    public List<ResourceDTO> createTechnologies(List<TechnologyDTO> technologyDTOs) {
+    public List<ResourceDto> createTechnologies(List<TechnologyDto> technologyDTOs) {
         return technologyDTOs.stream()
                 .map(technologyMapper::toEntity)
                 .map(technologyService::create)
@@ -55,8 +55,8 @@ public class TechnologyResource {
                 .collect(Collectors.toList());
     }
 
-    private ResourceDTO buildResourceDTO(Long technologyId) {
-        return ResourceDTO.builder()
+    private ResourceDto buildResourceDTO(Long technologyId) {
+        return ResourceDto.builder()
                 .objectType(Technology.TECHNOLOGY_TYPE)
                 .objectId(technologyId)
                 .resourceURI(ServletUriComponentsBuilder.fromCurrentRequestUri()
@@ -68,7 +68,7 @@ public class TechnologyResource {
 
     @RequestMapping(method = RequestMethod.PUT, value = ID_PATH)
     @ResponseStatus(value = HttpStatus.OK)
-    public ResourceDTO updateTechnology(@PathVariable(ID) Long technologyId, @RequestBody TechnologyDTO technologyDTO) {
+    public ResourceDto updateTechnology(@PathVariable(ID) Long technologyId, @RequestBody TechnologyDto technologyDTO) {
         Technology existingTechnology = technologyService.getById(technologyId);
         Technology updatedTechnology = technologyMapper.updateExistingTechnology(existingTechnology, technologyDTO);
         technologyService.update(updatedTechnology);

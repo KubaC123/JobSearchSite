@@ -1,12 +1,12 @@
 package getjobin.it.portal.jobservice.domain.indexation.boundary;
 
-import getjobin.it.portal.jobservice.api.client.IndexMappingDTO;
+import getjobin.it.portal.elasticservice.api.MappingEventDto;
 import getjobin.it.portal.jobservice.domain.company.boundary.CompanyResource;
-import getjobin.it.portal.jobservice.domain.job.boundary.OperationType;
-import getjobin.it.portal.jobservice.domain.job.boundary.JobResource;
-import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.indexation.control.IndexationService;
 import getjobin.it.portal.jobservice.domain.indexation.control.MappingService;
+import getjobin.it.portal.jobservice.domain.job.boundary.JobResource;
+import getjobin.it.portal.jobservice.domain.job.boundary.OperationType;
+import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,7 +40,7 @@ public class IndexationResource {
 
     @RequestMapping(method = RequestMethod.GET, value = COMPANY_MAPPING_PATH)
     @ResponseStatus(value = HttpStatus.OK)
-    public IndexMappingDTO getCompanyMapping() {
+    public MappingEventDto getCompanyMapping() {
         return mappingProvider.buildCompanyIndexMapping();
     }
 
@@ -52,7 +52,7 @@ public class IndexationResource {
 
     @RequestMapping(method = RequestMethod.GET, value = JOB_MAPPING_PATH)
     @ResponseStatus(value = HttpStatus.OK)
-    public IndexMappingDTO getJobMapping() {
+    public MappingEventDto getJobMapping() {
         return mappingProvider.buildJobIndexMapping();
     }
 

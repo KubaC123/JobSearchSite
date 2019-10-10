@@ -1,7 +1,7 @@
 package getjobin.it.portal.jobservice.domain.job.control;
 
+import getjobin.it.portal.jobservice.api.JobEventDto;
 import getjobin.it.portal.jobservice.domain.category.control.CategoryService;
-import getjobin.it.portal.jobservice.api.domain.event.JobEvent;
 import getjobin.it.portal.jobservice.domain.job.boundary.OperationType;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.technology.control.TechnologyService;
@@ -34,9 +34,9 @@ public class JobEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Async
-    public void processJobEvent(JobEvent event) {
+    public void processJobEvent(JobEventDto event) {
         try {
-            OperationType operationType = event.getOperationType();
+            OperationType operationType = OperationType.valueOf(event.getOperationType());
             log.info(MessageFormat.format("Received job event with id {0} and operation type {1}", event.getJobId(), operationType.getLiteral()));
             switch (operationType) {
                 case CREATE:

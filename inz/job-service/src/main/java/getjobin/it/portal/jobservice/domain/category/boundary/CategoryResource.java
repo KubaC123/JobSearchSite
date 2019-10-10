@@ -1,7 +1,7 @@
 package getjobin.it.portal.jobservice.domain.category.boundary;
 
-import getjobin.it.portal.jobservice.api.domain.rest.CategoryDTO;
-import getjobin.it.portal.jobservice.api.domain.rest.ResourceDTO;
+import getjobin.it.portal.jobservice.api.CategoryDto;
+import getjobin.it.portal.jobservice.api.ResourceDto;
 import getjobin.it.portal.jobservice.domain.category.control.CategoryService;
 import getjobin.it.portal.jobservice.domain.category.entity.Category;
 import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
@@ -39,7 +39,7 @@ public class CategoryResource {
 
     @RequestMapping(method = RequestMethod.GET, value = IDS_PATH)
     @ResponseStatus(value = HttpStatus.OK)
-    public List<CategoryDTO> browseCategories(@PathVariable(IDS) IdsParam ids) {
+    public List<CategoryDto> browseCategories(@PathVariable(IDS) IdsParam ids) {
         return categoryService.findByIds(ids.asList()).stream()
                 .map(categoryMapper::toDTO)
                 .collect(Collectors.toList());
@@ -47,7 +47,7 @@ public class CategoryResource {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
-    public List<ResourceDTO> createCategories(List<CategoryDTO> categoryDTOs) {
+    public List<ResourceDto> createCategories(List<CategoryDto> categoryDTOs) {
         return categoryDTOs.stream()
                 .map(categoryMapper::toEntity)
                 .map(categoryService::create)
@@ -55,8 +55,8 @@ public class CategoryResource {
                 .collect(Collectors.toList());
     }
 
-    private ResourceDTO buildResourceDTO(Long technologyId) {
-        return ResourceDTO.builder()
+    private ResourceDto buildResourceDTO(Long technologyId) {
+        return ResourceDto.builder()
                 .objectType(Category.CATEGORY_TYPE)
                 .objectId(technologyId)
                 .resourceURI(ServletUriComponentsBuilder.fromCurrentRequestUri()
@@ -68,7 +68,7 @@ public class CategoryResource {
 
     @RequestMapping(method = RequestMethod.PUT, value = ID_PATH)
     @ResponseStatus(value = HttpStatus.OK)
-    public ResourceDTO updateCategory(@PathVariable(ID) Long categoryId, @RequestBody CategoryDTO categoryDTO) {
+    public ResourceDto updateCategory(@PathVariable(ID) Long categoryId, @RequestBody CategoryDto categoryDTO) {
         Category existingCategory = categoryService.getById(categoryId);
         Category updatedCategory = categoryMapper.updateExistingCategory(existingCategory, categoryDTO);
         categoryService.update(updatedCategory);

@@ -1,6 +1,6 @@
 package getjobin.it.portal.jobservice.domain.company.boundary;
 
-import getjobin.it.portal.jobservice.api.domain.rest.CompanyDTO;
+import getjobin.it.portal.jobservice.api.CompanyDto;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import org.springframework.stereotype.Component;
 
@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 @Component
 public class CompanyMapper {
 
-    public List<Company> fromDTOtoEntity(List<CompanyDTO> companyDTOs) {
+    public List<Company> fromDTOtoEntity(List<CompanyDto> companyDTOs) {
         return companyDTOs.stream()
                 .map(this::toEntity)
                 .collect(Collectors.toList());
     }
 
-    public Company toEntity(CompanyDTO companyDTO) {
+    public Company toEntity(CompanyDto companyDTO) {
         return Company.builder()
                 .withId(companyDTO.getId())
                 .withName(companyDTO.getName())
@@ -33,14 +33,14 @@ public class CompanyMapper {
 
     }
 
-    public List<CompanyDTO> fromEntityToDTO(List<Company> companyEntities) {
+    public List<CompanyDto> fromEntityToDTO(List<Company> companyEntities) {
         return companyEntities.stream()
-                .map(this::toDTO)
+                .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
-    public CompanyDTO toDTO(Company company) {
-        return CompanyDTO.builder()
+    public CompanyDto toDto(Company company) {
+        return CompanyDto.builder()
                 .id(company.getId())
                 .name(company.getName())
                 .webSiteUrl(company.getWebSiteUrl())
@@ -55,7 +55,7 @@ public class CompanyMapper {
                 .build();
     }
 
-    public Company updateExistingEntity(Company existingEntity, CompanyDTO companyDTO) {
+    public Company updateExistingEntity(Company existingEntity, CompanyDto companyDTO) {
         Company.CompanyEntityBuilder builder = Company.toBuilder(existingEntity);
         return builder.withName(companyDTO.getName())
                 .withWebSiteUrl(companyDTO.getWebSiteUrl())

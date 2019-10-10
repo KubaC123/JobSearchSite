@@ -2,9 +2,9 @@ package getjobin.it.portal.jobservice.domain.indexation.boundary;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import getjobin.it.portal.jobservice.api.client.IndexationEventDTO;
-import getjobin.it.portal.jobservice.api.domain.event.JobIndexationDTO;
-import getjobin.it.portal.jobservice.api.domain.event.JobTechStackIndexationDTO;
+import getjobin.it.portal.elasticservice.api.DocumentEventDto;
+import getjobin.it.portal.jobservice.api.JobDocumentDto;
+import getjobin.it.portal.jobservice.api.JobTechStackDocumentDto;
 import getjobin.it.portal.jobservice.domain.job.boundary.OperationType;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
@@ -29,8 +29,8 @@ public class IndexationMapper {
         this.techStackService = techStackService;
     }
 
-    public JobIndexationDTO toJobIndexationDTO(Job job) {
-        JobIndexationDTO.JobIndexationDTOBuilder builder = JobIndexationDTO.builder();
+    public JobDocumentDto toJobDocumentDto(Job job) {
+        JobDocumentDto.JobDocumentDtoBuilder builder = JobDocumentDto.builder();
         Optional.ofNullable(job.getCompany()).ifPresent(company -> {
             builder.companyId(company.getId());
             builder.companyName(company.getName());
@@ -71,25 +71,25 @@ public class IndexationMapper {
                 .build();
     }
 
-    private JobTechStackIndexationDTO toJobTechStackEventDTO(JobTechStackRelation techStackRelation) {
-        return JobTechStackIndexationDTO.builder()
+    private JobTechStackDocumentDto toJobTechStackEventDTO(JobTechStackRelation techStackRelation) {
+        return JobTechStackDocumentDto.builder()
                 .techStackId(techStackRelation.getTechStackId())
                 .techStackName(techStackService.getById(techStackRelation.getTechStackId()).getName())
                 .techStackExperienceLevel(techStackRelation.getExperienceLevel())
                 .build();
     }
 
-    public IndexationEventDTO toIndexationEvent(Job job, OperationType operationType) {
-        JobIndexationDTO jobIndexationDTO = toJobIndexationDTO(job);
+    public DocumentEventDto toIndexationEvent(Job job, OperationType operationType) {
+        JobDocumentDto jobDocumentDto = toJobDocumentDto(job);
         try {
-            return IndexationEventDTO.builder()
-                    .objectId(jobIndexationDTO.getId())
+            return DocumentEventDto.builder()
+                    .objectId(jobDocumentDto.getId())
                     .index("job")
                     .operationType(operationType.getLiteral())
-                    .data(objectMapper.writeValueAsString(jobIndexationDTO))
+                    .data(objectMapper.writeValueAsString(jobDocumentDto))
                     .build();
         } catch (JsonProcessingException exception) {
-            log.warn("Exception during parsing JobIndexationDTO {} to JSON. {}", jobIndexationDTO,  exception);
+            log.warn("Exception during parsing JobIndexationDTO {} to JSON. {}", jobDocumentDto,  exception);
             return null;
         }
     }

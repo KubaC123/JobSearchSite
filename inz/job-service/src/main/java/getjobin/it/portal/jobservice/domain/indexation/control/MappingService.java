@@ -1,6 +1,6 @@
 package getjobin.it.portal.jobservice.domain.indexation.control;
 
-import getjobin.it.portal.jobservice.api.client.IndexMappingDTO;
+import getjobin.it.portal.elasticservice.api.MappingEventDto;
 import getjobin.it.portal.jobservice.infrastructure.config.KafkaTopic;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class MappingService {
         this.kafkaTopic = kafkaTopic;
     }
 
-    public void sendMappingOnTopic(IndexMappingDTO indexMapping) {
+    public void sendMappingOnTopic(MappingEventDto indexMapping) {
         try {
             log.info("Sending mapping on kafka topic {}", indexMapping);
             kafkaTopic.mappings()

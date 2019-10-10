@@ -1,11 +1,11 @@
 package getjobin.it.portal.jobservice.domain.job.boundary;
 
-import getjobin.it.portal.jobservice.api.domain.rest.JobDTO;
-import getjobin.it.portal.jobservice.api.domain.rest.ResourceDTO;
+import getjobin.it.portal.jobservice.api.JobDto;
+import getjobin.it.portal.jobservice.api.ResourceDto;
 import getjobin.it.portal.jobservice.domain.job.control.JobService;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
-import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServicePreconditions;
+import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -41,31 +41,31 @@ public class JobResource {
 
     @RequestMapping(method = RequestMethod.GET, value = IdsParam.IDS_PATH)
     @ResponseStatus(value = HttpStatus.OK)
-    public List<JobDTO> browseJobs(@PathVariable(IdsParam.IDS) IdsParam ids) {
+    public List<JobDto> browseJobs(@PathVariable(IdsParam.IDS) IdsParam ids) {
         return jobService.findByIds(ids.asList()).stream()
-                .map(jobMapper::toDTO)
+                .map(jobMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "search")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<JobDTO> browseJobs(@RequestParam String rsql) {
+    public List<JobDto> browseJobs(@RequestParam("rsql") String rsql) {
         return jobService.findByRSQLCondition(rsql).stream()
-                .map(jobMapper::toDTO)
+                .map(jobMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ResourceDTO createJob(@RequestBody JobDTO jobDTO) {
-        Job job = jobMapper.toEntity(jobDTO);
+    public ResourceDto createJob(@RequestBody JobDto jobDto) {
+        Job job = jobMapper.toEntity(jobDto);
         Long createdJobId = jobService.create(job);
         applicationEventPublisher.publishEvent(jobMapper.toEvent(createdJobId, OperationType.CREATE));
         return buildResourceDTO(createdJobId);
     }
 
-    private ResourceDTO buildResourceDTO(Long jobId) {
-        return ResourceDTO.builder()
+    private ResourceDto buildResourceDTO(Long jobId) {
+        return ResourceDto.builder()
                 .objectType(Job.JOB_TYPE)
                 .objectId(jobId)
                 .resourceURI(ServletUriComponentsBuilder.fromCurrentRequestUri()
@@ -77,7 +77,7 @@ public class JobResource {
 
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseStatus(value = HttpStatus.OK)
-    public ResourceDTO updateJob(@RequestBody JobDTO jobDTO) {
+    public ResourceDto updateJob(@RequestBody JobDto jobDTO) {
         JobServicePreconditions.checkArgument(jobDTO.getId() != null, "Job id must be specified in DTO order to update it");
         Job existingJob = jobService.getById(jobDTO.getId());
         Job updatedJob = jobMapper.updateExistingJobOffer(existingJob, jobDTO);

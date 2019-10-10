@@ -1,8 +1,7 @@
 package getjobin.it.portal.jobservice.domain.company.boundary;
 
-
-import getjobin.it.portal.jobservice.api.domain.rest.CompanyDTO;
-import getjobin.it.portal.jobservice.api.domain.rest.ResourceDTO;
+import getjobin.it.portal.jobservice.api.CompanyDto;
+import getjobin.it.portal.jobservice.api.ResourceDto;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyService;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
@@ -39,21 +38,21 @@ public class CompanyResource {
 
     @RequestMapping(method = RequestMethod.GET, value = IdsParam.IDS_PATH)
     @ResponseStatus(code = HttpStatus.OK)
-    public List<CompanyDTO> browseCompanies(@PathVariable(IdsParam.IDS) IdsParam ids) {
+    public List<CompanyDto> browseCompanies(@PathVariable(IdsParam.IDS) IdsParam ids) {
         return companyService.findByIds(ids.asList()).stream()
-                .map(companyMapper::toDTO)
+                .map(companyMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ResourceDTO createCompany(@RequestBody CompanyDTO companyDTO) {
+    public ResourceDto createCompany(@RequestBody CompanyDto companyDTO) {
         Long newCompanyId = companyService.create(companyMapper.toEntity(companyDTO));
         return buildResourceDTO(newCompanyId);
     }
 
-    private ResourceDTO buildResourceDTO(Long companyId) {
-        return ResourceDTO.builder()
+    private ResourceDto buildResourceDTO(Long companyId) {
+        return ResourceDto.builder()
                 .objectType(Company.COMPANY_TYPE)
                 .objectId(companyId)
                 .resourceURI(ServletUriComponentsBuilder.fromCurrentRequestUri()
@@ -65,9 +64,9 @@ public class CompanyResource {
 
     @RequestMapping(method = RequestMethod.PUT, value = IdsParam.ID_PATH)
     @ResponseStatus(code = HttpStatus.OK)
-    public ResourceDTO updateCompany(@PathVariable(IdsParam.ID) Long companyId, @RequestBody CompanyDTO companyDTO) {
+    public ResourceDto updateCompany(@PathVariable(IdsParam.ID) Long companyId, @RequestBody CompanyDto companyDto) {
         Company foundCompany = companyService.getById(companyId);
-        Company updatedCompany = companyMapper.updateExistingEntity(foundCompany, companyDTO);
+        Company updatedCompany = companyMapper.updateExistingEntity(foundCompany, companyDto);
         companyService.update(updatedCompany);
         return buildResourceDTO(updatedCompany.getId());
     }
