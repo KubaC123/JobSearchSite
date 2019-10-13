@@ -11,6 +11,9 @@ import getjobin.it.portal.jobservice.domain.job.control.JobService;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.entity.TestJobBuilder;
 import getjobin.it.portal.jobservice.domain.indexation.boundary.IndexationMapper;
+import getjobin.it.portal.jobservice.domain.location.control.LocationService;
+import getjobin.it.portal.jobservice.domain.location.entity.Location;
+import getjobin.it.portal.jobservice.domain.location.entity.TestLocationBuilder;
 import getjobin.it.portal.jobservice.domain.technology.control.TechnologyService;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.domain.technology.entity.TestTechnologyBuilder;
@@ -48,6 +51,10 @@ public class IndexationMapperUnitTest {
     @Autowired
     private TechStackService techStackService;
 
+
+    @Autowired
+    private LocationService locationService;
+
     @Autowired
     private JobService jobService;
 
@@ -63,7 +70,11 @@ public class IndexationMapperUnitTest {
                 .map(techStackService::create)
                 .map(techStackService::getById)
                 .collect(Collectors.toList());
-        job = jobService.getById(jobService.create(TestJobBuilder.buildValidJobWith(company, category, technology, techStacks)));
+        List<Location> locations = TestLocationBuilder.buildValidLocations(2).stream()
+                .map(locationService::create)
+                .map(locationService::getById)
+                .collect(Collectors.toList());
+        job = jobService.getById(jobService.create(TestJobBuilder.buildValidJobWith(company, category, technology, techStacks, locations)));
     }
 
     @Test

@@ -17,7 +17,8 @@ public class JobTypeValidator implements ConstraintValidator<JobTypeValidation, 
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if(JobType.fromString(value).isEmpty()) {
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(MessageFormat.format("Allowed job types: {0}, specified {1}", Arrays.stream(JobType.values())
+            context.buildConstraintViolationWithTemplate(MessageFormat.format("Allowed job types: {0}, specified {1}",
+                    Arrays.stream(JobType.values())
                     .map(JobType::getLiteral)
                     .collect(Collectors.joining(", ")), value))
                     .addConstraintViolation();

@@ -14,14 +14,11 @@ import java.util.Set;
 @Service
 public class CompanyService {
 
+    @Autowired
     private Validator validator;
-    private CompanyRepository companyRepository;
 
     @Autowired
-    public CompanyService(Validator validator, CompanyRepository companyRepository) {
-        this.validator = validator;
-        this.companyRepository = companyRepository;
-    }
+    private CompanyRepository companyRepository;
 
     public Optional<Company> findById(Long companyId) {
         return companyRepository.findById(companyId);

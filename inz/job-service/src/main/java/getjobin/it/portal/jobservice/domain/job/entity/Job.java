@@ -3,10 +3,14 @@ package getjobin.it.portal.jobservice.domain.job.entity;
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
 import getjobin.it.portal.jobservice.domain.category.entity.Category;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
+import getjobin.it.portal.jobservice.domain.job.entity.validation.CategoryValidation;
+import getjobin.it.portal.jobservice.domain.job.entity.validation.CompanyValidation;
 import getjobin.it.portal.jobservice.domain.job.entity.validation.EmploymentTypeValidation;
 import getjobin.it.portal.jobservice.domain.job.entity.validation.ExperienceLevelValidation;
 import getjobin.it.portal.jobservice.domain.job.entity.validation.JobTypeValidation;
+import getjobin.it.portal.jobservice.domain.job.entity.validation.LocationValidation;
 import getjobin.it.portal.jobservice.domain.job.entity.validation.TechStacksValidation;
+import getjobin.it.portal.jobservice.domain.job.entity.validation.TechnologyValidation;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +27,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -52,10 +57,14 @@ public class Job extends ManagedEntity {
 
     @ManyToOne
     @JoinColumn(name = "COMPANY_ID")
+    @NotNull(message = "Company must be provided")
+    @CompanyValidation
     private Company company;
 
     @ManyToOne
     @JoinColumn(name = "CATEGORY_ID")
+    @NotNull(message = "Category must be provided")
+    @CategoryValidation
     private Category category;
 
     @Column(name = "EXP_LEVEL")
@@ -85,11 +94,13 @@ public class Job extends ManagedEntity {
     private String currency;
     
     @Column(name = "DESCRIPTION")
-    @NotEmpty(message = "Job description must be provided")
+    @NotEmpty(message = "Description must be provided")
     private String description;
     
     @ManyToOne
     @JoinColumn(name = "TECHNOLOGY_ID")
+    @NotNull(message = "Technology must be provided")
+    @TechnologyValidation
     private Technology technology;
 
     @Column(name = "PROJECT_INDUSTRY")
@@ -146,13 +157,23 @@ public class Job extends ManagedEntity {
     @Column(name = "EXPIRE_DATE")
     private Date expireDate;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     @JoinColumn(name = "JOB_ID")
     @TechStacksValidation
     private List<JobTechStackRelation> techStackRelations;
 
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @JoinColumn(name = "JOB_ID")
+    @NotNull(message = "At least one location must be provided")
+    @LocationValidation
+    private List<JobLocationRelation> locationRelations;
+
     public Optional<List<JobTechStackRelation>> getTechStackRelations() {
         return Optional.ofNullable(techStackRelations);
+    }
+
+    public Optional<List<JobLocationRelation>> getLocationRelations() {
+        return Optional.ofNullable(locationRelations);
     }
 
     public Job() { }
@@ -195,6 +216,7 @@ public class Job extends ManagedEntity {
         this.modifyDate = builder.modifyDate;
         this.expireDate = builder.expireDate;
         this.techStackRelations = builder.techStackRelations;
+        this.locationRelations = builder.locationRelations;
     }
 
     public static JobEntityBuilder toBuilder(Job job) {
@@ -231,7 +253,8 @@ public class Job extends ManagedEntity {
                 .createDate(job.getCreateDate())
                 .modifyDate(job.getModifyDate())
                 .expireDate(job.getExpireDate())
-                .techStackRelations(job.getTechStackRelations().orElse(null));
+                .techStackRelations(job.getTechStackRelations().orElse(null))
+                .locationRelations(job.getLocationRelations().orElse(null));
     }
 
     public static class JobEntityBuilder {
@@ -269,6 +292,7 @@ public class Job extends ManagedEntity {
         private Date modifyDate;
         private Date expireDate;
         private List<JobTechStackRelation> techStackRelations;
+        private List<JobLocationRelation> locationRelations;
 
         public JobEntityBuilder id(Long id) {
             this.id = id;
@@ -433,6 +457,11 @@ public class Job extends ManagedEntity {
 
         public JobEntityBuilder techStackRelations(List<JobTechStackRelation> techStackRelations) {
             this.techStackRelations = techStackRelations;
+            return this;
+        }
+
+        public JobEntityBuilder locationRelations(List<JobLocationRelation> locationRelations) {
+            this.locationRelations = locationRelations;
             return this;
         }
 

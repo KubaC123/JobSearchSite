@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import getjobin.it.portal.elasticservice.api.DocumentEventDto;
 import getjobin.it.portal.jobservice.domain.indexation.boundary.IndexationMapper;
-import getjobin.it.portal.jobservice.domain.job.boundary.OperationType;
+import getjobin.it.portal.jobservice.domain.job.control.OperationType;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.search.boundary.QueryService;
 import getjobin.it.portal.jobservice.infrastructure.config.KafkaEventPublisher;
@@ -32,25 +32,21 @@ public class IndexationService {
     private static final int PARTITION_SIZE = 50;
     private static final int NUMBER_OF_THREADS = 10;
 
+    @Autowired
     private KafkaTopic kafkaTopic;
 
+    @Autowired
     private KafkaEventPublisher kafkaEventPublisher;
 
+    @Autowired
     private QueryService queryService;
 
+    @Autowired
     private IndexationMapper indexationMapper;
 
     private Executor executorService;
 
     private Map<String, BiConsumer<List<Long>, OperationType>> indexationConsumers = new HashMap<>();
-
-    @Autowired
-    public IndexationService(KafkaTopic kafkaTopic, KafkaEventPublisher kafkaEventPublisher, QueryService queryService, IndexationMapper indexationMapper) {
-        this.kafkaTopic = kafkaTopic;
-        this.kafkaEventPublisher = kafkaEventPublisher;
-        this.queryService = queryService;
-        this.indexationMapper = indexationMapper;
-    }
 
     @PostConstruct
     void init() {

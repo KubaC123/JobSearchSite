@@ -1,11 +1,10 @@
 package getjobin.it.portal.jobservice.domain.company;
 
+import getjobin.it.portal.jobservice.domain.IntegrationTest;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyService;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.company.entity.TestCompanyBuilder;
-import getjobin.it.portal.jobservice.domain.job.entity.TestJobBuilder;
-import getjobin.it.portal.jobservice.domain.job.control.JobService;
-import getjobin.it.portal.jobservice.domain.job.entity.Job;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +13,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
-import java.util.Optional;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -28,31 +25,24 @@ public class CompanyIntegrationTest {
     private CompanyService companyService;
 
     @Autowired
-    private JobService jobService;
+    private IntegrationTest integrationTest;
+
+    @Before
+    public void init() {
+        integrationTest.init();
+    }
 
     @Test
     public void givenDependenciesThenTheyAreInjected() {
         assertNotNull(companyService);
-        assertNotNull(jobService);
+        assertNotNull(integrationTest);
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void givenCompanyWithActiveJobsOnRemoveThenThrowsConstraintViolationException() {
         Long companyId = companyService.create(TestCompanyBuilder.buildValidCompany());
         Company createdCompany = companyService.getById(companyId);
-        jobService.create(TestJobBuilder.buildValidJobInCompany(createdCompany));
+        integrationTest.createValidJobWith(createdCompany);
         companyService.remove(createdCompany);
-    }
-
-    @Test
-    public void givenCompanyWithInactiveJobsThenRemovesIt() {
-        Long companyId = companyService.create(TestCompanyBuilder.buildValidCompany());
-        Company createdCompany = companyService.getById(companyId);
-        Long companyJobId = jobService.create(TestJobBuilder.buildValidJobInCompany(createdCompany));
-        Job companyJob = jobService.getById(companyJobId);
-        jobService.remove(companyJob);
-        companyService.remove(createdCompany);
-        Optional<Company> removedCompany = companyService.findById(companyId);
-        assertTrue(removedCompany.isEmpty());
     }
 }

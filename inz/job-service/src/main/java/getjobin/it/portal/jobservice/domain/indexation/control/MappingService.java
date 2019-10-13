@@ -11,15 +11,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class MappingService {
 
+    @Autowired
     private KafkaTopic kafkaTopic;
 
-    private KafkaEventPublisher kafkaEventPublisher;
-
     @Autowired
-    public MappingService(KafkaTopic kafkaTopic, KafkaEventPublisher kafkaEventPublisher) {
-        this.kafkaTopic = kafkaTopic;
-        this.kafkaEventPublisher = kafkaEventPublisher;
-    }
+    private KafkaEventPublisher kafkaEventPublisher;
 
     public void sendMappingOnTopic(MappingEventDto indexMapping) {
         try {

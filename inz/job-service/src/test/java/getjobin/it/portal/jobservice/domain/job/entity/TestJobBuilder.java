@@ -5,6 +5,7 @@ import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.job.control.enums.EmploymentType;
 import getjobin.it.portal.jobservice.domain.job.control.enums.ExperienceLevel;
 import getjobin.it.portal.jobservice.domain.job.control.enums.JobType;
+import getjobin.it.portal.jobservice.domain.location.entity.Location;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 
@@ -43,9 +44,9 @@ public class TestJobBuilder {
     public static Integer DOCUMENTATION = 5;
     public static Integer OTHER_ACTIVITIES = 100 - DEVELOPMENT - MAINTENANCE - TESTING - CLIENT_SUPPORT - DOCUMENTATION;
     public static String AGREEMENTS = "Przetwarzamy wszystko co się da, sprzedajemy twoje dane.";
-    public static Boolean REMOTE = Boolean.FALSE;
     public static String UPDATE = "update";
     public static Integer TECH_STACK_RELATION_EXP_LEVEL = 2;
+    public static Boolean LOCATION_RELATION_REMOTE = true;
 
     public static Job buildValidJob() {
         return Job.builder()
@@ -112,10 +113,20 @@ public class TestJobBuilder {
 
     public static Job buildJobWithRelationsToNotExistingTechStacks() {
         return Job.toBuilder(buildValidJob())
-                .techStackRelations(Stream.of(-1L, -2L, -3L, -4L)
-                        .map(techStackId -> buildJobTechStackRelation(techStackId))
-                        .collect(Collectors.toList()))
+                .techStackRelations(getNotExistingTechStacks())
                 .build();
+    }
+
+    public static List<JobTechStackRelation> getNotExistingTechStacks() {
+        return Stream.of(-1L, -2L, -3L, -4L)
+                .map(techStackId -> buildJobTechStackRelation(techStackId))
+                .collect(Collectors.toList());
+    }
+
+    public static List<JobLocationRelation> getNotExistingLocations() {
+        return Stream.of(-1L, -2L, -3L, -4L)
+                .map(locationId -> buildJobLocationRelation(locationId))
+                .collect(Collectors.toList());
     }
 
     public static Job buildValidJobWithTitle(String title) {
@@ -149,22 +160,82 @@ public class TestJobBuilder {
                 .build();
     }
 
-    private static JobTechStackRelation buildJobTechStackRelation(Long techStackId) {
+    public static JobTechStackRelation buildJobTechStackRelation(Long techStackId) {
         return JobTechStackRelation.builder()
                 .withTechStackId(techStackId)
                 .withExperienceLevel(TECH_STACK_RELATION_EXP_LEVEL)
                 .build();
     }
 
-    public static Job buildValidJobWith(Company company, Category category, Technology technology, List<TechStack> techStacks) {
+    public static Job buildValidJobWith(Company company, Category category, Technology technology,
+                                        List<TechStack> techStacks, List<Location> locations) {
         return Job.toBuilder(buildValidJob())
                 .company(company)
                 .category(category)
                 .technology(technology)
-                .techStackRelations(techStacks.stream()
-                        .map(TechStack::getId)
-                        .map(techStackId -> buildJobTechStackRelation(techStackId))
-                        .collect(Collectors.toList()))
+                .techStackRelations(getTechStackRelations(techStacks))
+                .locationRelations(getLocationRelations(locations))
+                .build();
+    }
+
+    public static List<JobLocationRelation> getLocationRelations(List<Location> locations) {
+        return locations.stream()
+                .map(Location::getId)
+                .map(locationId -> buildJobLocationRelation(locationId))
+                .collect(Collectors.toList());
+    }
+
+    public static List<JobTechStackRelation> getTechStackRelations(List<TechStack> techStacks) {
+        return techStacks.stream()
+                .map(TechStack::getId)
+                .map(techStackId -> buildJobTechStackRelation(techStackId))
+                .collect(Collectors.toList());
+    }
+
+    public static JobLocationRelation buildJobLocationRelation(Long locationId) {
+        return JobLocationRelation.builder()
+                .locationId(locationId)
+                .remote(LOCATION_RELATION_REMOTE)
+                .build();
+    }
+
+    public static Job buildJobWithOutCompany(Category category, Technology technology,
+                                             List<TechStack> techStacks, List<Location> locations) {
+        return Job.toBuilder(buildValidJob())
+                .category(category)
+                .technology(technology)
+                .techStackRelations(getTechStackRelations(techStacks))
+                .locationRelations(getLocationRelations(locations))
+                .build();
+    }
+
+    public static Job buildJobWithoutCategory(Company company, Technology technology,
+                                              List<TechStack> techStacks, List<Location> locations) {
+        return Job.toBuilder(buildValidJob())
+                .company(company)
+                .technology(technology)
+                .techStackRelations(getTechStackRelations(techStacks))
+                .locationRelations(getLocationRelations(locations))
+                .build();
+    }
+
+    public static Job buildJobWithoutTechnology(Company company, Category category,
+                                              List<TechStack> techStacks, List<Location> locations) {
+        return Job.toBuilder(buildValidJob())
+                .company(company)
+                .category(category)
+                .techStackRelations(getTechStackRelations(techStacks))
+                .locationRelations(getLocationRelations(locations))
+                .build();
+    }
+
+    public static Job buildJobWithoutLocation(Company company, Category category,
+                                                Technology technology, List<TechStack> techStacks) {
+        return Job.toBuilder(buildValidJob())
+                .company(company)
+                .category(category)
+                .technology(technology)
+                .techStackRelations(getTechStackRelations(techStacks))
                 .build();
     }
 }

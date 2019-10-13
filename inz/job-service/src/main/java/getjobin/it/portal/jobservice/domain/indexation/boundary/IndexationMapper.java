@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import getjobin.it.portal.elasticservice.api.DocumentEventDto;
 import getjobin.it.portal.jobservice.api.JobDocumentDto;
-import getjobin.it.portal.jobservice.domain.job.boundary.OperationType;
+import getjobin.it.portal.jobservice.domain.job.control.OperationType;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
@@ -20,14 +20,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class IndexationMapper {
 
-    private TechStackService techStackService;
-
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
-    public IndexationMapper(TechStackService techStackService) {
-        this.techStackService = techStackService;
-    }
+    private TechStackService techStackService;
 
     public JobDocumentDto toJobDocumentDto(Job job) {
         JobDocumentDto.JobDocumentDtoBuilder builder = JobDocumentDto.builder();

@@ -1,6 +1,5 @@
 package getjobin.it.portal.jobservice.domain.company;
 
-
 import getjobin.it.portal.jobservice.domain.company.control.CompanyRepository;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.company.entity.TestCompanyBuilder;

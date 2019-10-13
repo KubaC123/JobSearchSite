@@ -28,17 +28,13 @@ public class TechnologyResource {
     private static final String IDS_PATH = "{ids}";
     private static final String IDS = "ids";
 
+    @Autowired
     private TechnologyMapper technologyMapper;
-    private TechnologyService technologyService;
 
     @Autowired
-    public TechnologyResource(TechnologyMapper technologyMapper, TechnologyService technologyService) {
-        this.technologyMapper = technologyMapper;
-        this.technologyService = technologyService;
-    }
+    private TechnologyService technologyService;
 
     @RequestMapping(method = RequestMethod.GET, value = IDS_PATH)
-    @ResponseStatus(value = HttpStatus.OK)
     public List<TechnologyDto> browseTechnologies(@PathVariable(IDS)IdsParam ids) {
         return technologyService.findByIds(ids.asList()).stream()
                 .map(technologyMapper::toDto)
@@ -67,7 +63,6 @@ public class TechnologyResource {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = ID_PATH)
-    @ResponseStatus(value = HttpStatus.OK)
     public ResourceDto updateTechnology(@PathVariable(ID) Long technologyId, @RequestBody TechnologyDto technologyDTO) {
         Technology existingTechnology = technologyService.getById(technologyId);
         Technology updatedTechnology = technologyMapper.updateExistingTechnology(existingTechnology, technologyDTO);
@@ -76,7 +71,6 @@ public class TechnologyResource {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = IDS_PATH)
-    @ResponseStatus(value = HttpStatus.OK)
     public void deleteTechnologies(@PathVariable(IDS) IdsParam ids) {
         technologyService.findByIds(ids.asList())
                 .forEach(technologyService::remove);

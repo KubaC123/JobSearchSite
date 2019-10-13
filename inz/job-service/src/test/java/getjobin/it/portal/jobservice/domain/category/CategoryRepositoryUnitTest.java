@@ -53,7 +53,6 @@ public class CategoryRepositoryUnitTest {
         assertTrue(removedTechnology.isEmpty());
     }
 
-
     @Test
     public void givenValidDataOnUpdateThenUpdatesCategory() {
         Long categoryId = categoryRepository.save(TestCategoryBuilder.buildValidCategory());

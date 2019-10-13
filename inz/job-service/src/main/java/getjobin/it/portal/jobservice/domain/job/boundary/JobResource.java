@@ -30,31 +30,25 @@ public class JobResource {
 
     public static final String JOB_PATH = "job";
 
+    @Autowired
     private JobMapper jobMapper;
-    private JobService jobService;
 
     @Autowired
-    public JobResource(JobMapper jobMapper, JobService jobService) {
-        this.jobMapper = jobMapper;
-        this.jobService = jobService;
-    }
+    private JobService jobService;
 
     @RequestMapping(method = RequestMethod.GET, value = IdsParam.IDS_PATH)
-    @ResponseStatus(value = HttpStatus.OK)
     public List<JobDto> browseJobs(@PathVariable(IdsParam.IDS) IdsParam ids) {
         List<Job> foundJobs = jobService.findByIds(ids.asList());
         return jobMapper.toDtos(foundJobs);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "search")
-    @ResponseStatus(value = HttpStatus.OK)
     public List<JobDto> searchByRsql(@RequestParam("rsql") String rsql) {
         List<Job> foundJobs = jobService.findByRsqlCondition(rsql);
         return jobMapper.toDtos(foundJobs);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "search/fullText")
-    @ResponseStatus(value = HttpStatus.OK)
     public List<JobDto> searchByTextUsingElasticSearch(@RequestParam("searchText") String searchText) {
         Instant start = Instant.now();
         List<Job> foundJobs = jobService.searchByTextUsingElasticSearch(searchText);
@@ -64,7 +58,6 @@ public class JobResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "search/fullText/sql")
-    @ResponseStatus(value = HttpStatus.OK)
     public List<JobDto> searchByTextUsingSql(@RequestParam("searchText") String searchText) {
         Instant start = Instant.now();
         List<Job> foundJobs = jobService.searchByTextUsingSql(searchText);
@@ -93,7 +86,6 @@ public class JobResource {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    @ResponseStatus(value = HttpStatus.OK)
     public ResourceDto updateJob(@RequestBody JobDto jobDTO) {
         JobServicePreconditions.checkArgument(jobDTO.getId() != null, "Job id must be specified in DTO order to update it");
         Job existingJob = jobService.getById(jobDTO.getId());
@@ -103,7 +95,6 @@ public class JobResource {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = IdsParam.IDS)
-    @ResponseStatus(value = HttpStatus.OK)
     public void deleteJob(@PathParam(IdsParam.IDS) IdsParam ids) {
         jobService.findByIds(ids.asList())
                 .forEach(jobService::remove);

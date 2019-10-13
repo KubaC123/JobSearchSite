@@ -7,7 +7,6 @@ import getjobin.it.portal.elasticservice.api.FoundDocumentDto;
 import getjobin.it.portal.jobservice.client.ElasticServiceClient;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.indexation.control.IndexationService;
-import getjobin.it.portal.jobservice.domain.job.boundary.OperationType;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.search.control.GenericRSQLSpecification;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
@@ -29,9 +28,16 @@ import java.util.stream.Collectors;
 @Service
 public class JobService {
 
+    @Autowired
     private Validator validator;
+
+    @Autowired
     private JobRepository jobRepository;
+
+    @Autowired
     private IndexationService indexationService;
+
+    @Autowired
     private ElasticServiceClient elasticServiceClient;
 
     @Value("${getjobin.it.portal.job.sql.fulltext.attributes}")
@@ -39,15 +45,6 @@ public class JobService {
 
     @Value("${getjobin.it.portal.job.elastic.fulltext.attributes}")
     private String elasticFullTextSearchCommaSeparatedAttributes;
-
-    @Autowired
-    public JobService(Validator validator, JobRepository jobRepository,
-                      ElasticServiceClient elasticServiceClient, IndexationService indexationService) {
-        this.validator = validator;
-        this.jobRepository = jobRepository;
-        this.elasticServiceClient = elasticServiceClient;
-        this.indexationService = indexationService;
-    }
 
     public Optional<Job> findById(Long jobId) {
         return jobRepository.findById(jobId);

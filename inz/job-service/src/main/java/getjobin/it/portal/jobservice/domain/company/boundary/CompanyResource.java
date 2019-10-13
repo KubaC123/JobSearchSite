@@ -27,17 +27,13 @@ public class CompanyResource {
 
     public static final String COMPANY_PATH = "company";
 
+    @Autowired
     private CompanyMapper companyMapper;
-    private CompanyService companyService;
 
     @Autowired
-    public CompanyResource(CompanyMapper companyMapper, CompanyService companyService) {
-        this.companyMapper = companyMapper;
-        this.companyService = companyService;
-    }
+    private CompanyService companyService;
 
     @RequestMapping(method = RequestMethod.GET, value = IdsParam.IDS_PATH)
-    @ResponseStatus(code = HttpStatus.OK)
     public List<CompanyDto> browseCompanies(@PathVariable(IdsParam.IDS) IdsParam ids) {
         return companyService.findByIds(ids.asList()).stream()
                 .map(companyMapper::toDto)
@@ -63,7 +59,6 @@ public class CompanyResource {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = IdsParam.ID_PATH)
-    @ResponseStatus(code = HttpStatus.OK)
     public ResourceDto updateCompany(@PathVariable(IdsParam.ID) Long companyId, @RequestBody CompanyDto companyDto) {
         Company foundCompany = companyService.getById(companyId);
         Company updatedCompany = companyMapper.updateExistingEntity(foundCompany, companyDto);
@@ -72,7 +67,6 @@ public class CompanyResource {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = IdsParam.IDS_PATH)
-    @ResponseStatus(code = HttpStatus.OK)
     public void deleteCompanies(@PathVariable(IdsParam.IDS) IdsParam ids) {
         List<Company> foundCompanies = companyService.findByIds(ids.asList());
         log.info(MessageFormat.format("[COMPANY] removing companies with ids: {0}", getCommaSeparatedIds(foundCompanies)));

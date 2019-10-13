@@ -31,23 +31,26 @@ public class TechStacksValidator implements ConstraintValidator<TechStacksValida
     }
 
     private boolean validateTechStackRelations(List<JobTechStackRelation> techStackRelations, ConstraintValidatorContext context) {
-        boolean isValid = true;
         List<Long> specifiedTechStackIds = getTechStackIds(techStackRelations);
         Set<Long> duplicatedTechStackIds = findDuplicatedTechStackIds(specifiedTechStackIds);
-        List<Long> notExistingTechStackIds = findNotExistingTechStackIds(specifiedTechStackIds);
-        String message = "";
         if(!duplicatedTechStackIds.isEmpty()) {
-            isValid = false;
-            message = MessageFormat.format("Specified duplicated tech stack id(s): {0}.", getCommaSeparatedIds(duplicatedTechStackIds.stream()));
+            addMessageToContext(context,
+                    MessageFormat.format("Duplicated tech stack id(s): {0}.", getCommaSeparatedIds(duplicatedTechStackIds.stream())));
+            return false;
         }
+        List<Long> notExistingTechStackIds = findNotExistingTechStackIds(specifiedTechStackIds);
         if(!notExistingTechStackIds.isEmpty()) {
-            isValid = false;
-            message = MessageFormat.format("Given tech stack does not exists or was removed, id(s): {0}.", getCommaSeparatedIds(notExistingTechStackIds.stream()));
+            addMessageToContext(context,
+                    MessageFormat.format("Tech stack does not exists, id(s): {0}.", getCommaSeparatedIds(notExistingTechStackIds.stream())));
+            return false;
         }
+        return true;
+    }
+
+    private void addMessageToContext(ConstraintValidatorContext context, String message) {
         context.disableDefaultConstraintViolation();
         context.buildConstraintViolationWithTemplate(message)
                 .addConstraintViolation();
-        return isValid;
     }
 
     private String getCommaSeparatedIds(Stream<Long> stream) {

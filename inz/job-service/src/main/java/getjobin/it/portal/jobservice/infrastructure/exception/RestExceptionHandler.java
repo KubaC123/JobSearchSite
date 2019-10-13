@@ -1,6 +1,6 @@
 package getjobin.it.portal.jobservice.infrastructure.exception;
 
-import getjobin.it.portal.jobservice.api.ErrorMessageDto;
+import getjobin.it.portal.common.api.ErrorMessageDto;
 import getjobin.it.portal.jobservice.infrastructure.util.CurrentDate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

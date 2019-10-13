@@ -14,14 +14,11 @@ import java.util.Set;
 @Service
 public class CategoryService {
 
+    @Autowired
     private Validator validator;
-    private CategoryRepository categoryRepository;
 
     @Autowired
-    public CategoryService(Validator validator, CategoryRepository categoryRepository) {
-        this.validator = validator;
-        this.categoryRepository = categoryRepository;
-    }
+    private CategoryRepository categoryRepository;
 
     public List<Category> findByIds(List<Long> categoryIds) {
         return categoryRepository.findByIds(categoryIds);
@@ -40,21 +37,21 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    private void validate(Category technology) {
-        Set<ConstraintViolation<Category>> violations = validator.validate(technology);
+    private void validate(Category category) {
+        Set<ConstraintViolation<Category>> violations = validator.validate(category);
         if(!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
     }
 
-    public Long update(Category technology) {
-        validate(technology);
-        return categoryRepository.update(technology);
+    public Long update(Category category) {
+        validate(category);
+        return categoryRepository.update(category);
     }
 
-    public void remove(Category technology) {
-        validateOnRemove(technology);
-        categoryRepository.remove(technology);
+    public void remove(Category category) {
+        validateOnRemove(category);
+        categoryRepository.remove(category);
     }
 
     private void validateOnRemove(Category category) {

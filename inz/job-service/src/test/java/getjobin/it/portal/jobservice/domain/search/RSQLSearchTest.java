@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.infrastructure;
+package getjobin.it.portal.jobservice.domain.search;
 
 import cz.jirutka.rsql.parser.RSQLParser;
 import cz.jirutka.rsql.parser.RSQLParserException;

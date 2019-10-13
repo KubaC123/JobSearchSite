@@ -20,12 +20,8 @@ public class CompanyRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private QueryService queryService;
-
     @Autowired
-    public CompanyRepository(QueryService queryService) {
-        this.queryService = queryService;
-    }
+    private QueryService queryService;
 
     public Optional<Company> findById(Long companyId) {
         return Optional.ofNullable(entityManager.find(Company.class, companyId));

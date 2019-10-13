@@ -19,12 +19,8 @@ public class TechStackRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private QueryService queryService;
-
     @Autowired
-    public TechStackRepository(QueryService queryService) {
-        this.queryService = queryService;
-    }
+    private QueryService queryService;
 
     public Optional<TechStack> findById(Long techStackId) {
         return Optional.ofNullable(entityManager.find(TechStack.class, techStackId));

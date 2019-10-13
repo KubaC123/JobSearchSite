@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.infrastructure;
+package getjobin.it.portal.jobservice.domain.search;
 
 import getjobin.it.portal.jobservice.domain.company.control.CompanyRepository;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;

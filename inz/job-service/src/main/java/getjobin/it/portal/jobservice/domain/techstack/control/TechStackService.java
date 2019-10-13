@@ -14,14 +14,11 @@ import java.util.Set;
 @Service
 public class TechStackService {
 
+    @Autowired
     private Validator validator;
-    private TechStackRepository techStackRepository;
 
     @Autowired
-    public TechStackService(Validator validator, TechStackRepository techStackRepository) {
-        this.validator = validator;
-        this.techStackRepository = techStackRepository;
-    }
+    private TechStackRepository techStackRepository;
 
     public List<TechStack> findByIds(List<Long> techStackIds) {
         return techStackRepository.findByIds(techStackIds);

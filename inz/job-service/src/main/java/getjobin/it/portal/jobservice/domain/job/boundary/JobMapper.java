@@ -25,16 +25,14 @@ import java.util.stream.Collectors;
 @Component
 public class JobMapper {
 
+    @Autowired
     private TechStackMapper techStackMapper;
-    private JobTechStackRelationMapper techStackRelationMapper;
-    private TechStackService techStackService;
 
     @Autowired
-    public JobMapper(TechStackMapper techStackMapper, JobTechStackRelationMapper techStackRelationMapper, TechStackService techStackService) {
-        this.techStackMapper = techStackMapper;
-        this.techStackRelationMapper = techStackRelationMapper;
-        this.techStackService = techStackService;
-    }
+    private JobTechStackRelationMapper techStackRelationMapper;
+
+    @Autowired
+    private TechStackService techStackService;
 
     public Job toEntity(JobDto jobDto) {
         Job.JobEntityBuilder builder = Job.builder();

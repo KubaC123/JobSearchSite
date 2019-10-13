@@ -3,6 +3,7 @@ package getjobin.it.portal.jobservice.domain.job.control;
 import cz.jirutka.rsql.parser.ast.Node;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
+import getjobin.it.portal.jobservice.domain.job.entity.JobLocationRelation;
 import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
 import getjobin.it.portal.jobservice.domain.search.boundary.ManagedEntityRSQLVisitor;
 import getjobin.it.portal.jobservice.domain.search.boundary.QueryService;
@@ -34,15 +35,15 @@ public class JobRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
     private QueryService queryService;
 
+    @Autowired
     private JobTechStackRelationRepository jobTechStackRelationRepository;
 
     @Autowired
-    public JobRepository(QueryService queryService, JobTechStackRelationRepository jobTechStackRelationRepository) {
-        this.queryService = queryService;
-        this.jobTechStackRelationRepository = jobTechStackRelationRepository;
-    }
+    private JobLocationRelationRepository jobLocationRelationRepository;
+
 
     public Optional<Job> findById(Long jobId) {
         return Optional.ofNullable(entityManager.find(Job.class, jobId));
@@ -102,18 +103,25 @@ public class JobRepository {
         job.setActive(Boolean.TRUE);
         entityManager.persist(job);
         Long createdJobId = job.getId();
-        job.getTechStackRelations().ifPresent(jobTechStackRelations -> createTechStackRelations(createdJobId, jobTechStackRelations));
+        job.getTechStackRelations().ifPresent(techStackRelations -> createTechStackRelations(createdJobId, techStackRelations));
+        job.getLocationRelations().ifPresent(locationRelations -> createLocationRelations(createdJobId, locationRelations));
         return createdJobId;
     }
 
-    public void createTechStackRelations(Long createdJobId, List<JobTechStackRelation> jobTechStackRelations) {
-        jobTechStackRelations.forEach(jobTechStackRelation -> jobTechStackRelation.setJobId(createdJobId));
-        jobTechStackRelations.forEach(jobTechStackRelationRepository::save);
+    public void createTechStackRelations(Long jobId, List<JobTechStackRelation> techStackRelations) {
+        techStackRelations.forEach(techStackRelation -> techStackRelation.setJobId(jobId));
+        techStackRelations.forEach(jobTechStackRelationRepository::save);
+    }
+
+    public void createLocationRelations(Long jobId, List<JobLocationRelation> locationRelations) {
+        locationRelations.forEach(locationRelation -> locationRelation.setJobId(jobId));
+        locationRelations.forEach(jobLocationRelationRepository::save);
     }
 
     public Long update(Job job) {
         job.setModifyDate(CurrentDate.get());
-        job.getTechStackRelations().ifPresent(jobTechStackRelations -> createTechStackRelations(job.getId(), jobTechStackRelations));
+        job.getTechStackRelations().ifPresent(techStackRelations -> createTechStackRelations(job.getId(), techStackRelations));
+        job.getLocationRelations().ifPresent(locationRelations -> createLocationRelations(job.getId(), locationRelations));
         return entityManager.merge(job).getId();
     }
 

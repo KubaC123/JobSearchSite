@@ -19,12 +19,8 @@ public class TechnologyRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private QueryService queryService;
-
     @Autowired
-    public TechnologyRepository(QueryService queryService) {
-        this.queryService = queryService;
-    }
+    private QueryService queryService;
 
     public Optional<Technology> findById(Long technologyId) {
         return Optional.ofNullable(entityManager.find(Technology.class, technologyId));

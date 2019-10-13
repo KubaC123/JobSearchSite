@@ -19,12 +19,8 @@ public class CategoryRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private QueryService queryService;
-
     @Autowired
-    public CategoryRepository(QueryService queryService) {
-        this.queryService = queryService;
-    }
+    private QueryService queryService;
 
     public Optional<Category> findById(Long categoryId) {
         return Optional.ofNullable(entityManager.find(Category.class, categoryId));

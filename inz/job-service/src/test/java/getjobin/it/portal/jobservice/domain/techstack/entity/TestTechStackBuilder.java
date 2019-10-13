@@ -16,7 +16,7 @@ public class TestTechStackBuilder {
     }
 
     public static List<TechStack> buildValidTechStacks(int numberOfTechStacks) {
-        return IntStream.rangeClosed(0, numberOfTechStacks)
+        return IntStream.range(0, numberOfTechStacks)
                 .mapToObj(nr -> TechStack.builder()
                         .withName(NAME + nr)
                         .build())

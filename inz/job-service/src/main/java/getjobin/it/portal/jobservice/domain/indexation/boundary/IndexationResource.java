@@ -5,7 +5,7 @@ import getjobin.it.portal.jobservice.domain.company.boundary.CompanyResource;
 import getjobin.it.portal.jobservice.domain.indexation.control.IndexationService;
 import getjobin.it.portal.jobservice.domain.indexation.control.MappingService;
 import getjobin.it.portal.jobservice.domain.job.boundary.JobResource;
-import getjobin.it.portal.jobservice.domain.job.boundary.OperationType;
+import getjobin.it.portal.jobservice.domain.job.control.OperationType;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,21 +25,16 @@ public class IndexationResource {
     private static final String COMPANY_MAPPING_PATH = MAPPING_PATH + "/" + CompanyResource.COMPANY_PATH;
     private static final String JOB_MAPPING_PATH = MAPPING_PATH + "/" + JobResource.JOB_PATH;
 
+    @Autowired
     private ElasticSearchMappingProvider mappingProvider;
 
+    @Autowired
     private IndexationService indexationService;
 
+    @Autowired
     private MappingService mappingService;
 
-    @Autowired
-    public IndexationResource(ElasticSearchMappingProvider mappingProvider, IndexationService indexationService, MappingService mappingService) {
-        this.mappingProvider = mappingProvider;
-        this.indexationService = indexationService;
-        this.mappingService = mappingService;
-    }
-
     @RequestMapping(method = RequestMethod.GET, value = COMPANY_MAPPING_PATH)
-    @ResponseStatus(value = HttpStatus.OK)
     public MappingEventDto getCompanyMapping() {
         return mappingProvider.buildCompanyIndexMapping();
     }
@@ -51,7 +46,6 @@ public class IndexationResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = JOB_MAPPING_PATH)
-    @ResponseStatus(value = HttpStatus.OK)
     public MappingEventDto getJobMapping() {
         return mappingProvider.buildJobIndexMapping();
     }

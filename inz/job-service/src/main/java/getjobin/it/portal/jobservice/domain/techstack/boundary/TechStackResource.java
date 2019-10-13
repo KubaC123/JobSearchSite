@@ -28,17 +28,13 @@ public class TechStackResource {
     private static final String IDS_PATH = "{ids}";
     private static final String IDS = "ids";
 
+    @Autowired
     private TechStackMapper techStackMapper;
-    private TechStackService techStackService;
 
     @Autowired
-    public TechStackResource(TechStackMapper techStackMapper, TechStackService techStackService) {
-        this.techStackMapper = techStackMapper;
-        this.techStackService = techStackService;
-    }
+    private TechStackService techStackService;
 
     @RequestMapping(method = RequestMethod.GET, value = IDS_PATH)
-    @ResponseStatus(value = HttpStatus.OK)
     public List<TechStackDto> browseTechStacks(@PathVariable(IDS) IdsParam ids) {
         return techStackService.findByIds(ids.asList()).stream()
                 .map(techStackMapper::toDto)
@@ -66,7 +62,6 @@ public class TechStackResource {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    @ResponseStatus(value = HttpStatus.OK)
     public List<ResourceDto> updateTechStacks(@RequestBody List<TechStackDto> techStackDtos) {
         JobServicePreconditions.checkArgument(allTechStackDtosContainUniqueIds(techStackDtos),
                 "Specify unique id in each Dto in order to update tech stacks");
@@ -94,7 +89,6 @@ public class TechStackResource {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = IDS_PATH)
-    @ResponseStatus(value = HttpStatus.OK)
     public void deleteTechStacks(@PathVariable(IDS) IdsParam ids) {
         techStackService.findByIds(ids.asList())
                 .forEach(techStackService::remove);

@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.domain.job.boundary;
+package getjobin.it.portal.jobservice.domain.job.control;
 
 public enum OperationType {
 

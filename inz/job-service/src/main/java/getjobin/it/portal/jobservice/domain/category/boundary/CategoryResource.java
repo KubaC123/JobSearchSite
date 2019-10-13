@@ -28,17 +28,13 @@ public class CategoryResource {
     private static final String IDS_PATH = "{ids}";
     private static final String IDS = "ids";
 
+    @Autowired
     private CategoryMapper categoryMapper;
-    private CategoryService categoryService;
 
     @Autowired
-    public CategoryResource(CategoryMapper categoryMapper, CategoryService categoryService) {
-        this.categoryMapper = categoryMapper;
-        this.categoryService = categoryService;
-    }
+    private CategoryService categoryService;
 
     @RequestMapping(method = RequestMethod.GET, value = IDS_PATH)
-    @ResponseStatus(value = HttpStatus.OK)
     public List<CategoryDto> browseCategories(@PathVariable(IDS) IdsParam ids) {
         return categoryService.findByIds(ids.asList()).stream()
                 .map(categoryMapper::toDTO)
@@ -67,7 +63,6 @@ public class CategoryResource {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = ID_PATH)
-    @ResponseStatus(value = HttpStatus.OK)
     public ResourceDto updateCategory(@PathVariable(ID) Long categoryId, @RequestBody CategoryDto categoryDTO) {
         Category existingCategory = categoryService.getById(categoryId);
         Category updatedCategory = categoryMapper.updateExistingCategory(existingCategory, categoryDTO);
@@ -76,7 +71,6 @@ public class CategoryResource {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = IDS_PATH)
-    @ResponseStatus(value = HttpStatus.OK)
     public void deleteCategories(@PathVariable(IDS) IdsParam ids) {
         categoryService.findByIds(ids.asList())
                 .forEach(categoryService::remove);
