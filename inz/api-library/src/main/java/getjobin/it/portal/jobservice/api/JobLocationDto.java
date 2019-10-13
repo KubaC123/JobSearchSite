@@ -5,14 +5,14 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Data;
 
-@Builder(builderClassName = "JobEventDtoBuilder")
+@Builder(builderClassName = "JobLocationDtoBuilder")
 @Data
-@JsonDeserialize(builder = JobEventDto.JobEventDtoBuilder.class)
-public class JobEventDto {
+@JsonDeserialize(builder = JobLocationDto.JobLocationDtoBuilder.class)
+public class JobLocationDto {
 
-    private Long jobId;
-    private String operationType;
+    private LocationDto location;
+    private Boolean remote;
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static class JobEventDtoBuilder { }
+    public static class JobLocationDtoBuilder { }
 }

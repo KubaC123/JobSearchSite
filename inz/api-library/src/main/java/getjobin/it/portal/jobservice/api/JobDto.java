@@ -30,10 +30,17 @@ public class JobDto {
     private String projectIndustry;
     private Integer projectTeamSize;
     private String projectDescription;
-    private JobProfileDto jobProfile;
+    private Integer development;
+    private Integer testing;
+    private Integer maintenance;
+    private Integer clientSupport;
+    private Integer meetings;
+    private Integer leading;
+    private Integer documentation;
+    private Integer otherActivities;
     private String agreements;
-    private Boolean remote;
     private List<JobTechStackDto> techStacks;
+    private List<JobLocationDto> locations;
     private Integer applications;
 
     @JsonPOJOBuilder(withPrefix = "")
