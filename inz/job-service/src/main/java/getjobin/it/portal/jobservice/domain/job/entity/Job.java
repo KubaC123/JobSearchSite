@@ -157,11 +157,11 @@ public class Job extends ManagedEntity {
 
     public Job() { }
 
-    public static JobOfferEntityBuilder builder() {
-        return new JobOfferEntityBuilder();
+    public static JobEntityBuilder builder() {
+        return new JobEntityBuilder();
     }
 
-    private Job(JobOfferEntityBuilder builder) {
+    private Job(JobEntityBuilder builder) {
         this.id = builder.id;
         this.type = builder.type;
         this.title = builder.title;
@@ -197,8 +197,8 @@ public class Job extends ManagedEntity {
         this.techStackRelations = builder.techStackRelations;
     }
 
-    public static JobOfferEntityBuilder toBuilder(Job job) {
-        return new JobOfferEntityBuilder()
+    public static JobEntityBuilder toBuilder(Job job) {
+        return new JobEntityBuilder()
                 .id(job.getId())
                 .type(job.getType())
                 .title(job.getTitle())
@@ -234,7 +234,7 @@ public class Job extends ManagedEntity {
                 .techStackRelations(job.getTechStackRelations().orElse(null));
     }
 
-    public static class JobOfferEntityBuilder {
+    public static class JobEntityBuilder {
 
         private Long id;
         private String type;
@@ -270,168 +270,168 @@ public class Job extends ManagedEntity {
         private Date expireDate;
         private List<JobTechStackRelation> techStackRelations;
 
-        public JobOfferEntityBuilder id(Long id) {
+        public JobEntityBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public JobOfferEntityBuilder type(String type) {
+        public JobEntityBuilder type(String type) {
             this.type = type;
             return this;
         }
 
-        public JobOfferEntityBuilder title(String title) {
+        public JobEntityBuilder title(String title) {
             this.title = title;
             return this;
         }
 
-        public JobOfferEntityBuilder company(Company company) {
+        public JobEntityBuilder company(Company company) {
             this.company = company;
             return this;
         }
 
-        public JobOfferEntityBuilder category(Category category) {
+        public JobEntityBuilder category(Category category) {
             this.category = category;
             return this;
         }
 
-        public JobOfferEntityBuilder experienceLevel(String experienceLevel) {
+        public JobEntityBuilder experienceLevel(String experienceLevel) {
             this.experienceLevel = experienceLevel;
             return this;
         }
 
-        public JobOfferEntityBuilder employmentType(String employmentType) {
+        public JobEntityBuilder employmentType(String employmentType) {
             this.employmentType = employmentType;
             return this;
         }
 
-        public JobOfferEntityBuilder salaryMin(Integer salaryMin) {
+        public JobEntityBuilder salaryMin(Integer salaryMin) {
             this.salaryMin = salaryMin;
             return this;
         }
 
-        public JobOfferEntityBuilder salaryMax(Integer salaryMax) {
+        public JobEntityBuilder salaryMax(Integer salaryMax) {
             this.salaryMax = salaryMax;
             return this;
         }
 
-        public JobOfferEntityBuilder startDate(String startDate) {
+        public JobEntityBuilder startDate(String startDate) {
             this.startDate = startDate;
             return this;
         }
 
-        public JobOfferEntityBuilder contractDuration(String contractDuration) {
+        public JobEntityBuilder contractDuration(String contractDuration) {
             this.contractDuration = contractDuration;
             return this;
         }
 
-        public JobOfferEntityBuilder flexibleWorkHours(Boolean flexibleWorkHours) {
+        public JobEntityBuilder flexibleWorkHours(Boolean flexibleWorkHours) {
             this.flexibleWorkHours = flexibleWorkHours;
             return this;
         }
 
-        public JobOfferEntityBuilder currency(String currency) {
+        public JobEntityBuilder currency(String currency) {
             this.currency = currency;
             return this;
         }
 
-        public JobOfferEntityBuilder description(String description) {
+        public JobEntityBuilder description(String description) {
             this.description = description;
             return this;
         }
 
-        public JobOfferEntityBuilder technology(Technology technology) {
+        public JobEntityBuilder technology(Technology technology) {
             this.technology = technology;
             return this;
         }
 
-        public JobOfferEntityBuilder projectIndustry(String projectIndustry) {
+        public JobEntityBuilder projectIndustry(String projectIndustry) {
             this.projectIndustry = projectIndustry;
             return this;
         }
 
-        public JobOfferEntityBuilder projectTeamSize(Integer projectTeamSize) {
+        public JobEntityBuilder projectTeamSize(Integer projectTeamSize) {
             this.projectTeamSize = projectTeamSize;
             return this;
         }
 
-        public JobOfferEntityBuilder projectDescription(String projectDescription) {
+        public JobEntityBuilder projectDescription(String projectDescription) {
             this.projectDescription = projectDescription;
             return this;
         }
 
-        public JobOfferEntityBuilder development(Integer development) {
+        public JobEntityBuilder development(Integer development) {
             this.development = development;
             return this;
         }
 
-        public JobOfferEntityBuilder testing(Integer testing) {
+        public JobEntityBuilder testing(Integer testing) {
             this.testing = testing;
             return this;
         }
 
-        public JobOfferEntityBuilder maintenance(Integer maintenance) {
+        public JobEntityBuilder maintenance(Integer maintenance) {
             this.maintenance = maintenance;
             return this;
         }
 
-        public JobOfferEntityBuilder clientSupport(Integer clientSupport) {
+        public JobEntityBuilder clientSupport(Integer clientSupport) {
             this.clientSupport = clientSupport;
             return this;
         }
 
-        public JobOfferEntityBuilder meetings(Integer meetings) {
+        public JobEntityBuilder meetings(Integer meetings) {
             this.meetings = meetings;
             return this;
         }
 
-        public JobOfferEntityBuilder leading(Integer leading) {
+        public JobEntityBuilder leading(Integer leading) {
             this.leading = leading;
             return this;
         }
 
-        public JobOfferEntityBuilder documentation(Integer documentation) {
+        public JobEntityBuilder documentation(Integer documentation) {
             this.documentation = documentation;
             return this;
         }
 
-        public JobOfferEntityBuilder otherActivities(Integer otherActivities) {
+        public JobEntityBuilder otherActivities(Integer otherActivities) {
             this.otherActivities = otherActivities;
             return this;
         }
 
 
-        public JobOfferEntityBuilder agreements(String agreements) {
+        public JobEntityBuilder agreements(String agreements) {
             this.agreements = agreements;
             return this;
         }
 
-        public JobOfferEntityBuilder active(Boolean active) {
+        public JobEntityBuilder active(Boolean active) {
             this.active = active;
             return this;
         }
 
-        public JobOfferEntityBuilder applications(Integer applications) {
+        public JobEntityBuilder applications(Integer applications) {
             this.applications = applications;
             return this;
         }
 
-        public JobOfferEntityBuilder createDate(Date createDate) {
+        public JobEntityBuilder createDate(Date createDate) {
             this.createDate = createDate;
             return this;
         }
 
-        public JobOfferEntityBuilder modifyDate(Date modifyDate) {
+        public JobEntityBuilder modifyDate(Date modifyDate) {
             this.modifyDate = modifyDate;
             return this;
         }
 
-        public JobOfferEntityBuilder expireDate(Date expireDate) {
+        public JobEntityBuilder expireDate(Date expireDate) {
             this.expireDate = expireDate;
             return this;
         }
 
-        public JobOfferEntityBuilder techStackRelations(List<JobTechStackRelation> techStackRelations) {
+        public JobEntityBuilder techStackRelations(List<JobTechStackRelation> techStackRelations) {
             this.techStackRelations = techStackRelations;
             return this;
         }

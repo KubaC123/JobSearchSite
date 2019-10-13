@@ -52,18 +52,6 @@ public class TechnologyService {
         return technologyRepository.update(technology);
     }
 
-    public void incrementJobCounter(Technology technology) {
-        Integer currentCount = technology.getJobCounter();
-        technology.setJobCounter(++currentCount);
-        technologyRepository.update(technology);
-    }
-
-    public void decrementJobCounter(Technology technology) {
-        Integer currentCount = technology.getJobCounter();
-        technology.setJobCounter(--currentCount);
-        technologyRepository.update(technology);
-    }
-
     public void remove(Technology technology) {
         validateOnRemove(technology);
         technologyRepository.remove(technology);

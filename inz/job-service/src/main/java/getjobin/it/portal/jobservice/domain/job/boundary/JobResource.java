@@ -6,8 +6,8 @@ import getjobin.it.portal.jobservice.domain.job.control.JobService;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServicePreconditions;
 import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,48 +19,58 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.websocket.server.PathParam;
-import java.util.Collections;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = JobResource.JOB_PATH)
+@Slf4j
 public class JobResource {
 
     public static final String JOB_PATH = "job";
 
     private JobMapper jobMapper;
     private JobService jobService;
-    private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    public JobResource(JobMapper jobMapper, JobService jobService, ApplicationEventPublisher applicationEventPublisher) {
+    public JobResource(JobMapper jobMapper, JobService jobService) {
         this.jobMapper = jobMapper;
         this.jobService = jobService;
-        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = IdsParam.IDS_PATH)
     @ResponseStatus(value = HttpStatus.OK)
     public List<JobDto> browseJobs(@PathVariable(IdsParam.IDS) IdsParam ids) {
-        return jobService.findByIds(ids.asList()).stream()
-                .map(jobMapper::toDto)
-                .collect(Collectors.toList());
+        List<Job> foundJobs = jobService.findByIds(ids.asList());
+        return jobMapper.toDtos(foundJobs);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "search")
     @ResponseStatus(value = HttpStatus.OK)
     public List<JobDto> searchByRsql(@RequestParam("rsql") String rsql) {
-        return jobService.findByRSQLCondition(rsql).stream()
-                .map(jobMapper::toDto)
-                .collect(Collectors.toList());
+        List<Job> foundJobs = jobService.findByRsqlCondition(rsql);
+        return jobMapper.toDtos(foundJobs);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "search/fullText")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<JobDto> searchByText(@RequestParam("searchText") String searchText) {
-        // todo, which fields should have boost ?
-        return Collections.emptyList();
+    public List<JobDto> searchByTextUsingElasticSearch(@RequestParam("searchText") String searchText) {
+        Instant start = Instant.now();
+        List<Job> foundJobs = jobService.searchByTextUsingElasticSearch(searchText);
+        Instant end = Instant.now();
+        log.info("[FULL TEXT SEARCH] ES search took {} ms.", Duration.between(start, end).toMillis());
+        return jobMapper.toDtos(foundJobs);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "search/fullText/sql")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<JobDto> searchByTextUsingSql(@RequestParam("searchText") String searchText) {
+        Instant start = Instant.now();
+        List<Job> foundJobs = jobService.searchByTextUsingSql(searchText);
+        Instant end = Instant.now();
+        log.info("[FULL TEXT SEARCH] SQL search took {} ms.", Duration.between(start, end).toMillis());
+        return jobMapper.toDtos(foundJobs);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -68,7 +78,6 @@ public class JobResource {
     public ResourceDto createJob(@RequestBody JobDto jobDto) {
         Job job = jobMapper.toEntity(jobDto);
         Long createdJobId = jobService.create(job);
-        applicationEventPublisher.publishEvent(jobMapper.toEvent(createdJobId, OperationType.CREATE));
         return buildResourceDTO(createdJobId);
     }
 
@@ -90,7 +99,6 @@ public class JobResource {
         Job existingJob = jobService.getById(jobDTO.getId());
         Job updatedJob = jobMapper.updateExistingJobOffer(existingJob, jobDTO);
         jobService.update(updatedJob);
-        applicationEventPublisher.publishEvent(jobMapper.toEvent(jobDTO.getId(), OperationType.UPDATE));
         return buildResourceDTO(jobDTO.getId());
     }
 
@@ -98,9 +106,6 @@ public class JobResource {
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteJob(@PathParam(IdsParam.IDS) IdsParam ids) {
         jobService.findByIds(ids.asList())
-                .forEach(job -> {
-                    jobService.remove(job);
-                    applicationEventPublisher.publishEvent(jobMapper.toEvent(job.getId(), OperationType.DELETE));
-                });
+                .forEach(jobService::remove);
     }
 }

@@ -103,7 +103,7 @@ public class JobServiceUnitTest {
 
     @Test(expected = JobServiceException.class)
     public void givenInvalidRSQLSyntaxThenThrowsJobServiceException() {
-        jobService.findByRSQLCondition("title=lik='test'");
+        jobService.findByRsqlCondition("title=lik='test'");
     }
 
     @Test(expected = ConstraintViolationException.class)

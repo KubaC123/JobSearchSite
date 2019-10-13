@@ -22,7 +22,7 @@ public class CategoryUsageValidator implements ConstraintValidator<CategoryUsage
     @Override
     public boolean isValid(Category category, ConstraintValidatorContext context) {
         boolean isValid = true;
-        List<Job> categoryJobs = jobService.findByRSQLCondition("category.id==" + category.getId());
+        List<Job> categoryJobs = jobService.findByRsqlCondition("category.id==" + category.getId());
         if(!categoryJobs.isEmpty()) {
             isValid = false;
             context.disableDefaultConstraintViolation();

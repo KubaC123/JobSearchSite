@@ -18,7 +18,6 @@ public class CategoryMapper {
         return CategoryDto.builder()
                 .id(category.getId())
                 .name(category.getName())
-                .jobCounter(category.getJobCounter())
                 .build();
     }
 

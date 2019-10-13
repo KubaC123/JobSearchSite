@@ -52,18 +52,6 @@ public class CategoryService {
         return categoryRepository.update(technology);
     }
 
-    public void incrementJobCounter(Category category) {
-        Integer currentCount = category.getJobCounter();
-        category.setJobCounter(++currentCount);
-        categoryRepository.update(category);
-    }
-
-    public void decrementJobCounter(Category category) {
-        Integer currentCount = category.getJobCounter();
-        category.setJobCounter(--currentCount);
-        categoryRepository.update(category);
-    }
-
     public void remove(Category technology) {
         validateOnRemove(technology);
         categoryRepository.remove(technology);

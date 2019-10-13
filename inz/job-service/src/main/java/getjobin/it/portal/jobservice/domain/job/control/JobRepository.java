@@ -1,15 +1,15 @@
 package getjobin.it.portal.jobservice.domain.job.control;
 
+import cz.jirutka.rsql.parser.ast.Node;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
-import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
-import getjobin.it.portal.jobservice.infrastructure.util.CurrentDate;
-import getjobin.it.portal.jobservice.infrastructure.exception.JobServiceException;
 import getjobin.it.portal.jobservice.domain.search.boundary.ManagedEntityRSQLVisitor;
 import getjobin.it.portal.jobservice.domain.search.boundary.QueryService;
+import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
+import getjobin.it.portal.jobservice.infrastructure.exception.JobServiceException;
+import getjobin.it.portal.jobservice.infrastructure.util.CurrentDate;
 import lombok.extern.slf4j.Slf4j;
-import cz.jirutka.rsql.parser.ast.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
@@ -35,6 +35,7 @@ public class JobRepository {
     private EntityManager entityManager;
 
     private QueryService queryService;
+
     private JobTechStackRelationRepository jobTechStackRelationRepository;
 
     @Autowired

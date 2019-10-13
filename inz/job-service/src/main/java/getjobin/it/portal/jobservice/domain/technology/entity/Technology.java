@@ -3,7 +3,6 @@ package getjobin.it.portal.jobservice.domain.technology.entity;
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
 import getjobin.it.portal.jobservice.domain.technology.entity.validation.TechnologyUsageValidation;
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,10 +31,6 @@ public class Technology extends ManagedEntity {
 
     @Column(name = "IMAGE_URL")
     private String imageUrl;
-
-    @Column(name = "JOB_COUNTER")
-    @Setter
-    private Integer jobCounter;
 
     public interface DeleteValidations { }
 

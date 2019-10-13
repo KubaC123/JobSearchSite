@@ -30,10 +30,6 @@ public class Category extends ManagedEntity {
     @NotEmpty(message = "Category name must be provided")
     private String name;
 
-    @Column(name = "JOB_COUNTER")
-    @Setter
-    private Integer jobCounter;
-
     public interface DeleteValidations { }
 
     public static CategoryEntityBuilder builder() {

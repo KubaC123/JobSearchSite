@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 
 public class GenericRSQLSpecification<T extends ManagedEntity> implements Specification<T> {
 
+    public static final String RSQL_LOGICAL_OR = ",";
+    public static final String RSQL_EQUAL_TO = "==";
     private static final char RSQL_WILDCARD = '*';
     private static final char SQL_WILDCARD = '%';
 
