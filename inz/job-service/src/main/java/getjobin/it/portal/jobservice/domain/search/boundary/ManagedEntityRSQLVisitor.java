@@ -1,11 +1,11 @@
-package getjobin.it.portal.jobservice.infrastructure.query.boundary;
+package getjobin.it.portal.jobservice.domain.search.boundary;
 
 import cz.jirutka.rsql.parser.ast.AndNode;
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
 import cz.jirutka.rsql.parser.ast.OrNode;
 import cz.jirutka.rsql.parser.ast.RSQLVisitor;
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
-import getjobin.it.portal.jobservice.infrastructure.query.control.GenericRSQLSpecificationBuilder;
+import getjobin.it.portal.jobservice.domain.search.control.GenericRSQLSpecificationBuilder;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ManagedEntityRSQLVisitor<T extends ManagedEntity> implements RSQLVisitor<Specification<T>, Void> {

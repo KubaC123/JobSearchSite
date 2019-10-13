@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.infrastructure.query.control;
+package getjobin.it.portal.jobservice.domain.search.control;
 
 import cz.jirutka.rsql.parser.ast.ComparisonOperator;
 import getjobin.it.portal.jobservice.domain.ManagedEntity;

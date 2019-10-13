@@ -6,20 +6,17 @@ import getjobin.it.portal.elasticservice.api.DocumentEventDto;
 import getjobin.it.portal.jobservice.domain.indexation.boundary.IndexationMapper;
 import getjobin.it.portal.jobservice.domain.job.boundary.OperationType;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
+import getjobin.it.portal.jobservice.infrastructure.config.KafkaEventPublisher;
 import getjobin.it.portal.jobservice.infrastructure.config.KafkaTopic;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServiceException;
-import getjobin.it.portal.jobservice.infrastructure.query.boundary.QueryService;
+import getjobin.it.portal.jobservice.domain.search.boundary.QueryService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.BiConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.MessageHeaders;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MimeTypeUtils;
 
 import javax.annotation.PostConstruct;
-import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +34,8 @@ public class IndexationService {
 
     private KafkaTopic kafkaTopic;
 
+    private KafkaEventPublisher kafkaEventPublisher;
+
     private QueryService queryService;
 
     private IndexationMapper indexationMapper;
@@ -46,8 +45,9 @@ public class IndexationService {
     private Map<String, BiConsumer<List<Long>, OperationType>> indexationConsumers = new HashMap<>();
 
     @Autowired
-    public IndexationService(KafkaTopic kafkaTopic, QueryService queryService, IndexationMapper indexationMapper) {
+    public IndexationService(KafkaTopic kafkaTopic, KafkaEventPublisher kafkaEventPublisher, QueryService queryService, IndexationMapper indexationMapper) {
         this.kafkaTopic = kafkaTopic;
+        this.kafkaEventPublisher = kafkaEventPublisher;
         this.queryService = queryService;
         this.indexationMapper = indexationMapper;
     }
@@ -66,11 +66,7 @@ public class IndexationService {
 
     private void sendIndexationEvent(DocumentEventDto event) {
         try {
-            kafkaTopic.indexation()
-                    .send(MessageBuilder
-                            .withPayload(event)
-                            .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
-                            .build());
+            kafkaEventPublisher.sendEventOnTopic(kafkaTopic.indexation(), event);
             logSuccess(event);
         } catch (Exception exception) {
             logException(event, exception);

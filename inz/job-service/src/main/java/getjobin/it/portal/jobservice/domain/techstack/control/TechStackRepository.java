@@ -1,7 +1,7 @@
 package getjobin.it.portal.jobservice.domain.techstack.control;
 
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
-import getjobin.it.portal.jobservice.infrastructure.query.boundary.QueryService;
+import getjobin.it.portal.jobservice.domain.search.boundary.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

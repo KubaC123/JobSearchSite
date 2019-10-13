@@ -13,7 +13,7 @@ import getjobin.it.portal.jobservice.domain.technology.control.TechnologyReposit
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.domain.technology.entity.TestTechnologyBuilder;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServiceException;
-import getjobin.it.portal.jobservice.infrastructure.query.boundary.ManagedEntityRSQLVisitor;
+import getjobin.it.portal.jobservice.domain.search.boundary.ManagedEntityRSQLVisitor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

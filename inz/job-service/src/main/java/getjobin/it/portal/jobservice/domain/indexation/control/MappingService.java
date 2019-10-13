@@ -1,13 +1,11 @@
 package getjobin.it.portal.jobservice.domain.indexation.control;
 
 import getjobin.it.portal.elasticservice.api.MappingEventDto;
+import getjobin.it.portal.jobservice.infrastructure.config.KafkaEventPublisher;
 import getjobin.it.portal.jobservice.infrastructure.config.KafkaTopic;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.MessageHeaders;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MimeTypeUtils;
 
 @Service
 @Slf4j
@@ -15,19 +13,18 @@ public class MappingService {
 
     private KafkaTopic kafkaTopic;
 
+    private KafkaEventPublisher kafkaEventPublisher;
+
     @Autowired
-    public MappingService(KafkaTopic kafkaTopic) {
+    public MappingService(KafkaTopic kafkaTopic, KafkaEventPublisher kafkaEventPublisher) {
         this.kafkaTopic = kafkaTopic;
+        this.kafkaEventPublisher = kafkaEventPublisher;
     }
 
     public void sendMappingOnTopic(MappingEventDto indexMapping) {
         try {
-            log.info("Sending mapping on kafka topic {}", indexMapping);
-            kafkaTopic.mappings()
-                    .send(MessageBuilder
-                            .withPayload(indexMapping)
-                            .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
-                            .build());
+            kafkaEventPublisher.sendEventOnTopic(kafkaTopic.mappings(), indexMapping);
+            log.info("Mapping for index {} has been send on kafka topic", indexMapping.getIndexName());
         } catch (Exception exception) {
             log.warn("Exception during sending mapping on kafka topic {}. {}", indexMapping, exception);
         }

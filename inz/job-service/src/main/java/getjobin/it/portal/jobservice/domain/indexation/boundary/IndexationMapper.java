@@ -4,11 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import getjobin.it.portal.elasticservice.api.DocumentEventDto;
 import getjobin.it.portal.jobservice.api.JobDocumentDto;
-import getjobin.it.portal.jobservice.api.JobTechStackDocumentDto;
 import getjobin.it.portal.jobservice.domain.job.boundary.OperationType;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
+import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,21 +32,17 @@ public class IndexationMapper {
     public JobDocumentDto toJobDocumentDto(Job job) {
         JobDocumentDto.JobDocumentDtoBuilder builder = JobDocumentDto.builder();
         Optional.ofNullable(job.getCompany()).ifPresent(company -> {
-            builder.companyId(company.getId());
             builder.companyName(company.getName());
+            builder.companyDescription(company.getDescription());
         });
-        Optional.ofNullable(job.getCategory()).ifPresent(category -> {
-            builder.categoryId(category.getId());
-            builder.categoryName(category.getName());
-        });
-        Optional.ofNullable(job.getTechnology()).ifPresent(technology -> {
-            builder.technologyId(technology.getId());
-            builder.technologyName(technology.getName());
-        });
+        Optional.ofNullable(job.getCategory()).ifPresent(category -> builder.categoryName(category.getName()));
+        Optional.ofNullable(job.getTechnology()).ifPresent(technology -> builder.technologyName(technology.getName()));
         job.getTechStackRelations().ifPresent(techStackRelations -> {
             builder.techStacks(techStackRelations.stream()
-                    .map(this::toJobTechStackEventDTO)
-                    .collect(Collectors.toList()));
+                    .map(JobTechStackRelation::getTechStackId)
+                    .map(techStackService::getById)
+                    .map(TechStack::getName)
+                    .collect(Collectors.joining(", ")));
         });
         return builder
                 .id(job.getId())
@@ -54,28 +50,11 @@ public class IndexationMapper {
                 .title(job.getTitle())
                 .experienceLevel(job.getExperienceLevel())
                 .employmentType(job.getEmploymentType())
-                .salaryMin(job.getSalaryMin())
-                .salaryMax(job.getSalaryMax())
-                .flexibleWorkHours(job.getFlexibleWorkHours())
+                .salaryMin(String.valueOf(job.getSalaryMin()))
+                .salaryMax(String.valueOf(job.getSalaryMax()))
                 .description(job.getDescription())
                 .projectDescription(job.getProjectDescription())
-                .development(job.getDevelopment())
-                .testing(job.getTesting())
-                .maintenance(job.getMaintenance())
-                .clientSupport(job.getClientSupport())
-                .meetings(job.getMeetings())
-                .leading(job.getLeading())
-                .documentation(job.getDocumentation())
-                .otherActivities(job.getOtherActivities())
                 .active(job.getActive())
-                .build();
-    }
-
-    private JobTechStackDocumentDto toJobTechStackEventDTO(JobTechStackRelation techStackRelation) {
-        return JobTechStackDocumentDto.builder()
-                .techStackId(techStackRelation.getTechStackId())
-                .techStackName(techStackService.getById(techStackRelation.getTechStackId()).getName())
-                .techStackExperienceLevel(techStackRelation.getExperienceLevel())
                 .build();
     }
 
@@ -89,7 +68,7 @@ public class IndexationMapper {
                     .data(objectMapper.writeValueAsString(jobDocumentDto))
                     .build();
         } catch (JsonProcessingException exception) {
-            log.warn("Exception during parsing JobIndexationDTO {} to JSON. {}", jobDocumentDto,  exception);
+            log.warn("Exception during parsing JobDocumentDto {} to JSON. {}", jobDocumentDto,  exception);
             return null;
         }
     }
