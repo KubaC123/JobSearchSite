@@ -94,8 +94,8 @@ public class JobResource {
         return buildResourceDTO(jobDTO.getId());
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = IdsParam.IDS)
-    public void deleteJob(@PathParam(IdsParam.IDS) IdsParam ids) {
+    @RequestMapping(method = RequestMethod.DELETE, value = IdsParam.IDS_PATH)
+    public void deleteJob(@PathVariable(IdsParam.IDS) IdsParam ids) {
         jobService.findByIds(ids.asList())
                 .forEach(jobService::remove);
     }

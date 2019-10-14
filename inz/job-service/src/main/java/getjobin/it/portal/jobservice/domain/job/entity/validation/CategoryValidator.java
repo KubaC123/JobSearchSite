@@ -20,18 +20,21 @@ public class CategoryValidator implements ConstraintValidator<CategoryValidation
     @Override
     public boolean isValid(Category category, ConstraintValidatorContext context) {
         return Optional.ofNullable(category)
-                .map(specifiedCategory -> validate(specifiedCategory, context))
+                .map(specifiedCategory -> validateExistence(specifiedCategory, context))
                 .orElse(false);
     }
 
-    public boolean validate(Category category, ConstraintValidatorContext context){
+    public boolean validateExistence(Category category, ConstraintValidatorContext context){
         return categoryService.findById(category.getId())
                 .map(foundTechnology -> true)
                 .orElseGet(() -> {
-                    context.disableDefaultConstraintViolation();
-                    context.buildConstraintViolationWithTemplate(
-                            MessageFormat.format("Category with id {0} does not exist", category.getId()));
+                    addMessageToContext(MessageFormat.format("Category with id {0} does not exist", category.getId()), context);
                     return false;
                 });
+    }
+
+    private void addMessageToContext(String message, ConstraintValidatorContext context) {
+        context.disableDefaultConstraintViolation();
+        context.buildConstraintViolationWithTemplate(message);
     }
 }

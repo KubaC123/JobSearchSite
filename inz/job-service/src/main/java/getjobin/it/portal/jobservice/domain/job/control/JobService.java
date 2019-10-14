@@ -108,7 +108,7 @@ public class JobService {
     }
 
     private void validate(Job job) {
-        Set<ConstraintViolation<Job>>  violations = validator.validate(job);
+        Set<ConstraintViolation<Job>> violations = validator.validate(job);
         if(!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }

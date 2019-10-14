@@ -20,18 +20,21 @@ public class TechnologyValidator implements ConstraintValidator<TechnologyValida
     @Override
     public boolean isValid(Technology technology, ConstraintValidatorContext context) {
         return Optional.ofNullable(technology)
-                .map(specifiedCategory -> validate(technology, context))
+                .map(specifiedCategory -> validateExistence(technology, context))
                 .orElse(false);
     }
 
-    private boolean validate(Technology technology, ConstraintValidatorContext context) {
+    private boolean validateExistence(Technology technology, ConstraintValidatorContext context) {
         return technologyService.findById(technology.getId())
                 .map(foundTechnology -> true)
                 .orElseGet(() -> {
-                    context.disableDefaultConstraintViolation();
-                    context.buildConstraintViolationWithTemplate(
-                            MessageFormat.format("Technology with id {0} does not exist", technology.getId()));
+                    addMessageToContext(MessageFormat.format("Technology with id {0} does not exist", technology.getId()), context);
                     return false;
                 });
+    }
+
+    private void addMessageToContext(String message, ConstraintValidatorContext context) {
+        context.disableDefaultConstraintViolation();
+        context.buildConstraintViolationWithTemplate(message);
     }
 }

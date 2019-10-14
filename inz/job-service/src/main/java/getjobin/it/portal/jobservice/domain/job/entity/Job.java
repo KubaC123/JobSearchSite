@@ -27,7 +27,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -47,23 +46,20 @@ public class Job extends ManagedEntity {
     private Long id;
 
     @Column(name = "TYPE")
-    @NotEmpty(message = "Job type must be provided")
     @JobTypeValidation
     private String type;
 
     @Column(name = "TITLE")
-    @NotEmpty(message = "Job title must be provided")
+    @NotEmpty(message = "Title must be provided")
     private String title;
 
     @ManyToOne
     @JoinColumn(name = "COMPANY_ID")
-    @NotNull(message = "Company must be provided")
     @CompanyValidation
     private Company company;
 
     @ManyToOne
     @JoinColumn(name = "CATEGORY_ID")
-    @NotNull(message = "Category must be provided")
     @CategoryValidation
     private Category category;
 
@@ -99,7 +95,6 @@ public class Job extends ManagedEntity {
     
     @ManyToOne
     @JoinColumn(name = "TECHNOLOGY_ID")
-    @NotNull(message = "Technology must be provided")
     @TechnologyValidation
     private Technology technology;
 
@@ -164,7 +159,6 @@ public class Job extends ManagedEntity {
 
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "JOB_ID")
-    @NotNull(message = "At least one location must be provided")
     @LocationValidation
     private List<JobLocationRelation> locationRelations;
 

@@ -6,6 +6,7 @@ import getjobin.it.portal.jobservice.domain.location.control.LocationService;
 import getjobin.it.portal.jobservice.domain.location.entity.Location;
 import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,8 +29,8 @@ public class LocationResource {
     @Autowired
     private LocationService locationService;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public List<LocationDto> browseLocations(@RequestParam(IdsParam.IDS) IdsParam ids) {
+    @RequestMapping(method = RequestMethod.GET, value = IdsParam.IDS_PATH)
+    public List<LocationDto> browseLocations(@PathVariable(IdsParam.IDS) IdsParam ids) {
         return locationService.findByIds(ids.asList()).stream()
                 .map(locationMapper::toDto)
                 .collect(Collectors.toList());
@@ -55,8 +56,8 @@ public class LocationResource {
                 .build();
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
-    public void deleteLocations(@RequestParam(IdsParam.IDS) IdsParam ids) {
+    @RequestMapping(method = RequestMethod.DELETE, value = IdsParam.IDS_PATH)
+    public void deleteLocations(@PathVariable(IdsParam.IDS) IdsParam ids) {
         locationService.findByIds(ids.asList())
                 .forEach(locationService::remove);
     }

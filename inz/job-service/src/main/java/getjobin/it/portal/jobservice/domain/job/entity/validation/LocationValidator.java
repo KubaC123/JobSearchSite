@@ -10,7 +10,6 @@ import javax.validation.ConstraintValidatorContext;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,12 +24,14 @@ public class LocationValidator implements ConstraintValidator<LocationValidation
 
     @Override
     public boolean isValid(List<JobLocationRelation> locationRelations, ConstraintValidatorContext context) {
-        return Optional.ofNullable(locationRelations)
-                .map(relations -> validateLocationRelations(relations, context))
-                .orElse(false);
+        return validateLocationRelations(locationRelations, context);
     }
 
     private boolean validateLocationRelations(List<JobLocationRelation> locationRelations, ConstraintValidatorContext context) {
+        if(locationRelations == null || locationRelations.isEmpty()) {
+            addMessageToContext(context,"At least one location must be provided");
+            return false;
+        }
         List<Long> specifiedLocationIds = getLocationIds(locationRelations);
         Set<Long> duplicatedLocationIds = findDuplicatedLocationIds(specifiedLocationIds);
         if(!duplicatedLocationIds.isEmpty()) {

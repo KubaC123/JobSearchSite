@@ -20,18 +20,21 @@ public class CompanyValidator implements ConstraintValidator<CompanyValidation, 
     @Override
     public boolean isValid(Company company, ConstraintValidatorContext context) {
         return Optional.ofNullable(company)
-                .map(specifiedCategory -> validate(company, context))
+                .map(specifiedCategory -> validateExistence(company, context))
                 .orElse(false);
     }
 
-    private boolean validate(Company company, ConstraintValidatorContext context) {
+    private boolean validateExistence(Company company, ConstraintValidatorContext context) {
         return companyService.findById(company.getId())
                 .map(foundTechnology -> true)
                 .orElseGet(() -> {
-                    context.disableDefaultConstraintViolation();
-                    context.buildConstraintViolationWithTemplate(
-                            MessageFormat.format("Company with id {0} does not exist", company.getId()));
+                    addMessageToContext(MessageFormat.format("Company with id {0} does not exist", company.getId()), context);
                     return false;
                 });
+    }
+
+    private void addMessageToContext(String message, ConstraintValidatorContext context) {
+        context.disableDefaultConstraintViolation();
+        context.buildConstraintViolationWithTemplate(message);
     }
 }

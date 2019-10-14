@@ -17,7 +17,7 @@ public class ExperienceLevelValidator implements ConstraintValidator<ExperienceL
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if(ExperienceLevel.fromString(value).isEmpty()) {
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(MessageFormat.format("Experience level must be provided. Allowed exp levels: {0}, specified {1}", Arrays.stream(ExperienceLevel.values())
+            context.buildConstraintViolationWithTemplate(MessageFormat.format("Allowed exp levels: {0}, specified {1}", Arrays.stream(ExperienceLevel.values())
                     .map(ExperienceLevel::getLiteral)
                     .collect(Collectors.joining(", ")), value))
                     .addConstraintViolation();

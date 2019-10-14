@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TechnologyValidation {
 
-    String message() default "";
+    String message() default "Technology must be provided";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

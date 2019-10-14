@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CompanyValidation {
 
-    String message() default "";
+    String message() default "Company must be provided";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

@@ -1,6 +1,7 @@
 package getjobin.it.portal.jobservice.domain.job.boundary;
 
 import getjobin.it.portal.jobservice.api.JobDto;
+import getjobin.it.portal.jobservice.api.JobLocationDto;
 import getjobin.it.portal.jobservice.api.JobTechStackDto;
 import getjobin.it.portal.jobservice.api.ResourceDto;
 import getjobin.it.portal.jobservice.domain.category.boundary.CategoryResource;
@@ -8,6 +9,8 @@ import getjobin.it.portal.jobservice.domain.category.entity.Category;
 import getjobin.it.portal.jobservice.domain.company.boundary.CompanyResource;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
+import getjobin.it.portal.jobservice.domain.location.boundary.LocationMapper;
+import getjobin.it.portal.jobservice.domain.location.control.LocationService;
 import getjobin.it.portal.jobservice.domain.technology.boundary.TechnologyResource;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.domain.techstack.boundary.TechStackMapper;
@@ -29,10 +32,19 @@ public class JobMapper {
     private TechStackMapper techStackMapper;
 
     @Autowired
+    private LocationMapper locationMapper;
+
+    @Autowired
     private JobTechStackRelationMapper techStackRelationMapper;
 
     @Autowired
+    private JobLocationRelationMapper locationRelationMapper;
+
+    @Autowired
     private TechStackService techStackService;
+
+    @Autowired
+    private LocationService locationService;
 
     public Job toEntity(JobDto jobDto) {
         Job.JobEntityBuilder builder = Job.builder();
@@ -68,7 +80,8 @@ public class JobMapper {
                 .documentation(jobDto.getDocumentation())
                 .otherActivities(jobDto.getOtherActivities())
                 .agreements(jobDto.getAgreements())
-                .techStackRelations(techStackRelationMapper.toEntities(jobDto.getId(), jobDto.getTechStacks()));
+                .techStackRelations(techStackRelationMapper.toEntities(jobDto.getId(), jobDto.getTechStacks()))
+                .locationRelations(locationRelationMapper.toEntities(jobDto.getId(), jobDto.getLocations()));
     }
 
     private void addCompany(JobDto jobDto, Job.JobEntityBuilder builder) {
@@ -116,6 +129,12 @@ public class JobMapper {
                 .map(techStackRelation -> JobTechStackDto.builder()
                         .techStack(techStackMapper.toDto(techStackService.getById(techStackRelation.getTechStackId())))
                         .experienceLevel(techStackRelation.getExperienceLevel())
+                        .build())
+                .collect(Collectors.toList())));
+        job.getLocationRelations().ifPresent(locationRelations -> builder.locations(locationRelations.stream()
+                .map(locationRelation -> JobLocationDto.builder()
+                        .location(locationMapper.toDto(locationService.getById(locationRelation.getLocationId())))
+                        .remote(locationRelation.getRemote())
                         .build())
                 .collect(Collectors.toList())));
         return builder
