@@ -4,6 +4,7 @@ import getjobin.it.portal.jobservice.domain.IntegrationTest;
 import getjobin.it.portal.jobservice.domain.location.control.LocationService;
 import getjobin.it.portal.jobservice.domain.location.entity.Location;
 import getjobin.it.portal.jobservice.domain.location.entity.TestLocationBuilder;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

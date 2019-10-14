@@ -68,6 +68,14 @@ public class IntegrationTest {
                 .collect(Collectors.toList());
     }
 
+    public void clear() {
+        companyService.remove(company);
+        categoryService.remove(category);
+        technologyService.remove(technology);
+        techStacks.forEach(techStackService::remove);
+        locations.forEach(locationService::remove);
+    }
+
     public Company getCompany() {
         return company;
     }
@@ -124,5 +132,11 @@ public class IntegrationTest {
         jobService.create(Job.toBuilder(buildValidJob())
                 .locationRelations(TestJobBuilder.getLocationRelations(locations))
                 .build());
+    }
+
+    public Job createValidJobWith(String title) {
+        return jobService.getById(jobService.create(Job.toBuilder(buildValidJob())
+                .title(title)
+                .build()));
     }
 }

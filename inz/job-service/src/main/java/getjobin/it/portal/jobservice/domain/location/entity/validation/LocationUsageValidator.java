@@ -22,7 +22,7 @@ public class LocationUsageValidator implements ConstraintValidator<LocationUsage
     @Override
     public boolean isValid(Location location, ConstraintValidatorContext context) {
         boolean isValid = true;
-        List<Job> jobsInLocation = jobService.findByRsqlCondition("locationRelations.jobId==" + location.getId());
+        List<Job> jobsInLocation = jobService.findByRsqlCondition("locationRelations.locationId==" + location.getId());
         if(!jobsInLocation.isEmpty()) {
             isValid = false;
             context.disableDefaultConstraintViolation();

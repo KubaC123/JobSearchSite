@@ -4,6 +4,7 @@ import getjobin.it.portal.jobservice.domain.IntegrationTest;
 import getjobin.it.portal.jobservice.domain.technology.control.TechnologyService;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.domain.technology.entity.TestTechnologyBuilder;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

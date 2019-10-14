@@ -4,6 +4,7 @@ import getjobin.it.portal.jobservice.domain.IntegrationTest;
 import getjobin.it.portal.jobservice.domain.category.control.CategoryService;
 import getjobin.it.portal.jobservice.domain.category.entity.Category;
 import getjobin.it.portal.jobservice.domain.category.entity.TestCategoryBuilder;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

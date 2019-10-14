@@ -3,6 +3,7 @@ package getjobin.it.portal.jobservice.domain.search;
 import cz.jirutka.rsql.parser.RSQLParser;
 import cz.jirutka.rsql.parser.RSQLParserException;
 import cz.jirutka.rsql.parser.ast.Node;
+import getjobin.it.portal.jobservice.domain.IntegrationTest;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyRepository;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.company.entity.TestCompanyBuilder;
@@ -14,6 +15,8 @@ import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.domain.technology.entity.TestTechnologyBuilder;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServiceException;
 import getjobin.it.portal.jobservice.domain.search.boundary.ManagedEntityRSQLVisitor;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,14 +45,22 @@ public class RSQLSearchTest {
     @Autowired
     private CompanyRepository companyRepository;
 
+    @Autowired
+    private IntegrationTest integrationTest;
+
     @Test
     public void givenDependenciesThenTheyAreInjected() {
-        assertNotNull(jobRepository);
+        assertNotNull(integrationTest);
+    }
+
+    @Before
+    public void init() {
+        integrationTest.init();
     }
 
     @Test
     public void givenJobTitleThenFindsIt() {
-        jobRepository.save(TestJobBuilder.buildValidJob());
+        integrationTest.createValidJob();
         Node rootNode = new RSQLParser().parse("title=='" + TestJobBuilder.TITLE + "'");
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
@@ -58,102 +69,94 @@ public class RSQLSearchTest {
 
     @Test
     public void givenJobSalaryInRangeThenFindsIt() {
-        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJob());
+        Job createdJob = integrationTest.createValidJob();
         Node rootNode = new RSQLParser().parse("salaryMin>=" + TestJobBuilder.SALARY_MIN + ";salaryMax<=" + TestJobBuilder.SALARY_MAX);
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
         assertTrue(foundJobs.size() >= 1);
         assertTrue(foundJobs.stream()
-                .anyMatch(job -> createdJobId.equals(job.getId())));
+                .anyMatch(job -> createdJob.getId().equals(job.getId())));
         foundJobs.forEach(job -> assertTrue(job.getSalaryMin() >= TestJobBuilder.SALARY_MIN && job.getSalaryMax() <= TestJobBuilder.SALARY_MAX));
     }
 
     @Test
     public void givenJobSalaryInSetThenFindsIt() {
-        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJob());
+        Job createdJob = integrationTest.createValidJob();
         Node rootNode = new RSQLParser().parse("salaryMin=in=(" + TestJobBuilder.SALARY_MIN + ",100,3200,4200)");
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
         assertTrue(foundJobs.size() >= 1);
         assertTrue(foundJobs.stream()
-                .anyMatch(job -> createdJobId.equals(job.getId())));
+                .anyMatch(job -> createdJob.getId().equals(job.getId())));
     }
 
     @Test
     public void givenJobSalaryInOutSetThenNotReturnIt() {
-        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJob());
+        Job createdJob = integrationTest.createValidJob();
         Node rootNode = new RSQLParser().parse("salaryMin=out=(" + TestJobBuilder.SALARY_MIN + ",100,3200,4200)");
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
         assertTrue(foundJobs.stream()
-                .noneMatch(job -> createdJobId.equals(job.getId())));
+                .noneMatch(job -> createdJob.getId().equals(job.getId())));
     }
 
     @Test
     public void givenJobTechnologyIdThenFindsIt() {
-        Long technologyId = technologyRepository.save(TestTechnologyBuilder.buildValidTechnology());
-        Technology technology = technologyRepository.getById(technologyId);
-        Long jobWithTechnologyId = jobRepository.save(TestJobBuilder.buildValidJobWithTechnology(technology));
-        Node rootNode = new RSQLParser().parse("technology.id==" + technologyId);
+        Job createdJob = integrationTest.createValidJob();
+        Node rootNode = new RSQLParser().parse("technology.id==" + createdJob.getTechnology().getId());
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
         assertTrue(foundJobs.size() >= 1);
         assertTrue(foundJobs.stream()
-                .anyMatch(job -> jobWithTechnologyId.equals(job.getId())));
+                .anyMatch(job -> createdJob.getId().equals(job.getId())));
         assertTrue(foundJobs.stream()
-                .allMatch(job -> technology.equals(job.getTechnology())));
+                .allMatch(job -> createdJob.getTechnology().equals(job.getTechnology())));
     }
 
     @Test
     public void givenJobTechnologyNameThenFindsIt() {
-        Long technologyId = technologyRepository.save(TestTechnologyBuilder.buildValidTechnology());
-        Technology technology = technologyRepository.getById(technologyId);
-        Long jobWithTechnologyId = jobRepository.save(TestJobBuilder.buildValidJobWithTechnology(technology));
-        Node rootNode = new RSQLParser().parse("technology.name==" + technology.getName());
+        Job createdJob = integrationTest.createValidJob();
+        Node rootNode = new RSQLParser().parse("technology.name==" + createdJob.getTechnology().getName());
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
         assertTrue(foundJobs.size() >= 1);
         assertTrue(foundJobs.stream()
-                .anyMatch(job -> jobWithTechnologyId.equals(job.getId())));
+                .anyMatch(job -> createdJob.getId().equals(job.getId())));
         assertTrue(foundJobs.stream()
-                .allMatch(job -> technology.equals(job.getTechnology())));
+                .allMatch(job -> createdJob.getTechnology().getName().equals(job.getTechnology().getName())));
     }
 
     @Test
     public void givenJobCompanyIdThenFindsIt() {
-        Long companyId = companyRepository.save(TestCompanyBuilder.buildValidCompany());
-        Company company = companyRepository.getById(companyId);
-        Long jobWithCompanyId = jobRepository.save(TestJobBuilder.buildValidJobInCompany(company));
-        Node rootNode = new RSQLParser().parse("company.id==" + companyId);
+        Job createdJob = integrationTest.createValidJob();
+        Node rootNode = new RSQLParser().parse("company.id==" + createdJob.getCompany().getId());
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
         assertTrue(foundJobs.size() >= 1);
         assertTrue(foundJobs.stream()
-                .anyMatch(job -> jobWithCompanyId.equals(job.getId())));
+                .anyMatch(job -> createdJob.getId().equals(job.getId())));
         assertTrue(foundJobs.stream()
-                .allMatch(job -> company.equals(job.getCompany())));
+                .allMatch(job -> createdJob.getCompany().equals(job.getCompany())));
     }
 
     @Test
     public void givenJobCompanyNameThenFindsIt() {
-        Long companyId = companyRepository.save(TestCompanyBuilder.buildValidCompany());
-        Company company = companyRepository.getById(companyId);
-        Long jobWithCompanyId = jobRepository.save(TestJobBuilder.buildValidJobInCompany(company));
-        Node rootNode = new RSQLParser().parse("company.name=='" + company.getName() + "'");
+        Job createdJob = integrationTest.createValidJob();
+        Node rootNode = new RSQLParser().parse("company.name=='" + createdJob.getCompany().getName() + "'");
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
         assertTrue(foundJobs.size() >= 1);
         assertTrue(foundJobs.stream()
-                .anyMatch(job -> jobWithCompanyId.equals(job.getId())));
+                .anyMatch(job -> createdJob.getId().equals(job.getId())));
         assertTrue(foundJobs.stream()
-                .allMatch(job -> company.equals(job.getCompany())));
+                .allMatch(job -> createdJob.getCompany().getName().equals(job.getCompany().getName())));
     }
 
     @Test
     public void givenInactiveJobIdAndActiveTrueConditionThenReturnsEmptyList() {
-        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJob());
-        jobRepository.removeById(createdJobId);
-        Node rootNode = new RSQLParser().parse("active==true;id==" + createdJobId);
+        Job createdJob = integrationTest.createValidJob();
+        jobRepository.remove(createdJob);
+        Node rootNode = new RSQLParser().parse("active==true;id==" + createdJob.getId());
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
         assertTrue(foundJobs.isEmpty());
@@ -161,33 +164,33 @@ public class RSQLSearchTest {
 
     @Test
     public void givenJobTitleMatchingWithDoubleWildcardThenFindsIt() {
-        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJobWithTitle("Here java is present"));
+        Job createdJob = integrationTest.createValidJobWith("Here java is present");
         Node rootNode = new RSQLParser().parse("title=='*java*'");
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
         assertTrue(foundJobs.stream()
-                .anyMatch(job -> createdJobId.equals(job.getId())));
+                .anyMatch(job -> createdJob.getId().equals(job.getId())));
     }
 
     @Test
     public void givenJobTitleMatchingWithSingleWildcardThenFindsIt() {
-        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJobWithTitle("Junior dev java"));
+        Job createdJob = integrationTest.createValidJobWith("Junior dev java");
         Node rootNode = new RSQLParser().parse("title=='*java'");
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
         assertTrue(foundJobs.stream()
-                .anyMatch(job -> createdJobId.equals(job.getId())));
+                .anyMatch(job -> createdJob.getId().equals(job.getId())));
     }
 
     @Test
     public void givenInactiveJobIdThenFindsIt() {
-        Long createdJobId = jobRepository.save(TestJobBuilder.buildValidJob());
-        jobRepository.removeById(createdJobId);
-        Node rootNode = new RSQLParser().parse("id==" + createdJobId);
+        Job createdJob = integrationTest.createValidJob();
+        jobRepository.remove(createdJob);
+        Node rootNode = new RSQLParser().parse("id==" + createdJob.getId());
         Specification<Job> rsqlBasedSpecification = rootNode.accept(new ManagedEntityRSQLVisitor<>());
         List<Job> foundJobs = jobRepository.findBySpecification(rsqlBasedSpecification);
         assertEquals(1, foundJobs.size());
-        assertEquals(createdJobId, foundJobs.get(0).getId());
+        assertEquals(createdJob.getId(), foundJobs.get(0).getId());
     }
 
     @Test(expected = JobServiceException.class)

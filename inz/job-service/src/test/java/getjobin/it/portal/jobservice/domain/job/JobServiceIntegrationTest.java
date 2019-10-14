@@ -5,6 +5,7 @@ import getjobin.it.portal.jobservice.domain.job.control.JobService;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.entity.TestJobBuilder;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServiceException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

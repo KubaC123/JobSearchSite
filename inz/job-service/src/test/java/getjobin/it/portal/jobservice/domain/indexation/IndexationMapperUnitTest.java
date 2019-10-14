@@ -1,6 +1,7 @@
 package getjobin.it.portal.jobservice.domain.indexation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import getjobin.it.portal.jobservice.domain.IntegrationTest;
 import getjobin.it.portal.jobservice.domain.category.control.CategoryService;
 import getjobin.it.portal.jobservice.domain.category.entity.Category;
 import getjobin.it.portal.jobservice.domain.category.entity.TestCategoryBuilder;
@@ -21,6 +22,7 @@ import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TestTechStackBuilder;
 import org.assertj.core.api.Assertions;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,55 +34,34 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertNotNull;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
 public class IndexationMapperUnitTest {
 
-    private Job job;
-
     @Autowired
-    private CompanyService companyService;
-
-    @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private TechnologyService technologyService;
-
-    @Autowired
-    private TechStackService techStackService;
-
-
-    @Autowired
-    private LocationService locationService;
-
-    @Autowired
-    private JobService jobService;
+    private IntegrationTest integrationTest;
 
     @Autowired
     private IndexationMapper indexationMapper;
 
     @Before
     public void init() {
-        Company company = companyService.getById(companyService.create(TestCompanyBuilder.buildValidCompany()));
-        Category category = categoryService.getById(categoryService.create(TestCategoryBuilder.buildValidCategory()));
-        Technology technology = technologyService.getById(technologyService.create(TestTechnologyBuilder.buildValidTechnology()));
-        List<TechStack> techStacks = TestTechStackBuilder.buildValidTechStacks(5).stream()
-                .map(techStackService::create)
-                .map(techStackService::getById)
-                .collect(Collectors.toList());
-        List<Location> locations = TestLocationBuilder.buildValidLocations(2).stream()
-                .map(locationService::create)
-                .map(locationService::getById)
-                .collect(Collectors.toList());
-        job = jobService.getById(jobService.create(TestJobBuilder.buildValidJobWith(company, category, technology, techStacks, locations)));
+        integrationTest.init();
+    }
+
+    @Test
+    public void givenDependenciesThenTheyAreInjected() {
+        assertNotNull(integrationTest);
+        assertNotNull(indexationMapper);
     }
 
     @Test
     public void givenJobIndexationDTOThenParseToJSON() {
         ObjectMapper objectMapper = new ObjectMapper();
-        Assertions.assertThatCode(() -> objectMapper.writeValueAsString(indexationMapper.toJobDocumentDto(job)))
+        Assertions.assertThatCode(() -> objectMapper.writeValueAsString(indexationMapper.toJobDocumentDto(integrationTest.createValidJob())))
                 .doesNotThrowAnyException();
     }
 }
