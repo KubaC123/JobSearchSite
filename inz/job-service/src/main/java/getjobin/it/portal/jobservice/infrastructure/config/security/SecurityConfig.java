@@ -26,9 +26,6 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
                 pattern = "org.keycloak.adapters.springsecurity.management.HttpSessionManager"))
 public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
-    private static final String ADMIN_ROLE = "admin";
-    private static final String RECRUITER_ROLE = "recruiter";
-
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();

@@ -28,7 +28,7 @@ public class CompanyRepository {
     }
 
     public List<Company> findByIds(List<Long> companyIds) {
-        return queryService.queryByIds(Company.class, companyIds);
+        return queryService.queryByIds(companyIds, Company.class);
     }
 
     public Company getById(Long companyId) {

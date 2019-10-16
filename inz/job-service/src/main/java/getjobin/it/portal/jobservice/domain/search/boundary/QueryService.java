@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -22,7 +21,7 @@ public class QueryService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public <T extends ManagedEntity> List<T> queryByIds(Class<T> entityClass, List<Long> ids) {
+    public <T extends ManagedEntity> List<T> queryByIds(List<Long> ids, Class<T> entityClass) {
         return entityManager.unwrap(Session.class)
                 .byMultipleIds(entityClass)
                 .enableSessionCheck(true)
@@ -32,12 +31,21 @@ public class QueryService {
                 .collect(Collectors.toList());
     }
 
-    public <T extends ManagedEntity> List<T> findAll(Class<T> entityClass) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
-        Root<T> root = criteriaQuery.from(entityClass);
-        CriteriaQuery<T> all = criteriaQuery.select(root);
-        TypedQuery<T> query = entityManager.createQuery(all);
-        return query.getResultList();
+    public <T extends ManagedEntity> Long countObjects(Class<T> entityClass) {
+        CriteriaBuilder qb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = qb.createQuery(Long.class);
+        cq.select(qb.count(cq.from(entityClass)));
+        return entityManager.createQuery(cq).getSingleResult();
+    }
+
+    public <T extends ManagedEntity> List<T> queryPartition(Integer first, Integer last, Class<T> entityClass) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<T> cq = cb.createQuery(entityClass);
+        Root<T> root = cq.from(entityClass);
+        CriteriaQuery<T> all = cq.select(root);
+        return entityManager.createQuery(all)
+                .setFirstResult(first)
+                .setMaxResults(last)
+                .getResultList();
     }
 }

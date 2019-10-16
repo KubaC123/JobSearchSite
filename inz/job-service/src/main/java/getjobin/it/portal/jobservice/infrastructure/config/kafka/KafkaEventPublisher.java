@@ -10,9 +10,10 @@ import org.springframework.util.MimeTypeUtils;
 public class KafkaEventPublisher {
 
     public void sendEventOnTopic(MessageChannel topic, Object event) {
-        topic.send(MessageBuilder
-                .withPayload(event)
-                .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
-                .build());
+            topic.send(MessageBuilder
+                    .withPayload(event)
+                    .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
+                    .build());
+
     }
 }

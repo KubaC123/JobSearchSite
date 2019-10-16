@@ -27,7 +27,7 @@ public class TechStackRepository {
     }
 
     public List<TechStack> findByIds(List<Long> techStackIds) {
-        return queryService.queryByIds(TechStack.class, techStackIds);
+        return queryService.queryByIds(techStackIds, TechStack.class);
     }
 
     public TechStack getById(Long techStackId) {

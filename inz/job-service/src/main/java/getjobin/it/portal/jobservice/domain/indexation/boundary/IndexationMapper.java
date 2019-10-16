@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -54,7 +55,13 @@ public class IndexationMapper {
                 .build();
     }
 
-    public DocumentEventDto toIndexationEvent(Job job, OperationType operationType) {
+    public List<DocumentEventDto> toDocumentEventDtos(List<Job> jobs, OperationType operationType) {
+        return jobs.stream()
+                .map(job -> toDocumentEventDto(job, operationType))
+                .collect(Collectors.toList());
+    }
+
+    public DocumentEventDto toDocumentEventDto(Job job, OperationType operationType) {
         JobDocumentDto jobDocumentDto = toJobDocumentDto(job);
         try {
             return DocumentEventDto.builder()

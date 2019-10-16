@@ -6,20 +6,20 @@ import cz.jirutka.rsql.parser.ast.Node;
 import getjobin.it.portal.elasticservice.api.FoundDocumentDto;
 import getjobin.it.portal.jobservice.client.ElasticServiceClient;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
-import getjobin.it.portal.jobservice.domain.indexation.control.IndexationService;
+import getjobin.it.portal.jobservice.domain.indexation.boundary.IndexationMapper;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.search.control.GenericRSQLSpecification;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,7 +35,10 @@ public class JobService {
     private JobRepository jobRepository;
 
     @Autowired
-    private IndexationService indexationService;
+    private IndexationMapper indexationMapper;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     private ElasticServiceClient elasticServiceClient;
@@ -81,7 +84,8 @@ public class JobService {
 
     public List<Job> searchByTextUsingElasticSearch(String searchText) {
         return elasticServiceClient.fullTextSearch("job", searchText, elasticFullTextSearchCommaSeparatedAttributes)
-                .getDocuments().stream()
+                .getDocuments()
+                .stream()
                 .map(FoundDocumentDto::getObjectId)
                 .map(jobRepository::findById)
                 .filter(Optional::isPresent)
@@ -99,12 +103,12 @@ public class JobService {
     public Long create(Job job) {
         validate(job);
         Long createdJobId = jobRepository.save(job);
-        indexJob(createdJobId, OperationType.CREATE);
+        sendIndexationEvent(createdJobId, OperationType.CREATE);
         return createdJobId;
     }
 
-    private void indexJob(Long jobId, OperationType operationType) {
-        indexationService.indexObjectsAsync(Collections.singletonList(jobId), Job.JOB_TYPE, operationType);
+    private void sendIndexationEvent(Long jobId, OperationType operationType) {
+        eventPublisher.publishEvent(indexationMapper.toDocumentEventDto(getById(jobId), operationType));
     }
 
     private void validate(Job job) {
@@ -117,7 +121,7 @@ public class JobService {
     public Long update(Job job) {
         validate(job);
         Long updatedJobId = jobRepository.update(job);
-        indexJob(updatedJobId, OperationType.UPDATE);
+        sendIndexationEvent(updatedJobId, OperationType.UPDATE);
         return updatedJobId;
     }
 

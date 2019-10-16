@@ -27,7 +27,7 @@ public class CategoryRepository {
     }
 
     public List<Category> findByIds(List<Long> categoryIds) {
-        return queryService.queryByIds(Category.class, categoryIds);
+        return queryService.queryByIds(categoryIds, Category.class);
     }
 
     public Category getById(Long categoryId) {

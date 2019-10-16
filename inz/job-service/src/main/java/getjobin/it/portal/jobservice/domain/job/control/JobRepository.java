@@ -50,7 +50,7 @@ public class JobRepository {
     }
 
     public List<Job> findByIds(List<Long> jobIds) {
-        return queryService.queryByIds(Job.class, jobIds);
+        return queryService.queryByIds(jobIds, Job.class);
     }
 
     public Job getById(Long jobId) {

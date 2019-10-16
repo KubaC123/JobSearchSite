@@ -27,7 +27,7 @@ public class TechnologyRepository {
     }
 
     public List<Technology> findByIds(List<Long> technologyIds) {
-        return queryService.queryByIds(Technology.class, technologyIds);
+        return queryService.queryByIds(technologyIds, Technology.class);
     }
 
     public Technology getById(Long technologyId) {

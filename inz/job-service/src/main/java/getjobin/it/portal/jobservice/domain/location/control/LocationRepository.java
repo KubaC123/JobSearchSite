@@ -27,7 +27,7 @@ public class LocationRepository {
     }
 
     public List<Location> findByIds(List<Long> locationIds) {
-        return queryService.queryByIds(Location.class, locationIds);
+        return queryService.queryByIds(locationIds, Location.class);
     }
 
     public Location getById(Long locationId) {
