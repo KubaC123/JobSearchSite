@@ -4,7 +4,9 @@ import getjobin.it.portal.jobservice.api.CompanyDto;
 import getjobin.it.portal.jobservice.api.ResourceDto;
 import getjobin.it.portal.jobservice.domain.company.control.CompanyService;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
-import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
+import getjobin.it.portal.jobservice.infrastructure.config.security.IsAdmin;
+import getjobin.it.portal.jobservice.infrastructure.config.security.IsRecruiter;
+import getjobin.it.portal.jobservice.infrastructure.rest.IdsParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CompanyResource {
 
-    public static final String COMPANY_PATH = "company";
+    public static final String COMPANY_PATH = "api/company";
 
     @Autowired
     private CompanyMapper companyMapper;
@@ -40,6 +42,7 @@ public class CompanyResource {
                 .collect(Collectors.toList());
     }
 
+    @IsAdmin @IsRecruiter
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(code = HttpStatus.CREATED)
     public ResourceDto createCompany(@RequestBody CompanyDto companyDTO) {
@@ -58,6 +61,7 @@ public class CompanyResource {
                 .build();
     }
 
+    @IsAdmin @IsRecruiter
     @RequestMapping(method = RequestMethod.PUT, value = IdsParam.ID_PATH)
     public ResourceDto updateCompany(@PathVariable(IdsParam.ID) Long companyId, @RequestBody CompanyDto companyDto) {
         Company foundCompany = companyService.getById(companyId);
@@ -66,6 +70,7 @@ public class CompanyResource {
         return buildResourceDTO(updatedCompany.getId());
     }
 
+    @IsAdmin
     @RequestMapping(method = RequestMethod.DELETE, value = IdsParam.IDS_PATH)
     public void deleteCompanies(@PathVariable(IdsParam.IDS) IdsParam ids) {
         List<Company> foundCompanies = companyService.findByIds(ids.asList());

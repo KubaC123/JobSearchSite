@@ -1,12 +1,10 @@
-package getjobin.it.portal.jobservice.infrastructure.config;
+package getjobin.it.portal.jobservice.infrastructure.config.kafka;
 
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeTypeUtils;
-
-import java.io.IOException;
 
 @Component
 public class KafkaEventPublisher {

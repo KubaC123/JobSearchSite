@@ -4,8 +4,10 @@ import getjobin.it.portal.jobservice.api.JobDto;
 import getjobin.it.portal.jobservice.api.ResourceDto;
 import getjobin.it.portal.jobservice.domain.job.control.JobService;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
+import getjobin.it.portal.jobservice.infrastructure.config.security.IsAdmin;
+import getjobin.it.portal.jobservice.infrastructure.config.security.IsRecruiter;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServicePreconditions;
-import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
+import getjobin.it.portal.jobservice.infrastructure.rest.IdsParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.websocket.server.PathParam;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.List;
 @Slf4j
 public class JobResource {
 
-    public static final String JOB_PATH = "job";
+    public static final String JOB_PATH = "api/job";
 
     @Autowired
     private JobMapper jobMapper;
@@ -42,6 +43,7 @@ public class JobResource {
         return jobMapper.toDtos(foundJobs);
     }
 
+    @IsAdmin
     @RequestMapping(method = RequestMethod.GET, value = "search")
     public List<JobDto> searchByRsql(@RequestParam("rsql") String rsql) {
         List<Job> foundJobs = jobService.findByRsqlCondition(rsql);
@@ -66,6 +68,7 @@ public class JobResource {
         return jobMapper.toDtos(foundJobs);
     }
 
+    @IsAdmin @IsRecruiter
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResourceDto createJob(@RequestBody JobDto jobDto) {
@@ -85,6 +88,7 @@ public class JobResource {
                 .build();
     }
 
+    @IsAdmin @IsRecruiter
     @RequestMapping(method = RequestMethod.PUT)
     public ResourceDto updateJob(@RequestBody JobDto jobDTO) {
         JobServicePreconditions.checkArgument(jobDTO.getId() != null, "Job id must be specified in DTO order to update it");
@@ -94,6 +98,7 @@ public class JobResource {
         return buildResourceDTO(jobDTO.getId());
     }
 
+    @IsAdmin
     @RequestMapping(method = RequestMethod.DELETE, value = IdsParam.IDS_PATH)
     public void deleteJob(@PathVariable(IdsParam.IDS) IdsParam ids) {
         jobService.findByIds(ids.asList())

@@ -4,7 +4,8 @@ import getjobin.it.portal.jobservice.api.CategoryDto;
 import getjobin.it.portal.jobservice.api.ResourceDto;
 import getjobin.it.portal.jobservice.domain.category.control.CategoryService;
 import getjobin.it.portal.jobservice.domain.category.entity.Category;
-import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
+import getjobin.it.portal.jobservice.infrastructure.config.security.IsAdmin;
+import getjobin.it.portal.jobservice.infrastructure.rest.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @RequestMapping(value = CategoryResource.CATEGORY_PATH)
 public class CategoryResource {
 
-    static final String CATEGORY_PATH = "category";
+    public static final String CATEGORY_PATH = "api/category";
     private static final String ID_PATH = "{id}";
     private static final String ID = "id";
     private static final String IDS_PATH = "{ids}";
@@ -41,6 +42,7 @@ public class CategoryResource {
                 .collect(Collectors.toList());
     }
 
+    @IsAdmin
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
     public List<ResourceDto> createCategories(@RequestBody List<CategoryDto> categoryDTOs) {
@@ -62,6 +64,7 @@ public class CategoryResource {
                 .build();
     }
 
+    @IsAdmin
     @RequestMapping(method = RequestMethod.PUT, value = ID_PATH)
     public ResourceDto updateCategory(@PathVariable(ID) Long categoryId, @RequestBody CategoryDto categoryDTO) {
         Category existingCategory = categoryService.getById(categoryId);
@@ -70,6 +73,7 @@ public class CategoryResource {
         return buildResourceDTO(updatedCategory.getId());
     }
 
+    @IsAdmin
     @RequestMapping(method = RequestMethod.DELETE, value = IDS_PATH)
     public void deleteCategories(@PathVariable(IDS) IdsParam ids) {
         categoryService.findByIds(ids.asList())

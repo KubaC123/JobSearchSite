@@ -4,7 +4,8 @@ import getjobin.it.portal.jobservice.api.ResourceDto;
 import getjobin.it.portal.jobservice.api.TechnologyDto;
 import getjobin.it.portal.jobservice.domain.technology.control.TechnologyService;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
-import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
+import getjobin.it.portal.jobservice.infrastructure.config.security.IsAdmin;
+import getjobin.it.portal.jobservice.infrastructure.rest.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @RequestMapping(value = TechnologyResource.TECHNOLOGY_PATH)
 public class TechnologyResource {
 
-    static final String TECHNOLOGY_PATH = "technology";
+    public static final String TECHNOLOGY_PATH = "api/technology";
     private static final String ID_PATH = "{id}";
     private static final String ID = "id";
     private static final String IDS_PATH = "{ids}";
@@ -41,6 +42,7 @@ public class TechnologyResource {
                 .collect(Collectors.toList());
     }
 
+    @IsAdmin
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
     public List<ResourceDto> createTechnologies(@RequestBody List<TechnologyDto> technologyDtos) {
@@ -62,6 +64,7 @@ public class TechnologyResource {
                 .build();
     }
 
+    @IsAdmin
     @RequestMapping(method = RequestMethod.PUT, value = ID_PATH)
     public ResourceDto updateTechnology(@PathVariable(ID) Long technologyId, @RequestBody TechnologyDto technologyDTO) {
         Technology existingTechnology = technologyService.getById(technologyId);
@@ -70,6 +73,7 @@ public class TechnologyResource {
         return buildResourceDTO(updatedTechnology.getId());
     }
 
+    @IsAdmin
     @RequestMapping(method = RequestMethod.DELETE, value = IDS_PATH)
     public void deleteTechnologies(@PathVariable(IDS) IdsParam ids) {
         technologyService.findByIds(ids.asList())

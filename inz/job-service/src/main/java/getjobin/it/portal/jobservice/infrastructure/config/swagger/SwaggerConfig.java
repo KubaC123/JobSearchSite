@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.infrastructure.config;
+package getjobin.it.portal.jobservice.infrastructure.config.swagger;
 
 import com.google.common.collect.ImmutableList;
 import org.springframework.context.annotation.Bean;

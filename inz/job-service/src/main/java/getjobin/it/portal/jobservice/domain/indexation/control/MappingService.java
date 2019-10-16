@@ -1,8 +1,8 @@
 package getjobin.it.portal.jobservice.domain.indexation.control;
 
 import getjobin.it.portal.elasticservice.api.MappingEventDto;
-import getjobin.it.portal.jobservice.infrastructure.config.KafkaEventPublisher;
-import getjobin.it.portal.jobservice.infrastructure.config.KafkaTopic;
+import getjobin.it.portal.jobservice.infrastructure.config.kafka.KafkaEventPublisher;
+import getjobin.it.portal.jobservice.infrastructure.config.kafka.KafkaTopic;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

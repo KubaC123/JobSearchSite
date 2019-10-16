@@ -4,8 +4,10 @@ import getjobin.it.portal.jobservice.api.ResourceDto;
 import getjobin.it.portal.jobservice.api.TechStackDto;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
+import getjobin.it.portal.jobservice.infrastructure.config.security.IsAdmin;
+import getjobin.it.portal.jobservice.infrastructure.config.security.IsRecruiter;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServicePreconditions;
-import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
+import getjobin.it.portal.jobservice.infrastructure.rest.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +26,7 @@ import java.util.stream.Collectors;
 @RequestMapping(value = TechStackResource.TECH_STACK_PATH)
 public class TechStackResource {
 
-    static final String TECH_STACK_PATH = "techStack";
+    public static final String TECH_STACK_PATH = "api/techStack";
     private static final String IDS_PATH = "{ids}";
     private static final String IDS = "ids";
 
@@ -41,6 +43,7 @@ public class TechStackResource {
                 .collect(Collectors.toList());
     }
 
+    @IsAdmin @IsRecruiter
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
     public List<ResourceDto> createTechStacks(@RequestBody List<TechStackDto> techStackDtos) {
@@ -61,6 +64,7 @@ public class TechStackResource {
                 .build();
     }
 
+    @IsAdmin
     @RequestMapping(method = RequestMethod.PUT)
     public List<ResourceDto> updateTechStacks(@RequestBody List<TechStackDto> techStackDtos) {
         JobServicePreconditions.checkArgument(allTechStackDtosContainUniqueIds(techStackDtos),
@@ -88,6 +92,7 @@ public class TechStackResource {
         return updatedTechStacks;
     }
 
+    @IsAdmin
     @RequestMapping(method = RequestMethod.DELETE, value = IDS_PATH)
     public void deleteTechStacks(@PathVariable(IDS) IdsParam ids) {
         techStackService.findByIds(ids.asList())

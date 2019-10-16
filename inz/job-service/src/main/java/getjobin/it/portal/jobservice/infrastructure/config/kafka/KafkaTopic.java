@@ -1,4 +1,4 @@
-package getjobin.it.portal.jobservice.infrastructure.config;
+package getjobin.it.portal.jobservice.infrastructure.config.kafka;
 
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;

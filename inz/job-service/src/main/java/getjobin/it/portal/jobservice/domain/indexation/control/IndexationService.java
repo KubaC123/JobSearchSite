@@ -7,8 +7,8 @@ import getjobin.it.portal.jobservice.domain.indexation.boundary.IndexationMapper
 import getjobin.it.portal.jobservice.domain.job.control.OperationType;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.search.boundary.QueryService;
-import getjobin.it.portal.jobservice.infrastructure.config.KafkaEventPublisher;
-import getjobin.it.portal.jobservice.infrastructure.config.KafkaTopic;
+import getjobin.it.portal.jobservice.infrastructure.config.kafka.KafkaEventPublisher;
+import getjobin.it.portal.jobservice.infrastructure.config.kafka.KafkaTopic;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.BiConsumer;

@@ -15,7 +15,7 @@ import getjobin.it.portal.jobservice.domain.technology.boundary.TechnologyResour
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.domain.techstack.boundary.TechStackMapper;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
-import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
+import getjobin.it.portal.jobservice.infrastructure.rest.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.stereotype.Component;

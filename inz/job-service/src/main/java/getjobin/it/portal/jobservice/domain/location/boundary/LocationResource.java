@@ -4,13 +4,14 @@ import getjobin.it.portal.jobservice.api.LocationDto;
 import getjobin.it.portal.jobservice.api.ResourceDto;
 import getjobin.it.portal.jobservice.domain.location.control.LocationService;
 import getjobin.it.portal.jobservice.domain.location.entity.Location;
-import getjobin.it.portal.jobservice.infrastructure.util.IdsParam;
+import getjobin.it.portal.jobservice.infrastructure.config.security.IsAdmin;
+import getjobin.it.portal.jobservice.infrastructure.config.security.IsRecruiter;
+import getjobin.it.portal.jobservice.infrastructure.rest.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 @RequestMapping(value = LocationResource.LOCATION_PATH)
 public class LocationResource {
 
-    static final String LOCATION_PATH = "location";
+    public static final String LOCATION_PATH = "api/location";
 
     @Autowired
     private LocationMapper locationMapper;
@@ -36,6 +37,7 @@ public class LocationResource {
                 .collect(Collectors.toList());
     }
 
+    @IsAdmin @IsRecruiter
     @RequestMapping(method = RequestMethod.POST)
     public List<ResourceDto> createLocations(@RequestBody List<LocationDto> locationDtos) {
         return locationDtos.stream()
@@ -56,6 +58,7 @@ public class LocationResource {
                 .build();
     }
 
+    @IsAdmin
     @RequestMapping(method = RequestMethod.DELETE, value = IdsParam.IDS_PATH)
     public void deleteLocations(@PathVariable(IdsParam.IDS) IdsParam ids) {
         locationService.findByIds(ids.asList())
