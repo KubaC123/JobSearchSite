@@ -1,4 +1,4 @@
-package getjobin.it.portal.elasticservice.client.boundary;
+package getjobin.it.portal.elasticservice.domain.boundary;
 
 import getjobin.it.portal.elasticservice.api.MappingEventDto;
 import getjobin.it.portal.elasticservice.client.control.ESJavaClient;
