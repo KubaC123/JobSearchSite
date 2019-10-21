@@ -1,4 +1,4 @@
-package getjobin.it.portal.elasticservice.domain.boundary;
+package getjobin.it.portal.elasticservice.client.boundary;
 
 import getjobin.it.portal.elasticservice.api.SearchResultDto;
 import getjobin.it.portal.elasticservice.client.control.ESJavaClient;
