@@ -10,11 +10,14 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 const theme = createMuiTheme({
   spacing: 4,
+  typography: {
+    fontFamily: 'sans-serif'
+  },
   palette: {
-    type: 'dark',
-    background: {
-      default: 'black'
-    },
+    type: 'light',
+    // background: {
+    //   default: 'black'
+    // },
     primary: blue,
     secondary: orange
   },
