@@ -22,6 +22,10 @@ public class TechnologyRepository {
     @Autowired
     private QueryService queryService;
 
+    public List<Technology> findAll() {
+        return queryService.findAll(Technology.class);
+    }
+
     public Optional<Technology> findById(Long technologyId) {
         return Optional.ofNullable(entityManager.find(Technology.class, technologyId));
     }

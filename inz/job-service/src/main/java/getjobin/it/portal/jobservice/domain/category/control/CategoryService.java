@@ -20,6 +20,10 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
+
     public List<Category> findByIds(List<Long> categoryIds) {
         return categoryRepository.findByIds(categoryIds);
     }

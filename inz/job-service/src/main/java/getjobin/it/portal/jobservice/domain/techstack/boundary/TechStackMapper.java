@@ -3,11 +3,13 @@ package getjobin.it.portal.jobservice.domain.techstack.boundary;
 import getjobin.it.portal.jobservice.api.TechStackDto;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.ApplicationScope;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@ApplicationScope
 public class TechStackMapper {
 
     public List<TechStack> toEntities(List<TechStackDto> techStackDtos) {
@@ -23,7 +25,7 @@ public class TechStackMapper {
                 .build();
     }
 
-    public List<TechStackDto> toDTOs(List<TechStack> techStacks) {
+    public List<TechStackDto> toDtos(List<TechStack> techStacks) {
         return techStacks.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());

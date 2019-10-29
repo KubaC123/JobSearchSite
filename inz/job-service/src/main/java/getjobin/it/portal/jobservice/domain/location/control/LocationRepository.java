@@ -22,6 +22,10 @@ public class LocationRepository {
     @Autowired
     private QueryService queryService;
 
+    public List<Location> findAll() {
+        return queryService.findAll(Location.class);
+    }
+
     public Optional<Location> findById(Long locationId) {
         return Optional.ofNullable(entityManager.find(Location.class, locationId));
     }

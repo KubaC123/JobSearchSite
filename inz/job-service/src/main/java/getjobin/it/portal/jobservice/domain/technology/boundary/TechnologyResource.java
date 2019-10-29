@@ -35,11 +35,16 @@ public class TechnologyResource {
     @Autowired
     private TechnologyService technologyService;
 
+    @RequestMapping(method = RequestMethod.GET, value = "all")
+    public List<TechnologyDto> findAll() {
+        List<Technology> allTechnologies = technologyService.findAll();
+        return technologyMapper.toDtos(allTechnologies);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = IDS_PATH)
     public List<TechnologyDto> browseTechnologies(@PathVariable(IDS)IdsParam ids) {
-        return technologyService.findByIds(ids.asList()).stream()
-                .map(technologyMapper::toDto)
-                .collect(Collectors.toList());
+        List<Technology> foundTechnologies = technologyService.findByIds(ids.asList());
+        return technologyMapper.toDtos(foundTechnologies);
     }
 
     @IsAdmin

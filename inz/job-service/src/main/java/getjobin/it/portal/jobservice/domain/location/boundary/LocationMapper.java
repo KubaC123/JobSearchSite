@@ -3,8 +3,13 @@ package getjobin.it.portal.jobservice.domain.location.boundary;
 import getjobin.it.portal.jobservice.api.LocationDto;
 import getjobin.it.portal.jobservice.domain.location.entity.Location;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.ApplicationScope;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
+@ApplicationScope
 public class LocationMapper {
 
     public Location toEntity(LocationDto locationDto) {
@@ -18,6 +23,12 @@ public class LocationMapper {
                 .longitude(locationDto.getLongitude())
                 .latitude(locationDto.getLatitude())
                 .build();
+    }
+
+    public List<LocationDto> toDtos(List<Location> locations) {
+        return locations.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 
     public LocationDto toDto(Location location) {

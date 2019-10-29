@@ -3,18 +3,14 @@ package getjobin.it.portal.jobservice.domain.company.boundary;
 import getjobin.it.portal.jobservice.api.CompanyDto;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.ApplicationScope;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@ApplicationScope
 public class CompanyMapper {
-
-    public List<Company> fromDTOtoEntity(List<CompanyDto> companyDTOs) {
-        return companyDTOs.stream()
-                .map(this::toEntity)
-                .collect(Collectors.toList());
-    }
 
     public Company toEntity(CompanyDto companyDTO) {
         return Company.builder()
@@ -33,7 +29,7 @@ public class CompanyMapper {
 
     }
 
-    public List<CompanyDto> fromEntityToDTO(List<Company> companyEntities) {
+    public List<CompanyDto> toDtos(List<Company> companyEntities) {
         return companyEntities.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());

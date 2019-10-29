@@ -35,6 +35,12 @@ public class CompanyResource {
     @Autowired
     private CompanyService companyService;
 
+    @RequestMapping(method = RequestMethod.GET, value = "all")
+    public List<CompanyDto> findAll() {
+        List<Company> allCompanies = companyService.findAll();
+        return companyMapper.toDtos(allCompanies);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = IdsParam.IDS_PATH)
     public List<CompanyDto> browseCompanies(@PathVariable(IdsParam.IDS) IdsParam ids) {
         return companyService.findByIds(ids.asList()).stream()

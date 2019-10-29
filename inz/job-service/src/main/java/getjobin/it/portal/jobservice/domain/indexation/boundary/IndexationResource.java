@@ -3,7 +3,6 @@ package getjobin.it.portal.jobservice.domain.indexation.boundary;
 import getjobin.it.portal.elasticservice.api.MappingEventDto;
 import getjobin.it.portal.jobservice.domain.indexation.control.IndexationService;
 import getjobin.it.portal.jobservice.domain.indexation.control.MappingService;
-import getjobin.it.portal.jobservice.domain.job.boundary.JobResource;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.infrastructure.config.security.IsAdmin;
 import getjobin.it.portal.jobservice.infrastructure.rest.IdsParam;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(value = IndexationResource.INDEXATION_PATH)
 public class IndexationResource {
@@ -27,6 +24,8 @@ public class IndexationResource {
     private static final String COMPANY_PATH = "company";
     private static final String COMPANY_MAPPING_PATH = MAPPING_PATH + "/" + COMPANY_PATH;
     private static final String JOB_MAPPING_PATH = MAPPING_PATH + "/" + JOB_PATH;
+    private static final String JOB_GIVEN_INDEXATION_PATH = JOB_PATH + "/given";
+    private static final String JOB_FULL_INDEXATION_PATH = JOB_PATH + "/full";
 
     @Autowired
     private ElasticSearchMappingProvider mappingProvider;
@@ -63,19 +62,14 @@ public class IndexationResource {
     }
 
     @IsAdmin
-    @RequestMapping(method = RequestMethod.POST, value = JOB_PATH)
+    @RequestMapping(method = RequestMethod.POST, value = JOB_GIVEN_INDEXATION_PATH)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void performAsynchronousJobIndexation(@RequestParam("ids") IdsParam ids) {
-        List<Long> specifiedIds = ids.asList();
-        if(specifiedIds.isEmpty()) {
-            indexationService.indexAllObjectsAsync(Job.class);
-        } else {
-            indexationService.indexGivenObjectsAsync(specifiedIds, Job.class);
-        }
+        indexationService.indexGivenObjectsAsync(ids.asList(), Job.class);
     }
 
     @IsAdmin
-    @RequestMapping(method = RequestMethod.POST, value = JOB_PATH + "/full")
+    @RequestMapping(method = RequestMethod.POST, value = JOB_FULL_INDEXATION_PATH)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void performAsynchronousAllJobIndexation() {
         indexationService.indexAllObjectsAsync(Job.class);

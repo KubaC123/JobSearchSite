@@ -20,6 +20,10 @@ public class TechStackService {
     @Autowired
     private TechStackRepository techStackRepository;
 
+    public List<TechStack> findAll() {
+        return techStackRepository.findAll();
+    }
+
     public List<TechStack> findByIds(List<Long> techStackIds) {
         return techStackRepository.findByIds(techStackIds);
     }

@@ -22,6 +22,10 @@ public class CategoryRepository {
     @Autowired
     private QueryService queryService;
 
+    public List<Category> findAll() {
+        return queryService.findAll(Category.class);
+    }
+
     public Optional<Category> findById(Long categoryId) {
         return Optional.ofNullable(entityManager.find(Category.class, categoryId));
     }

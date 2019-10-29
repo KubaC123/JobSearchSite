@@ -1,38 +1,31 @@
 package getjobin.it.portal.jobservice.domain.job.boundary;
 
 import getjobin.it.portal.jobservice.api.JobDto;
-import getjobin.it.portal.jobservice.api.JobLocationDto;
-import getjobin.it.portal.jobservice.api.JobTechStackDto;
-import getjobin.it.portal.jobservice.api.ResourceDto;
-import getjobin.it.portal.jobservice.domain.category.boundary.CategoryResource;
-import getjobin.it.portal.jobservice.domain.category.entity.Category;
-import getjobin.it.portal.jobservice.domain.company.boundary.CompanyResource;
-import getjobin.it.portal.jobservice.domain.company.entity.Company;
+import getjobin.it.portal.jobservice.domain.category.boundary.CategoryMapper;
+import getjobin.it.portal.jobservice.domain.company.boundary.CompanyMapper;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
-import getjobin.it.portal.jobservice.domain.location.boundary.LocationMapper;
-import getjobin.it.portal.jobservice.domain.location.control.LocationService;
-import getjobin.it.portal.jobservice.domain.technology.boundary.TechnologyResource;
-import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
-import getjobin.it.portal.jobservice.domain.techstack.boundary.TechStackMapper;
-import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
-import getjobin.it.portal.jobservice.infrastructure.rest.IdsParam;
+import getjobin.it.portal.jobservice.domain.job.entity.JobWithRelatedObjects;
+import getjobin.it.portal.jobservice.domain.technology.boundary.TechnologyMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.ApplicationScope;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
+@ApplicationScope
 public class JobMapper {
 
     @Autowired
-    private TechStackMapper techStackMapper;
+    private CompanyMapper companyMapper;
 
     @Autowired
-    private LocationMapper locationMapper;
+    private CategoryMapper categoryMapper;
+
+    @Autowired
+    private TechnologyMapper technologyMapper;
 
     @Autowired
     private JobTechStackRelationMapper techStackRelationMapper;
@@ -40,20 +33,24 @@ public class JobMapper {
     @Autowired
     private JobLocationRelationMapper locationRelationMapper;
 
-    @Autowired
-    private TechStackService techStackService;
-
-    @Autowired
-    private LocationService locationService;
-
     public Job toEntity(JobDto jobDto) {
         Job.JobEntityBuilder builder = Job.builder();
-        addCompany(jobDto, builder);
-        addCategory(jobDto, builder);
-        addTechnology(jobDto, builder);
         builder.id(jobDto.getId());
+        addReferenceAttributes(jobDto, builder);
         addCommonAttributes(jobDto, builder);
         return builder.build();
+    }
+
+    private void addReferenceAttributes(JobDto jobDto, Job.JobEntityBuilder builder) {
+        Optional.ofNullable(jobDto.getCompany()).ifPresent(company -> {
+            builder.company(companyMapper.toEntity(company));
+        });
+        Optional.ofNullable(jobDto.getCategory()).ifPresent(category-> {
+            builder.category(categoryMapper.toEntity(category));
+        });
+        Optional.ofNullable(jobDto.getTechnology()).ifPresent(technology -> {
+            builder.technology(technologyMapper.toEntity(technology));
+        });
     }
 
     private void addCommonAttributes(JobDto jobDto, Job.JobEntityBuilder builder) {
@@ -84,63 +81,21 @@ public class JobMapper {
                 .locationRelations(locationRelationMapper.toEntities(jobDto.getId(), jobDto.getLocations()));
     }
 
-    private void addCompany(JobDto jobDto, Job.JobEntityBuilder builder) {
-        Optional.ofNullable(jobDto.getCompany()).ifPresent(company -> builder.company(Company.builder()
-                .withId(company.getObjectId())
-                .build()));
-    }
-
-    private void addCategory(JobDto jobDto, Job.JobEntityBuilder builder) {
-        Optional.ofNullable(jobDto.getCategory()).ifPresent(category -> builder.category(Category.builder()
-                .withId(category.getObjectId())
-                .build()));
-    }
-
-    private void addTechnology(JobDto jobDto, Job.JobEntityBuilder builder) {
-        Optional.ofNullable(jobDto.getTechnology()).ifPresent(technology -> builder.technology(Technology.builder()
-                .withId(technology.getObjectId())
-                .build()));
-    }
-
-    List<JobDto> toDtos(List<Job> jobs) {
+    List<JobDto> toDtos(List<JobWithRelatedObjects> jobs) {
         return jobs.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
-    JobDto toDto(Job job) {
+    JobDto toDto(JobWithRelatedObjects jobWithRelatedObjects) {
         JobDto.JobDtoBuilder builder = JobDto.builder();
-        Optional.ofNullable(job.getCompany()).ifPresent(company -> builder.company(ResourceDto.builder()
-                .objectId(company.getId())
-                .objectType(Company.COMPANY_TYPE)
-                .resourceURI(getCompanyResourceURI(company.getId()))
-                .build()));
-        Optional.ofNullable(job.getCategory()).ifPresent(category -> builder.category(ResourceDto.builder()
-                .objectId(category.getId())
-                .objectType(Category.CATEGORY_TYPE)
-                .resourceURI(getCategoryResourceURI(category.getId()))
-                .build()));
-        Optional.ofNullable(job.getTechnology()).ifPresent(technology -> builder.technology(ResourceDto.builder()
-                .objectId(technology.getId())
-                .objectType(Technology.TECHNOLOGY_TYPE)
-                .resourceURI(getTechnologyResourceURI(technology.getId()))
-                .build()));
-        job.getTechStackRelations().ifPresent(techStackRelations -> builder.techStacks(techStackRelations.stream()
-                .map(techStackRelation -> JobTechStackDto.builder()
-                        .techStack(techStackMapper.toDto(techStackService.getById(techStackRelation.getTechStackId())))
-                        .experienceLevel(techStackRelation.getExperienceLevel())
-                        .build())
-                .collect(Collectors.toList())));
-        job.getLocationRelations().ifPresent(locationRelations -> builder.locations(locationRelations.stream()
-                .map(locationRelation -> JobLocationDto.builder()
-                        .location(locationMapper.toDto(locationService.getById(locationRelation.getLocationId())))
-                        .remote(locationRelation.getRemote())
-                        .build())
-                .collect(Collectors.toList())));
+        Job job = jobWithRelatedObjects.getJob();
         return builder
                 .id(job.getId())
                 .type(job.getType())
                 .title(job.getTitle())
+                .company(companyMapper.toDto(job.getCompany()))
+                .category(categoryMapper.toDto(job.getCategory()))
                 .experienceLevel(job.getExperienceLevel())
                 .employmentType(job.getEmploymentType())
                 .salaryMin(job.getSalaryMin())
@@ -150,6 +105,7 @@ public class JobMapper {
                 .flexibleWorkHours(job.getFlexibleWorkHours())
                 .currency(job.getCurrency())
                 .description(job.getDescription())
+                .technology(technologyMapper.toDto(job.getTechnology()))
                 .projectIndustry(job.getProjectIndustry())
                 .projectTeamSize(job.getProjectTeamSize())
                 .projectDescription(job.getProjectDescription())
@@ -162,36 +118,16 @@ public class JobMapper {
                 .documentation(job.getDocumentation())
                 .otherActivities(job.getOtherActivities())
                 .agreements(job.getAgreements())
+                .techStacks(techStackRelationMapper.toDtos(jobWithRelatedObjects.getTechStacksWithExperienceLevel()))
+                .locations(locationRelationMapper.toDtos(jobWithRelatedObjects.getLocationsWithRemote()))
                 .applications(job.getApplications())
                 .build();
     }
 
-    private URI getCompanyResourceURI(Long companyId) {
-        return ControllerLinkBuilder.linkTo(ControllerLinkBuilder
-                .methodOn(CompanyResource.class)
-                .browseCompanies(new IdsParam(String.valueOf(companyId))))
-                .toUri();
-    }
-
-    private URI getCategoryResourceURI(Long categoryId) {
-        return ControllerLinkBuilder.linkTo(ControllerLinkBuilder
-                .methodOn(CategoryResource.class)
-                .browseCategories(new IdsParam(String.valueOf(categoryId))))
-                .toUri();
-    }
-
-    private URI getTechnologyResourceURI(Long technologyId) {
-        return ControllerLinkBuilder.linkTo(ControllerLinkBuilder
-                .methodOn(TechnologyResource.class)
-                .browseTechnologies(new IdsParam(String.valueOf(technologyId))))
-                .toUri();
-    }
-
     Job updateExistingJobOffer(Job existingJob, JobDto jobDto) {
         Job.JobEntityBuilder builder = Job.toBuilder(existingJob);
+        addReferenceAttributes(jobDto, builder);
         addCommonAttributes(jobDto, builder);
-        addCategory(jobDto, builder);
-        addTechnology(jobDto, builder);
         return builder.build();
     }
 }

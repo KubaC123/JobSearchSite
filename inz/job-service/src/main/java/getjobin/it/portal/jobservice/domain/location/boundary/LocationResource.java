@@ -30,11 +30,16 @@ public class LocationResource {
     @Autowired
     private LocationService locationService;
 
+    @RequestMapping(method = RequestMethod.GET, value = "all")
+    public List<LocationDto> findAll() {
+        List<Location> allLocations = locationService.findAll();
+        return locationMapper.toDtos(allLocations);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = IdsParam.IDS_PATH)
     public List<LocationDto> browseLocations(@PathVariable(IdsParam.IDS) IdsParam ids) {
-        return locationService.findByIds(ids.asList()).stream()
-                .map(locationMapper::toDto)
-                .collect(Collectors.toList());
+        List<Location> foundLocations = locationService.findByIds(ids.asList());
+        return locationMapper.toDtos(foundLocations);
     }
 
     @IsAdmin @IsRecruiter

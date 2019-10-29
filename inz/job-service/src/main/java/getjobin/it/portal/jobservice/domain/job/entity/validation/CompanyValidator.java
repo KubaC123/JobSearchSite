@@ -26,7 +26,7 @@ public class CompanyValidator implements ConstraintValidator<CompanyValidation, 
 
     private boolean validateExistence(Company company, ConstraintValidatorContext context) {
         return companyService.findById(company.getId())
-                .map(foundTechnology -> true)
+                .map(foundCompany -> true)
                 .orElseGet(() -> {
                     addMessageToContext(MessageFormat.format("Company with id {0} does not exist", company.getId()), context);
                     return false;

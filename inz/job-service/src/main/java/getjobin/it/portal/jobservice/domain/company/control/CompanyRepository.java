@@ -23,6 +23,10 @@ public class CompanyRepository {
     @Autowired
     private QueryService queryService;
 
+    public List<Company> findAll() {
+        return queryService.findAll(Company.class);
+    }
+
     public Optional<Company> findById(Long companyId) {
         return Optional.ofNullable(entityManager.find(Company.class, companyId));
     }

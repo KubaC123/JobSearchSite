@@ -20,6 +20,10 @@ public class LocationService {
     @Autowired
     private LocationRepository locationRepository;
 
+    public List<Location> findAll() {
+        return locationRepository.findAll();
+    }
+
     public List<Location> findByIds(List<Long> locationIds) {
         return locationRepository.findByIds(locationIds);
     }

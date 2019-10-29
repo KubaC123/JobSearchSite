@@ -35,11 +35,16 @@ public class CategoryResource {
     @Autowired
     private CategoryService categoryService;
 
+    @RequestMapping(method = RequestMethod.GET, value = "all")
+    public List<CategoryDto> findAll() {
+        List<Category> allCategories = categoryService.findAll();
+        return categoryMapper.toDtos(allCategories);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = IDS_PATH)
     public List<CategoryDto> browseCategories(@PathVariable(IDS) IdsParam ids) {
-        return categoryService.findByIds(ids.asList()).stream()
-                .map(categoryMapper::toDTO)
-                .collect(Collectors.toList());
+        List<Category> foundCategories = categoryService.findByIds(ids.asList());
+        return categoryMapper.toDtos(foundCategories);
     }
 
     @IsAdmin

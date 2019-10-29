@@ -20,6 +20,10 @@ public class TechnologyService {
     @Autowired
     private TechnologyRepository technologyRepository;
 
+    public List<Technology> findAll() {
+        return technologyRepository.findAll();
+    }
+
     public List<Technology> findByIds(List<Long> technologyIds) {
         return technologyRepository.findByIds(technologyIds);
     }

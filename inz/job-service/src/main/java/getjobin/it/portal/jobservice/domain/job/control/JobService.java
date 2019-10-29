@@ -8,17 +8,26 @@ import getjobin.it.portal.jobservice.client.ElasticServiceClient;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.indexation.boundary.IndexationMapper;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
+import getjobin.it.portal.jobservice.domain.job.entity.JobLocationRelation;
+import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
+import getjobin.it.portal.jobservice.domain.job.entity.JobWithRelatedObjects;
+import getjobin.it.portal.jobservice.domain.location.control.LocationService;
+import getjobin.it.portal.jobservice.domain.location.entity.Location;
 import getjobin.it.portal.jobservice.domain.search.control.GenericRSQLSpecification;
 import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
+import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
+import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +44,12 @@ public class JobService {
     private JobRepository jobRepository;
 
     @Autowired
+    private TechStackService techStackService;
+
+    @Autowired
+    private LocationService locationService;
+
+    @Autowired
     private IndexationMapper indexationMapper;
 
     @Autowired
@@ -48,6 +63,46 @@ public class JobService {
 
     @Value("${getjobin.it.portal.job.elastic.fulltext.attributes}")
     private String elasticFullTextSearchCommaSeparatedAttributes;
+
+    public List<Job> findAll() {
+        return jobRepository.findAll();
+    }
+
+    public List<JobWithRelatedObjects> getJobsWithRelatedObjects(List<Job> jobs) {
+        return jobs.stream()
+                .map(this::getJobWithRelatedObjects)
+                .collect(Collectors.toList());
+    }
+
+    private JobWithRelatedObjects getJobWithRelatedObjects(Job job) {
+        return JobWithRelatedObjects.builder()
+                .job(job)
+                .techStacksWithExperienceLevel(getTechStacks(job))
+                .locationsWithRemote(getLocations(job))
+                .build();
+    }
+
+    private List<Pair<TechStack, Integer>> getTechStacks(Job job) {
+        return job.getTechStackRelations().map(this::queryTechStacks)
+                .orElseGet(ArrayList::new);
+    }
+
+    private List<Pair<TechStack, Integer>> queryTechStacks(List<JobTechStackRelation> techStackRelations) {
+        return techStackRelations.stream()
+                .map(relation -> Pair.of(techStackService.getById(relation.getTechStackId()), relation.getExperienceLevel()))
+                .collect(Collectors.toList());
+    }
+
+    private List<Pair<Location, Boolean>> getLocations(Job job) {
+        return job.getLocationRelations().map(this::queryLocations)
+                .orElseGet(ArrayList::new);
+    }
+
+    private List<Pair<Location, Boolean>> queryLocations(List<JobLocationRelation> locationRelations) {
+        return locationRelations.stream()
+                .map(relation -> Pair.of(locationService.getById(relation.getLocationId()), relation.getRemote()))
+                .collect(Collectors.toList());
+    }
 
     public Optional<Job> findById(Long jobId) {
         return jobRepository.findById(jobId);

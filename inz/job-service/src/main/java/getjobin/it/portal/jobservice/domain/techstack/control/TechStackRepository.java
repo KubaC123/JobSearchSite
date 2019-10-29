@@ -22,6 +22,10 @@ public class TechStackRepository {
     @Autowired
     private QueryService queryService;
 
+    public List<TechStack> findAll() {
+        return queryService.findAll(TechStack.class);
+    }
+
     public Optional<TechStack> findById(Long techStackId) {
         return Optional.ofNullable(entityManager.find(TechStack.class, techStackId));
     }

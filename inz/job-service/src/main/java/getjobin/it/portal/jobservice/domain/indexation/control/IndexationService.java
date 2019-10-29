@@ -62,17 +62,24 @@ public class IndexationService {
     @Async
     public <T extends ManagedEntity> void indexAllObjectsAsync(Class<T> entityClass) {
         Long count = queryService.countObjects(entityClass);
-        Long iterations = count/PARTITION_SIZE + 1;
-        Stream.iterate(0, i -> i + PARTITION_SIZE)
-                .limit(iterations)
+        CompletableFuture[] futurePartitions = getFuturePartitions(entityClass, count);
+        CompletableFuture.allOf(futurePartitions).exceptionally(handleIndexationException);
+;    }
+
+    private <T extends ManagedEntity> CompletableFuture[] getFuturePartitions(Class<T> entityClass, Long count) {
+        return Stream.iterate(0, i -> i + PARTITION_SIZE)
+                .limit(count/PARTITION_SIZE + 1)
                 .map(i -> futureIndexPartition(i, entityClass))
-                .map(CompletableFuture::join);
-        // todo fix executing futures
+                .toArray(CompletableFuture[]::new);
     }
 
     private <T extends ManagedEntity> CompletableFuture<Void> futureIndexPartition(Integer startRow, Class<T> entityClass) {
-        return CompletableFuture.runAsync(() -> indexPartition(startRow, entityClass))
-                .exceptionally(handleIndexationException);
+        return CompletableFuture.runAsync(() -> indexPartition(startRow, entityClass), executorService);
+    }
+
+    private <T extends ManagedEntity> void indexPartition(Integer startRow, Class<T> entityClass) {
+        List<T> objects = queryService.queryPartition(startRow, startRow + PARTITION_SIZE, entityClass);
+        indexationConsumers.get(entityClass).accept(objects);
     }
 
     private Function<Throwable, Void> handleIndexationException = ex -> {
@@ -80,23 +87,23 @@ public class IndexationService {
         return null;
     };
 
-    private <T extends ManagedEntity> void indexPartition(Integer startRow, Class<T> entityClass) {
-        List<T> objects = queryService.queryPartition(startRow, startRow + PARTITION_SIZE, entityClass);
-        indexationConsumers.get(entityClass).accept(objects);
-    }
-
     @Async
     public <T extends ManagedEntity> void indexGivenObjectsAsync(List<Long> ids, Class<T> entityClass) {
-        Lists.partition(ids, PARTITION_SIZE).stream()
-                .forEach(partition -> indexPartition(partition, entityClass));
+        CompletableFuture[] futurePartitions = getFuturePartitions(ids, entityClass);
+        CompletableFuture.allOf(futurePartitions).exceptionally(handleIndexationException);
     }
 
-    public <T extends ManagedEntity> CompletableFuture<Void> futureIndexPartition(List<Long> ids, Class<T> entityClass) {
-        return CompletableFuture.runAsync(() -> indexPartition(ids, entityClass))
-                .exceptionally(handleIndexationException);
+    private <T extends ManagedEntity> CompletableFuture[] getFuturePartitions(List<Long> ids, Class<T> entityClass) {
+        return Lists.partition(ids, PARTITION_SIZE).stream()
+                .map(partition -> futureIndexPartition(partition, entityClass))
+                .toArray(CompletableFuture[]::new);
     }
 
-    public <T extends ManagedEntity> void indexPartition(List<Long> ids, Class<T> entityClass) {
+    private <T extends ManagedEntity> CompletableFuture<Void> futureIndexPartition(List<Long> ids, Class<T> entityClass) {
+        return CompletableFuture.runAsync(() -> indexPartition(ids, entityClass), executorService);
+    }
+
+    private <T extends ManagedEntity> void indexPartition(List<Long> ids, Class<T> entityClass) {
         List<T> objects = queryService.queryByIds(ids, entityClass);
         indexationConsumers.get(entityClass).accept(objects);
     }

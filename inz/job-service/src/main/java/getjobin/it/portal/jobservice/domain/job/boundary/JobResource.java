@@ -4,6 +4,7 @@ import getjobin.it.portal.jobservice.api.JobDto;
 import getjobin.it.portal.jobservice.api.ResourceDto;
 import getjobin.it.portal.jobservice.domain.job.control.JobService;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
+import getjobin.it.portal.jobservice.domain.job.entity.JobWithRelatedObjects;
 import getjobin.it.portal.jobservice.infrastructure.config.security.IsAdmin;
 import getjobin.it.portal.jobservice.infrastructure.config.security.IsRecruiter;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServicePreconditions;
@@ -37,17 +38,26 @@ public class JobResource {
     @Autowired
     private JobService jobService;
 
+    @RequestMapping(method = RequestMethod.GET, value = "all")
+    public List<JobDto> findAll() {
+        List<Job> foundJobs = jobService.findAll();
+        List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.getJobsWithRelatedObjects(foundJobs);
+        return jobMapper.toDtos(jobsWithRelatedObjects);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = IdsParam.IDS_PATH)
-    public List<JobDto> browseJobs(@PathVariable(IdsParam.IDS) IdsParam ids) {
+    public List<JobDto> searchByIds(@PathVariable(IdsParam.IDS) IdsParam ids) {
         List<Job> foundJobs = jobService.findByIds(ids.asList());
-        return jobMapper.toDtos(foundJobs);
+        List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.getJobsWithRelatedObjects(foundJobs);
+        return jobMapper.toDtos(jobsWithRelatedObjects);
     }
 
     @IsAdmin
     @RequestMapping(method = RequestMethod.GET, value = "search")
     public List<JobDto> searchByRsql(@RequestParam("rsql") String rsql) {
         List<Job> foundJobs = jobService.findByRsqlCondition(rsql);
-        return jobMapper.toDtos(foundJobs);
+        List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.getJobsWithRelatedObjects(foundJobs);
+        return jobMapper.toDtos(jobsWithRelatedObjects);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "search/fullText")
@@ -56,7 +66,8 @@ public class JobResource {
         List<Job> foundJobs = jobService.searchByTextUsingElasticSearch(searchText);
         Instant end = Instant.now();
         log.info("[FULL TEXT SEARCH] ES search took {} ms.", Duration.between(start, end).toMillis());
-        return jobMapper.toDtos(foundJobs);
+        List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.getJobsWithRelatedObjects(foundJobs);
+        return jobMapper.toDtos(jobsWithRelatedObjects);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "search/fullText/sql")
@@ -65,7 +76,8 @@ public class JobResource {
         List<Job> foundJobs = jobService.searchByTextUsingSql(searchText);
         Instant end = Instant.now();
         log.info("[FULL TEXT SEARCH] SQL search took {} ms.", Duration.between(start, end).toMillis());
-        return jobMapper.toDtos(foundJobs);
+        List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.getJobsWithRelatedObjects(foundJobs);
+        return jobMapper.toDtos(jobsWithRelatedObjects);
     }
 
     @IsAdmin @IsRecruiter

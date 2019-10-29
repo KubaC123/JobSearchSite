@@ -26,17 +26,17 @@ public class IndexationEventListener {
             logSuccess(event);
         } catch (Exception exception) {
             logException(event, exception);
-            throw new JobServiceException("[INDEXATION] Exception during sending indexation event. Check server log for details.");
+            throw new JobServiceException("[INDEXATION] Exception during sending indexation event, check server log for details");
         }
     }
 
     private void logSuccess(DocumentEventDto event) {
-        log.info("[INDEXATION] Event for object with id {}, operation type {} has been send on kafka topic",
+        log.info("[INDEXATION] Event with id {}, operation type {} has been send on kafka topic",
                 event.getObjectId(), event.getOperationType().toUpperCase());
     }
 
     private void logException(DocumentEventDto event, Exception exception) {
-        log.info("[INDEXATION] Exception during sending event with id {} and operation type {} on kafka topic. {}",
+        log.info("[INDEXATION] Exception during sending event with id {} and operation type {} on kafka topic \n {}",
                 event.getObjectId(), event.getOperationType().toUpperCase(), exception);
     }
 }

@@ -21,6 +21,14 @@ public class QueryService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    public <T extends ManagedEntity> List<T> findAll(Class<T> entityClass) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<T> cq = cb.createQuery(entityClass);
+        Root<T> root = cq.from(entityClass);
+        CriteriaQuery<T> all = cq.select(root);
+        return entityManager.createQuery(all).getResultList();
+    }
+
     public <T extends ManagedEntity> List<T> queryByIds(List<Long> ids, Class<T> entityClass) {
         return entityManager.unwrap(Session.class)
                 .byMultipleIds(entityClass)

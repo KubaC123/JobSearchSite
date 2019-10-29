@@ -44,6 +44,9 @@ public class JobRepository {
     @Autowired
     private JobLocationRelationRepository jobLocationRelationRepository;
 
+    public List<Job> findAll() {
+        return queryService.findAll(Job.class);
+    }
 
     public Optional<Job> findById(Long jobId) {
         return Optional.ofNullable(entityManager.find(Job.class, jobId));

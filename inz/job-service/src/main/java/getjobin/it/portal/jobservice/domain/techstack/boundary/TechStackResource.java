@@ -36,11 +36,16 @@ public class TechStackResource {
     @Autowired
     private TechStackService techStackService;
 
+    @RequestMapping(method = RequestMethod.GET, value = "all")
+    public List<TechStackDto> findAll() {
+        List<TechStack> allTechStacks = techStackService.findAll();
+        return techStackMapper.toDtos(allTechStacks);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = IDS_PATH)
     public List<TechStackDto> browseTechStacks(@PathVariable(IDS) IdsParam ids) {
-        return techStackService.findByIds(ids.asList()).stream()
-                .map(techStackMapper::toDto)
-                .collect(Collectors.toList());
+        List<TechStack> foundTechStacks = techStackService.findByIds(ids.asList());
+        return techStackMapper.toDtos(foundTechStacks);
     }
 
     @IsAdmin @IsRecruiter

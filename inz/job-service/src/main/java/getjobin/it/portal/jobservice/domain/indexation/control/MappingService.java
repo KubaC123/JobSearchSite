@@ -20,9 +20,9 @@ public class MappingService {
     public void sendMappingOnTopic(MappingEventDto indexMapping) {
         try {
             kafkaEventPublisher.sendEventOnTopic(kafkaTopic.mappings(), indexMapping);
-            log.info("Mapping for index {} has been send on kafka topic", indexMapping.getIndexName());
+            log.info("[INDEXATION] Mapping for index {} has been send on kafka topic", indexMapping.getIndexName());
         } catch (Exception exception) {
-            log.warn("Exception during sending mapping on kafka topic {}. {}", indexMapping, exception);
+            log.warn("[INDEXATION] Exception during sending mapping on kafka topic {} \n {}", indexMapping, exception);
         }
     }
 }

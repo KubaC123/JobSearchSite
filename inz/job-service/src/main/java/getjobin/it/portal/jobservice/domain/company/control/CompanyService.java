@@ -20,6 +20,10 @@ public class CompanyService {
     @Autowired
     private CompanyRepository companyRepository;
 
+    public List<Company> findAll() {
+        return companyRepository.findAll();
+    }
+
     public Optional<Company> findById(Long companyId) {
         return companyRepository.findById(companyId);
     }
