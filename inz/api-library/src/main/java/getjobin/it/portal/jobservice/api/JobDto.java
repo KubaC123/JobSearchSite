@@ -15,8 +15,8 @@ public class JobDto {
     private Long id;
     private String type;
     private String title;
-    private ResourceDto company;
-    private ResourceDto category;
+    private CompanyDto company;
+    private CategoryDto category;
     private String experienceLevel;
     private String employmentType;
     private Integer salaryMin;
@@ -26,7 +26,7 @@ public class JobDto {
     private Boolean flexibleWorkHours;
     private String currency;
     private String description;
-    private ResourceDto technology;
+    private TechnologyDto technology;
     private String projectIndustry;
     private Integer projectTeamSize;
     private String projectDescription;

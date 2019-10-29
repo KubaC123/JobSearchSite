@@ -12,7 +12,6 @@ public class CategoryDto {
 
     private Long id;
     private String name;
-    private Integer jobCounter;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class CategoryDtoBuilder { }
