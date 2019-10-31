@@ -3,7 +3,7 @@ package getjobin.it.portal.elasticservice.infrastructure.exception;
 import java.io.IOException;
 
 @FunctionalInterface
-public interface ElasticSearchRequest<T, R> {
+public interface UncheckedFunction<T, R> {
 
     R apply(T t) throws IOException;
 

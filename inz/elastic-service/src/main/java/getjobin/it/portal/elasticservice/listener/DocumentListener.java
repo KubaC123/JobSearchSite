@@ -4,7 +4,6 @@ import getjobin.it.portal.elasticservice.api.DocumentEventDto;
 import getjobin.it.portal.elasticservice.client.control.ESJavaClient;
 import getjobin.it.portal.elasticservice.infrastructure.config.KafkaTopic;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.action.DocWriteRequest.OpType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -23,17 +22,12 @@ public class DocumentListener {
 
     @StreamListener(KafkaTopic.INDEXATION_TOPIC)
     public void handleIndexationEvent(@Payload DocumentEventDto documentEvent) {
-        log.info("Received indexation event {}", documentEvent);
+        log.info("[INDEXATION] Received indexation event {}", documentEvent);
 
-        OpType operationType = OpType.fromString(documentEvent.getOperationType());
-
-        switch(operationType) {
-            case CREATE:
-                esJavaClient.indexDocument(documentEvent);
-                break;
-            case UPDATE:
-                esJavaClient.updateDocument(documentEvent);
-                break;
+        if(esJavaClient.documentExists(documentEvent)) {
+            esJavaClient.updateDocument(documentEvent);
+        } else {
+            esJavaClient.indexDocument(documentEvent);
         }
     }
 }

@@ -4,9 +4,10 @@ import getjobin.it.portal.elasticservice.api.DocumentEventDto;
 import getjobin.it.portal.elasticservice.api.FoundDocumentDto;
 import getjobin.it.portal.elasticservice.api.MappingEventDto;
 import getjobin.it.portal.elasticservice.api.SearchResultDto;
-import getjobin.it.portal.elasticservice.infrastructure.exception.ElasticSearchRequest;
+import getjobin.it.portal.elasticservice.infrastructure.exception.UncheckedFunction;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
@@ -48,44 +49,54 @@ public class ESJavaClient {
 
     public void indexDocument(DocumentEventDto documentEvent) {
         indexDocument().unchecked(requestBuilder.indexRequest(documentEvent));
-        log.info("[DOCUMENT] Indexed document with id: {}, on index: {}", documentEvent.getObjectId(), documentEvent.getIndex());
+        log.info("[INDEXATION] Indexed document with id: {}, on index: {}", documentEvent.getObjectId(), documentEvent.getIndex());
     }
 
-    private ElasticSearchRequest<IndexRequest, IndexResponse> indexDocument() {
+    private UncheckedFunction<IndexRequest, IndexResponse> indexDocument() {
         return indexRequest -> client.index(indexRequest, RequestOptions.DEFAULT);
     }
 
     public void updateDocument(DocumentEventDto documentEvent) {
         updateDocument().unchecked(requestBuilder.updateRequest(documentEvent));
+        log.info("[INDEXATION] Updated document with id: {}, on index: {}", documentEvent.getObjectId(), documentEvent.getIndex());
     }
 
-    private ElasticSearchRequest<UpdateRequest, UpdateResponse> updateDocument() {
+    private UncheckedFunction<UpdateRequest, UpdateResponse> updateDocument() {
         return updateRequest -> client.update(updateRequest, RequestOptions.DEFAULT);
+    }
+
+    public boolean documentExists(DocumentEventDto documentEvent) {
+        return documentExists().unchecked(requestBuilder.documentExistsRequest(documentEvent));
+    }
+
+    private UncheckedFunction<GetRequest, Boolean> documentExists() {
+        return getRequest -> client.exists(getRequest, RequestOptions.DEFAULT);
     }
 
     public void createIndex(MappingEventDto mappingEvent) {
         createIndex().unchecked(requestBuilder.createIndexRequest(mappingEvent));
-        log.info("[INDEX] Index {} has been created.", mappingEvent.getIndexName());
+        log.info("[INDEX] Index {} has been created", mappingEvent.getIndexName());
     }
 
-    private ElasticSearchRequest<CreateIndexRequest, CreateIndexResponse> createIndex() {
+    private UncheckedFunction<CreateIndexRequest, CreateIndexResponse> createIndex() {
         return createIndexRequest -> client.indices().create(createIndexRequest, RequestOptions.DEFAULT);
     }
 
     public void deleteIndex(String indexName) {
         deleteIndex().unchecked(requestBuilder.deleteIndexRequest(indexName));
+        log.info("[INDEX] Index {} has been deleted", indexName);
     }
 
-    private ElasticSearchRequest<DeleteIndexRequest, AcknowledgedResponse> deleteIndex() {
+    private UncheckedFunction<DeleteIndexRequest, AcknowledgedResponse> deleteIndex() {
         return deleteIndexRequest -> client.indices().delete(deleteIndexRequest, RequestOptions.DEFAULT);
     }
 
     public void putMapping(MappingEventDto mappingEvent) {
         putMapping().unchecked(requestBuilder.putMappingRequest(mappingEvent));
-        log.info("[INDEX] Mapping for index {} has been updated.", mappingEvent.getIndexName());
+        log.info("[INDEX] Mapping for index {} has been updated", mappingEvent.getIndexName());
     }
 
-    private ElasticSearchRequest<PutMappingRequest, AcknowledgedResponse> putMapping() {
+    private UncheckedFunction<PutMappingRequest, AcknowledgedResponse> putMapping() {
         return putMappingRequest -> client.indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
     }
 
@@ -93,7 +104,7 @@ public class ESJavaClient {
         return getMapping().unchecked(requestBuilder.getMappingRequest(indexNames)).mappings();
     }
 
-    private ElasticSearchRequest<GetMappingsRequest, GetMappingsResponse> getMapping() {
+    private UncheckedFunction<GetMappingsRequest, GetMappingsResponse> getMapping() {
         return getMappingsRequest -> client.indices().getMapping(getMappingsRequest, RequestOptions.DEFAULT);
     }
 
@@ -101,7 +112,7 @@ public class ESJavaClient {
         return indexExist().unchecked(requestBuilder.getIndexRequest(indexName));
     }
 
-    private ElasticSearchRequest<GetIndexRequest, Boolean> indexExist() {
+    private UncheckedFunction<GetIndexRequest, Boolean> indexExist() {
         return getIndexRequest -> client.indices().exists(getIndexRequest, RequestOptions.DEFAULT);
     }
 
@@ -112,7 +123,7 @@ public class ESJavaClient {
         return buildSearchResult(foundDocuments);
     }
 
-    private ElasticSearchRequest<SearchRequest, SearchResponse> search() {
+    private UncheckedFunction<SearchRequest, SearchResponse> search() {
         return searchRequest -> client.search(searchRequest, RequestOptions.DEFAULT);
     }
 
