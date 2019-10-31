@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import getjobin.it.portal.elasticservice.api.DocumentEventDto;
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
 import getjobin.it.portal.jobservice.domain.indexation.boundary.IndexationMapper;
-import getjobin.it.portal.jobservice.domain.job.control.OperationType;
+import getjobin.it.portal.jobservice.domain.job.control.JobService;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.search.boundary.QueryService;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +51,7 @@ public class IndexationService {
     }
 
     private Consumer<List<? extends ManagedEntity>> jobIndexationConsumer = jobs ->
-        sendIndexationEvents(indexationMapper.toDocumentEventDtos((List<Job>)jobs, OperationType.UPDATE));
+        sendIndexationEvents(indexationMapper.toDocumentEventDtos((List<Job>)jobs));
 
     private void sendIndexationEvents(List<DocumentEventDto> events) {
         for(DocumentEventDto event : events) {
@@ -83,7 +83,7 @@ public class IndexationService {
     }
 
     private Function<Throwable, Void> handleIndexationException = ex -> {
-        log.warn("[INDEXATION] indexation failed, stack trace: \n{}", (Object) ex.getStackTrace());
+        log.warn("[INDEXATION] indexation failed, message: \n{}", ex.getLocalizedMessage());
         return null;
     };
 

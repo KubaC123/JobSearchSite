@@ -1,6 +1,7 @@
 package getjobin.it.portal.jobservice.domain.job.boundary;
 
 import getjobin.it.portal.jobservice.api.JobDto;
+import getjobin.it.portal.jobservice.api.JobSearchDto;
 import getjobin.it.portal.jobservice.api.ResourceDto;
 import getjobin.it.portal.jobservice.domain.job.control.JobService;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
@@ -60,10 +61,20 @@ public class JobResource {
         return jobMapper.toDtos(jobsWithRelatedObjects);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "search/fullText")
-    public List<JobDto> searchByTextUsingElasticSearch(@RequestParam("searchText") String searchText) {
+    @RequestMapping(method = RequestMethod.POST, value = "search/fullText")
+    public List<JobDto> searchByTextOnAttributesElasticSearch(@RequestBody JobSearchDto jobSearchDto) {
         Instant start = Instant.now();
-        List<Job> foundJobs = jobService.searchByTextUsingElasticSearch(searchText);
+        List<Job> foundJobs = jobService.searchByTextOnAttributesElasticSearch(jobSearchDto);
+        Instant end = Instant.now();
+        log.info("[FULL TEXT SEARCH] ES search took {} ms.", Duration.between(start, end).toMillis());
+        List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.getJobsWithRelatedObjects(foundJobs);
+        return jobMapper.toDtos(jobsWithRelatedObjects);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "search/fullText")
+    public List<JobDto> searchByTextElasticSearch(@RequestParam("searchText") String searchText) {
+        Instant start = Instant.now();
+        List<Job> foundJobs = jobService.searchByTextElasticSearch(searchText);
         Instant end = Instant.now();
         log.info("[FULL TEXT SEARCH] ES search took {} ms.", Duration.between(start, end).toMillis());
         List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.getJobsWithRelatedObjects(foundJobs);
@@ -71,9 +82,9 @@ public class JobResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "search/fullText/sql")
-    public List<JobDto> searchByTextUsingSql(@RequestParam("searchText") String searchText) {
+    public List<JobDto> searchByTextSql(@RequestParam("searchText") String searchText) {
         Instant start = Instant.now();
-        List<Job> foundJobs = jobService.searchByTextUsingSql(searchText);
+        List<Job> foundJobs = jobService.searchByTextSql(searchText);
         Instant end = Instant.now();
         log.info("[FULL TEXT SEARCH] SQL search took {} ms.", Duration.between(start, end).toMillis());
         List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.getJobsWithRelatedObjects(foundJobs);

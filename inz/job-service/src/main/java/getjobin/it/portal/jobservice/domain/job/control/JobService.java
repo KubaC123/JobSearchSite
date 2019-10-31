@@ -4,6 +4,8 @@ import cz.jirutka.rsql.parser.RSQLParser;
 import cz.jirutka.rsql.parser.RSQLParserException;
 import cz.jirutka.rsql.parser.ast.Node;
 import getjobin.it.portal.elasticservice.api.FoundDocumentDto;
+import getjobin.it.portal.elasticservice.api.SearchResultDto;
+import getjobin.it.portal.jobservice.api.JobSearchDto;
 import getjobin.it.portal.jobservice.client.ElasticServiceClient;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.indexation.boundary.IndexationMapper;
@@ -74,7 +76,7 @@ public class JobService {
                 .collect(Collectors.toList());
     }
 
-    private JobWithRelatedObjects getJobWithRelatedObjects(Job job) {
+    public JobWithRelatedObjects getJobWithRelatedObjects(Job job) {
         return JobWithRelatedObjects.builder()
                 .job(job)
                 .techStacksWithExperienceLevel(getTechStacks(job))
@@ -137,8 +139,21 @@ public class JobService {
         }
     }
 
-    public List<Job> searchByTextUsingElasticSearch(String searchText) {
-        return elasticServiceClient.fullTextSearch("job", searchText, elasticFullTextSearchCommaSeparatedAttributes)
+    public List<Job> searchByTextOnAttributesElasticSearch(JobSearchDto jobSearchDto) {
+        SearchResultDto searchResult = elasticServiceClient.fullTextSearch(
+                "job", jobSearchDto.getSearchText(), String.join(",", jobSearchDto.getAttributes()));
+        return parseElasticSearchResults(searchResult);
+    }
+
+    public List<Job> searchByTextElasticSearch(String searchText) {
+        SearchResultDto searchResult = elasticServiceClient.fullTextSearch(
+                "job", searchText, elasticFullTextSearchCommaSeparatedAttributes);
+        return parseElasticSearchResults(searchResult);
+
+    }
+
+    private List<Job> parseElasticSearchResults(SearchResultDto searchResultDto) {
+        return searchResultDto
                 .getDocuments()
                 .stream()
                 .map(FoundDocumentDto::getObjectId)
@@ -148,7 +163,7 @@ public class JobService {
                 .collect(Collectors.toList());
     }
 
-    public List<Job> searchByTextUsingSql(String searchText) {
+    public List<Job> searchByTextSql(String searchText) {
         String rsqlCondition = Arrays.stream(sqlFullTextSearchCommaSeparatedAttributes.split(","))
                 .map(attribute -> attribute + GenericRSQLSpecification.RSQL_EQUAL_TO + searchText)
                 .collect(Collectors.joining(GenericRSQLSpecification.RSQL_LOGICAL_OR));
@@ -158,12 +173,12 @@ public class JobService {
     public Long create(Job job) {
         validate(job);
         Long createdJobId = jobRepository.save(job);
-        sendIndexationEvent(createdJobId, OperationType.CREATE);
+        sendIndexationEvent(createdJobId);
         return createdJobId;
     }
 
-    private void sendIndexationEvent(Long jobId, OperationType operationType) {
-        eventPublisher.publishEvent(indexationMapper.toDocumentEventDto(getById(jobId), operationType));
+    private void sendIndexationEvent(Long jobId) {
+        eventPublisher.publishEvent(indexationMapper.toDocumentEventDto(getById(jobId)));
     }
 
     private void validate(Job job) {
@@ -176,7 +191,7 @@ public class JobService {
     public Long update(Job job) {
         validate(job);
         Long updatedJobId = jobRepository.update(job);
-        sendIndexationEvent(updatedJobId, OperationType.UPDATE);
+        sendIndexationEvent(updatedJobId);
         return updatedJobId;
     }
 
