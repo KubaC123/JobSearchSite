@@ -12,7 +12,6 @@ public class DocumentEventDto {
 
     private Long objectId;
     private String index;
-    private String operationType;
     private String data;
 
     @JsonPOJOBuilder(withPrefix = "")
