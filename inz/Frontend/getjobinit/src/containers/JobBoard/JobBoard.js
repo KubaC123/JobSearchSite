@@ -3,15 +3,21 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import getJobInItClient from '../../GetJobInItClient';
 import JobCard from '../../components/JobCard/JobCard';
-import SearchBar from '../SearchBar/SearchBar';
+import SearchBar from './SearchBar/SearchBar';
 
 class JobBoard extends Component {
 
   state = {
-    jobs: []
+    jobs: [],
+    searchText: null
   }
   
   componentDidMount() {
+    console.log("componentDidMount");
+    this.getAllJobs();
+  }
+
+  getAllJobs() {
     getJobInItClient.get("/job-service/api/job/all")
     .then(response => {
       const jobs = response.data;
@@ -22,8 +28,21 @@ class JobBoard extends Component {
     })
   }
 
+  handleSearch = (searchText) => {
+    if(this.state.searchText !== searchText) {
+      getJobInItClient.get("/job-service/api/job/search/sql", { params: {searchText: searchText}})
+      .then(response => {
+        const jobs = response.data;
+        this.setState({jobs: jobs});
+      })
+      .catch(error => {
+        alert("Server is down :(")
+      })
+      this.setState({searchText: searchText});
+    }
+  }
+
   render() {
-    console.log(this.state.jobs);
     let cards = this.state.jobs.map(job => {
       return (
         <JobCard job={job}/>
@@ -33,7 +52,7 @@ class JobBoard extends Component {
     return (
       <Box maxWidth="70%" mx="auto">
         <SearchBar 
-          
+          handleSearch={this.handleSearch}
         />
         <Box paddingTop={10}>
           <Typography component="h3">

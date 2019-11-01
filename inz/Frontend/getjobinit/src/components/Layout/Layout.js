@@ -5,12 +5,10 @@ import Toolbar from '../Navigation/Toolbar/Toolbar';
 
 const layout = (props) => {
   return (
-    <Box>
+    <div>
       <Toolbar />
-      <Paper>
-        {props.children}
-      </Paper>
-    </Box>
+      {props.children}
+    </div>
   );
 }
 
