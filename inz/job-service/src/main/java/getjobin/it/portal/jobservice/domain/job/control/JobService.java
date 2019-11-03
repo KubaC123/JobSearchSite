@@ -3,12 +3,13 @@ package getjobin.it.portal.jobservice.domain.job.control;
 import cz.jirutka.rsql.parser.RSQLParser;
 import cz.jirutka.rsql.parser.RSQLParserException;
 import cz.jirutka.rsql.parser.ast.Node;
+import getjobin.it.portal.elasticservice.api.DocumentEventDto;
 import getjobin.it.portal.elasticservice.api.FoundDocumentDto;
 import getjobin.it.portal.elasticservice.api.SearchResultDto;
 import getjobin.it.portal.jobservice.api.JobSearchDto;
 import getjobin.it.portal.jobservice.client.ElasticServiceClient;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
-import getjobin.it.portal.jobservice.domain.indexation.boundary.IndexationMapper;
+import getjobin.it.portal.jobservice.domain.job.boundary.JobMapper;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.entity.JobLocationRelation;
 import getjobin.it.portal.jobservice.domain.job.entity.JobTechStackRelation;
@@ -25,18 +26,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class JobService {
 
     @Autowired
@@ -52,7 +56,7 @@ public class JobService {
     private LocationService locationService;
 
     @Autowired
-    private IndexationMapper indexationMapper;
+    private JobMapper jobMapper;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -65,6 +69,23 @@ public class JobService {
 
     @Value("${getjobin.it.portal.job.elastic.fulltext.attributes}")
     private String elasticFullTextSearchCommaSeparatedAttributes;
+
+    public List<DocumentEventDto> getDocumentEvents(Integer startRow, Integer endRow) {
+        List<Job> jobs = jobRepository.queryPartition(startRow, endRow);
+        return toDocumentEvents(jobs);
+    }
+
+    public List<DocumentEventDto> getDocumentEvents(List<Long> ids) {
+        List<Job> jobs = jobRepository.findByIds(ids);
+        return toDocumentEvents(jobs);
+    }
+
+    private List<DocumentEventDto> toDocumentEvents(List<Job> jobs) {
+        return jobs.stream()
+                .map(this::getJobWithRelatedObjects)
+                .map(jobMapper::toDocumentEventDto)
+                .collect(Collectors.toList());
+    }
 
     public List<Job> findAll() {
         return jobRepository.findAll();
@@ -147,27 +168,33 @@ public class JobService {
 
     public List<Job> searchByTextElasticSearch(String searchText) {
         SearchResultDto searchResult = elasticServiceClient.fullTextSearch(
-                "job", searchText, elasticFullTextSearchCommaSeparatedAttributes);
+                "job", searchText, "title,type");
         return parseElasticSearchResults(searchResult);
-
     }
 
     private List<Job> parseElasticSearchResults(SearchResultDto searchResultDto) {
-        return searchResultDto
-                .getDocuments()
-                .stream()
-                .map(FoundDocumentDto::getObjectId)
-                .map(jobRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+        if(searchResultDto.getDocuments() != null) {
+            return searchResultDto
+                    .getDocuments()
+                    .stream()
+                    .map(FoundDocumentDto::getObjectId)
+                    .map(jobRepository::findById)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 
     public List<Job> searchByTextSql(String searchText) {
         String rsqlCondition = Arrays.stream(sqlFullTextSearchCommaSeparatedAttributes.split(","))
-                .map(attribute -> attribute + GenericRSQLSpecification.RSQL_EQUAL_TO + searchText)
+                .map(attribute -> toRsqlEqual(attribute, searchText))
                 .collect(Collectors.joining(GenericRSQLSpecification.RSQL_LOGICAL_OR));
         return findByRsqlCondition(rsqlCondition);
+    }
+
+    private String toRsqlEqual(String attribute, String searchText) {
+        return attribute + GenericRSQLSpecification.RSQL_EQUAL_TO + "'" + searchText + "'";
     }
 
     public Long create(Job job) {
@@ -178,7 +205,9 @@ public class JobService {
     }
 
     private void sendIndexationEvent(Long jobId) {
-        eventPublisher.publishEvent(indexationMapper.toDocumentEventDto(getById(jobId)));
+        JobWithRelatedObjects jobWithRelatedObjects = getJobWithRelatedObjects(getById(jobId));
+        DocumentEventDto event = jobMapper.toDocumentEventDto(jobWithRelatedObjects);
+        eventPublisher.publishEvent(event);
     }
 
     private void validate(Job job) {

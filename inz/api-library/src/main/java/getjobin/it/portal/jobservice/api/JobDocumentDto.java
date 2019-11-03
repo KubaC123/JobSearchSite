@@ -27,6 +27,9 @@ public class JobDocumentDto {
     private String projectDescription;
     private Boolean active;
     private String techStacks;
+    private String cities;
+    private String countries;
+    private String streets;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class JobDocumentDtoBuilder { }

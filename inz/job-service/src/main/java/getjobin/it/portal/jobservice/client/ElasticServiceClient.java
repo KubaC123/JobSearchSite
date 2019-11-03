@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient("elastic-service")
+@FeignClient(value = "elastic-service", url="http://localhost:9020/")
 public interface ElasticServiceClient {
 
-    @RequestMapping(method = RequestMethod.GET, value = "search/fullText")
-    SearchResultDto fullTextSearch(@RequestParam("indexName") String indexName,
+    @RequestMapping(method = RequestMethod.GET, value = "search/fullText", produces = "application/json")
+    SearchResultDto fullTextSearch(@RequestParam("index") String indexName,
                                    @RequestParam("searchText") String searchText,
                                    @RequestParam("fields") String commaSeparatedFields);
 

@@ -31,12 +31,10 @@ public class IndexationEventListener {
     }
 
     private void logSuccess(DocumentEventDto event) {
-        log.info("[INDEXATION] Event with id {}, operation type {} has been send on kafka topic",
-                event.getObjectId(), event.getOperationType().toUpperCase());
+        log.info("[INDEXATION] Event with id {}, has been send on kafka topic", event.getObjectId());
     }
 
     private void logException(DocumentEventDto event, Exception exception) {
-        log.info("[INDEXATION] Exception during sending event with id {} and operation type {} on kafka topic \n {}",
-                event.getObjectId(), event.getOperationType().toUpperCase(), exception);
+        log.info("[INDEXATION] Exception during sending event with id {} on kafka topic \n {}", event.getObjectId(), exception);
     }
 }

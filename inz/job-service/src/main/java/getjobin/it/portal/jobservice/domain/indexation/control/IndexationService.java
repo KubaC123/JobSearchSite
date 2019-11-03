@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import getjobin.it.portal.elasticservice.api.DocumentEventDto;
 import getjobin.it.portal.jobservice.domain.ManagedEntity;
-import getjobin.it.portal.jobservice.domain.indexation.boundary.IndexationMapper;
 import getjobin.it.portal.jobservice.domain.job.control.JobService;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.search.boundary.QueryService;
@@ -20,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -28,30 +28,38 @@ import java.util.stream.Stream;
 @Slf4j
 public class IndexationService {
 
-    private static final int PARTITION_SIZE = 100;
     private static final int NUMBER_OF_THREADS = 10;
+    private static final int PARTITION_SIZE = 100;
 
     @Autowired
     private QueryService queryService;
 
     @Autowired
-    private IndexationMapper indexationMapper;
+    private JobService jobService;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
     private Executor executorService;
-
-    private Map<Class<? extends ManagedEntity>, Consumer<List<? extends ManagedEntity>>> indexationConsumers;
+    private Map<Class<? extends ManagedEntity>, BiConsumer<Integer, Integer>> fullIndexationConsumers;
+    private Map<Class<? extends ManagedEntity>, Consumer<List<Long>>> partialIndexationConsumers;
 
     @PostConstruct
     void init() {
         executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
-        indexationConsumers = ImmutableMap.of(Job.class, jobIndexationConsumer);
+        fullIndexationConsumers = ImmutableMap.of(Job.class, jobFullIndexationConsumer);
+        partialIndexationConsumers = ImmutableMap.of(Job.class, jobPartialIndexationConsumer);
     }
 
-    private Consumer<List<? extends ManagedEntity>> jobIndexationConsumer = jobs ->
-        sendIndexationEvents(indexationMapper.toDocumentEventDtos((List<Job>)jobs));
+    private BiConsumer<Integer, Integer> jobFullIndexationConsumer = (startRow, endRow) -> {
+        List<DocumentEventDto> events = jobService.getDocumentEvents(startRow, endRow);
+        sendIndexationEvents(events);
+    };
+
+    private Consumer<List<Long>> jobPartialIndexationConsumer = (ids) -> {
+        List<DocumentEventDto> events = jobService.getDocumentEvents(ids);
+        sendIndexationEvents(events);
+    };
 
     private void sendIndexationEvents(List<DocumentEventDto> events) {
         for(DocumentEventDto event : events) {
@@ -78,12 +86,11 @@ public class IndexationService {
     }
 
     private <T extends ManagedEntity> void indexPartition(Integer startRow, Class<T> entityClass) {
-        List<T> objects = queryService.queryPartition(startRow, startRow + PARTITION_SIZE, entityClass);
-        indexationConsumers.get(entityClass).accept(objects);
+        fullIndexationConsumers.get(entityClass).accept(startRow, startRow + PARTITION_SIZE);
     }
 
     private Function<Throwable, Void> handleIndexationException = ex -> {
-        log.warn("[INDEXATION] indexation failed, message: \n{}", ex.getLocalizedMessage());
+        log.warn("[INDEXATION] indexation failed, message: \n{} \n{}", ex.getLocalizedMessage(), ex.getStackTrace());
         return null;
     };
 
@@ -104,7 +111,6 @@ public class IndexationService {
     }
 
     private <T extends ManagedEntity> void indexPartition(List<Long> ids, Class<T> entityClass) {
-        List<T> objects = queryService.queryByIds(ids, entityClass);
-        indexationConsumers.get(entityClass).accept(objects);
+        partialIndexationConsumers.get(entityClass).accept(ids);
     }
 }

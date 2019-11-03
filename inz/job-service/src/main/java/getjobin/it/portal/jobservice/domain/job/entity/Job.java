@@ -152,14 +152,16 @@ public class Job extends ManagedEntity {
     @Column(name = "EXPIRE_DATE")
     private Date expireDate;
 
-    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "JOB_ID")
     @TechStacksValidation
+    @Setter
     private List<JobTechStackRelation> techStackRelations;
 
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "JOB_ID")
     @LocationValidation
+    @Setter
     private List<JobLocationRelation> locationRelations;
 
     public Optional<List<JobTechStackRelation>> getTechStackRelations() {

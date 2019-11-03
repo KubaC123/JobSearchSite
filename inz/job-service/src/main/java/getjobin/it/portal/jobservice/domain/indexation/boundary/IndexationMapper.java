@@ -4,13 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import getjobin.it.portal.elasticservice.api.DocumentEventDto;
 import getjobin.it.portal.jobservice.api.JobDocumentDto;
-import getjobin.it.portal.jobservice.domain.job.control.JobService;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.entity.JobWithRelatedObjects;
 import getjobin.it.portal.jobservice.domain.location.entity.Location;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
@@ -24,32 +22,27 @@ public class IndexationMapper {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
-    private JobService jobService;
-
-    public JobDocumentDto toJobDocumentDto(Job job) {
+    public JobDocumentDto toJobDocumentDto(JobWithRelatedObjects jobWithRelatedObjects) {
         JobDocumentDto.JobDocumentDtoBuilder builder = JobDocumentDto.builder();
-        addReferenceAttributes(job, builder);
-
+        addReferenceAttributes(jobWithRelatedObjects, builder);
         return builder
-                .id(job.getId())
-                .type(job.getType())
-                .title(job.getTitle())
-                .experienceLevel(job.getExperienceLevel())
-                .employmentType(job.getEmploymentType())
-                .salaryMin(String.valueOf(job.getSalaryMin()))
-                .salaryMax(String.valueOf(job.getSalaryMax()))
-                .description(job.getDescription())
-                .projectDescription(job.getProjectDescription())
-                .active(job.getActive())
+                .id(jobWithRelatedObjects.getJob().getId())
+                .type(jobWithRelatedObjects.getJob().getType())
+                .title(jobWithRelatedObjects.getJob().getTitle())
+                .experienceLevel(jobWithRelatedObjects.getJob().getExperienceLevel())
+                .employmentType(jobWithRelatedObjects.getJob().getEmploymentType())
+                .salaryMin(String.valueOf(jobWithRelatedObjects.getJob().getSalaryMin()))
+                .salaryMax(String.valueOf(jobWithRelatedObjects.getJob().getSalaryMax()))
+                .description(jobWithRelatedObjects.getJob().getDescription())
+                .projectDescription(jobWithRelatedObjects.getJob().getProjectDescription())
+                .active(jobWithRelatedObjects.getJob().getActive())
                 .build();
     }
 
-    private void addReferenceAttributes(Job job, JobDocumentDto.JobDocumentDtoBuilder builder) {
-        JobWithRelatedObjects jobWithRelatedObjects = jobService.getJobWithRelatedObjects(job);
+    public void addReferenceAttributes(JobWithRelatedObjects jobWithRelatedObjects, JobDocumentDto.JobDocumentDtoBuilder builder) {
         addTechStacks(builder, jobWithRelatedObjects);
         addLocations(builder, jobWithRelatedObjects);
-        addOtherReferenceAttributes(job, builder);
+        addOtherReferenceAttributes(jobWithRelatedObjects.getJob(), builder);
     }
 
     private void addLocations(JobDocumentDto.JobDocumentDtoBuilder builder, JobWithRelatedObjects jobWithRelatedObjects) {
@@ -83,13 +76,7 @@ public class IndexationMapper {
         Optional.ofNullable(job.getTechnology()).ifPresent(technology -> builder.technologyName(technology.getName()));
     }
 
-    public List<DocumentEventDto> toDocumentEventDtos(List<Job> jobs) {
-        return jobs.stream()
-                .map(this::toDocumentEventDto)
-                .collect(Collectors.toList());
-    }
-
-    public DocumentEventDto toDocumentEventDto(Job job) {
+    public DocumentEventDto toDocumentEventDto(JobWithRelatedObjects job) {
         JobDocumentDto jobDocumentDto = toJobDocumentDto(job);
         try {
             return DocumentEventDto.builder()

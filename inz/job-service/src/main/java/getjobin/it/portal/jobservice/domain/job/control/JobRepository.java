@@ -44,6 +44,10 @@ public class JobRepository {
     @Autowired
     private JobLocationRelationRepository jobLocationRelationRepository;
 
+    public List<Job> queryPartition(Integer startRow, Integer endRow) {
+        return queryService.queryPartition(startRow, endRow, Job.class);
+    }
+
     public List<Job> findAll() {
         return queryService.findAll(Job.class);
     }

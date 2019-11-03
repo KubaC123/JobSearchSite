@@ -54,14 +54,14 @@ public class JobResource {
     }
 
     @IsAdmin
-    @RequestMapping(method = RequestMethod.GET, value = "search")
+    @RequestMapping(method = RequestMethod.GET, value = "query")
     public List<JobDto> searchByRsql(@RequestParam("rsql") String rsql) {
         List<Job> foundJobs = jobService.findByRsqlCondition(rsql);
         List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.getJobsWithRelatedObjects(foundJobs);
         return jobMapper.toDtos(jobsWithRelatedObjects);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "search/fullText")
+    @RequestMapping(method = RequestMethod.POST, value = "search")
     public List<JobDto> searchByTextOnAttributesElasticSearch(@RequestBody JobSearchDto jobSearchDto) {
         Instant start = Instant.now();
         List<Job> foundJobs = jobService.searchByTextOnAttributesElasticSearch(jobSearchDto);
@@ -71,7 +71,7 @@ public class JobResource {
         return jobMapper.toDtos(jobsWithRelatedObjects);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "search/fullText")
+    @RequestMapping(method = RequestMethod.GET, value = "search")
     public List<JobDto> searchByTextElasticSearch(@RequestParam("searchText") String searchText) {
         Instant start = Instant.now();
         List<Job> foundJobs = jobService.searchByTextElasticSearch(searchText);
@@ -81,7 +81,7 @@ public class JobResource {
         return jobMapper.toDtos(jobsWithRelatedObjects);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "search/fullText/sql")
+    @RequestMapping(method = RequestMethod.GET, value = "search/sql")
     public List<JobDto> searchByTextSql(@RequestParam("searchText") String searchText) {
         Instant start = Instant.now();
         List<Job> foundJobs = jobService.searchByTextSql(searchText);

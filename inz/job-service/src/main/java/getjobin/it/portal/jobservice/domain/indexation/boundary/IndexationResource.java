@@ -8,6 +8,7 @@ import getjobin.it.portal.jobservice.infrastructure.config.security.IsAdmin;
 import getjobin.it.portal.jobservice.infrastructure.rest.IdsParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = IndexationResource.INDEXATION_PATH)
+@Transactional
 public class IndexationResource {
 
     public static final String INDEXATION_PATH = "api/indexation";
@@ -61,14 +63,14 @@ public class IndexationResource {
         mappingService.sendMappingOnTopic(mappingProvider.buildJobIndexMapping());
     }
 
-    @IsAdmin
+//    @IsAdmin
     @RequestMapping(method = RequestMethod.POST, value = JOB_GIVEN_INDEXATION_PATH)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void performAsynchronousJobIndexation(@RequestParam("ids") IdsParam ids) {
         indexationService.indexGivenObjectsAsync(ids.asList(), Job.class);
     }
 
-    @IsAdmin
+//    @IsAdmin
     @RequestMapping(method = RequestMethod.POST, value = JOB_FULL_INDEXATION_PATH)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void performAsynchronousAllJobIndexation() {
