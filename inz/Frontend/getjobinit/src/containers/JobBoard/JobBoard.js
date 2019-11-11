@@ -18,7 +18,7 @@ class JobBoard extends Component {
   }
 
   getAllJobs() {
-    getJobInItClient.get("/job-service/api/job/all")
+    getJobInItClient.get("/job-service/api/job/scroll?startRow=0&rowsCount=50")
     .then(response => {
       const jobs = response.data;
       this.setState({jobs: jobs});
@@ -30,7 +30,7 @@ class JobBoard extends Component {
 
   handleSearch = (searchText) => {
     if(this.state.searchText !== searchText) {
-      getJobInItClient.get("/job-service/api/job/search/sql", { params: {searchText: searchText}})
+      getJobInItClient.get("/job-service/api/job/search", { params: {searchText: searchText}})
       .then(response => {
         const jobs = response.data;
         this.setState({jobs: jobs});

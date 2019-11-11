@@ -9,13 +9,13 @@ import java.util.Map;
 
 @Builder(builderClassName = "FoundDocumentDtoBuilder")
 @Data
-@JsonDeserialize(builder = FoundDocumentDto.FoundDocumentDtoBuilder.class)
-public class FoundDocumentDto {
+@JsonDeserialize(builder = DocumentDto.FoundDocumentDtoBuilder.class)
+public class DocumentDto {
 
     Float score;
     Long objectId;
     Map<String, Object> data;
 
-    @JsonPOJOBuilder
+    @JsonPOJOBuilder(withPrefix = "")
     public static class FoundDocumentDtoBuilder { }
 }

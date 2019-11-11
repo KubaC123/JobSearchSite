@@ -13,8 +13,8 @@ import java.util.List;
 public class SearchResultDto {
 
     Integer count;
-    List<FoundDocumentDto> documents;
+    List<DocumentDto> documents;
 
-    @JsonPOJOBuilder
+    @JsonPOJOBuilder(withPrefix = "")
     public static class SearchResultDtoBuilder { }
 }
