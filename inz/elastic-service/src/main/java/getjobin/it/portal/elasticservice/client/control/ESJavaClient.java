@@ -1,8 +1,9 @@
 package getjobin.it.portal.elasticservice.client.control;
 
+import getjobin.it.portal.elasticservice.api.DocumentDto;
 import getjobin.it.portal.elasticservice.api.DocumentEventDto;
-import getjobin.it.portal.elasticservice.api.FoundDocumentDto;
 import getjobin.it.portal.elasticservice.api.MappingEventDto;
+import getjobin.it.portal.elasticservice.api.SearchRequestDto;
 import getjobin.it.portal.elasticservice.api.SearchResultDto;
 import getjobin.it.portal.elasticservice.infrastructure.exception.UncheckedFunction;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -44,7 +46,6 @@ public class ESJavaClient {
     public ESJavaClient(ESRequestBuilder requestBuilder, RestHighLevelClient client) {
         this.requestBuilder = requestBuilder;
         this.client = client;
-
     }
 
     public void indexDocument(DocumentEventDto documentEvent) {
@@ -116,21 +117,30 @@ public class ESJavaClient {
         return getIndexRequest -> client.indices().exists(getIndexRequest, RequestOptions.DEFAULT);
     }
 
-    public SearchResultDto fullTextSearch(String indexName, String searchText, List<String> fields) {
-        SearchResponse response = search().unchecked(requestBuilder.fullTextSearch(indexName, searchText, fields));
-        List<FoundDocumentDto> foundDocuments = getFoundDocuments(response);
-        logSearchDetails(indexName, searchText, fields, response, foundDocuments.size());
+    public SearchResultDto fullTextSearch(SearchRequestDto searchRequest) {
+        SearchResponse response = search().unchecked(requestBuilder.fullTextSearch(searchRequest));
+        List<DocumentDto> foundDocuments = getFoundDocuments(response);
+        logSearchDetails(searchRequest, response, foundDocuments);
         return buildSearchResult(foundDocuments);
+    }
+
+    private void logSearchDetails(SearchRequestDto searchRequest, SearchResponse response, List<DocumentDto> documents) {
+        logSearchDetails(
+                searchRequest.getIndex(),
+                searchRequest.getSearchText(),
+                searchRequest.getFieldsWithBoost().keySet(),
+                response,
+                documents.size());
     }
 
     private UncheckedFunction<SearchRequest, SearchResponse> search() {
         return searchRequest -> client.search(searchRequest, RequestOptions.DEFAULT);
     }
 
-    private List<FoundDocumentDto> getFoundDocuments(SearchResponse response) {
-        List<FoundDocumentDto> foundDocuments = new ArrayList<>();
+    private List<DocumentDto> getFoundDocuments(SearchResponse response) {
+        List<DocumentDto> foundDocuments = new ArrayList<>();
         for(SearchHit hit : response.getHits().getHits()) {
-            foundDocuments.add(FoundDocumentDto.builder()
+            foundDocuments.add(DocumentDto.builder()
                     .score(hit.getScore())
                     .objectId(Long.valueOf(hit.getId()))
                     .data(hit.getSourceAsMap())
@@ -139,7 +149,7 @@ public class ESJavaClient {
         return foundDocuments;
     }
 
-    private void logSearchDetails(String indexName, String searchText, List<String> fields, SearchResponse response, int foundDocumentsCount) {
+    private void logSearchDetails(String indexName, String searchText, Set<String> fields, SearchResponse response, int foundDocumentsCount) {
         log.info("[SEARCH] Searched for index name: {}, text: {}, fields {}. \n" +
                         "Search response details: \n" +
                         "Found documents: {} \n" +
@@ -164,10 +174,10 @@ public class ESJavaClient {
         // todo handle failed shards
     }
 
-    private SearchResultDto buildSearchResult(List<FoundDocumentDto> foundDocuments) {
+    private SearchResultDto buildSearchResult(List<DocumentDto> documents) {
         return SearchResultDto.builder()
-                .count(foundDocuments.size())
-                .documents(foundDocuments)
+                .count(documents.size())
+                .documents(documents)
                 .build();
     }
 
