@@ -1,9 +1,12 @@
 package getjobin.it.portal.jobservice.domain.job.boundary;
 
+import getjobin.it.portal.elasticservice.api.DocumentDto;
+import getjobin.it.portal.elasticservice.api.SearchRequestDto;
 import getjobin.it.portal.jobservice.api.JobDto;
-import getjobin.it.portal.jobservice.api.JobSearchDto;
+import getjobin.it.portal.jobservice.api.JobSimpleDto;
 import getjobin.it.portal.jobservice.api.ResourceDto;
 import getjobin.it.portal.jobservice.domain.job.control.JobService;
+import getjobin.it.portal.jobservice.domain.job.control.JobServiceTestData;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
 import getjobin.it.portal.jobservice.domain.job.entity.JobWithRelatedObjects;
 import getjobin.it.portal.jobservice.infrastructure.config.security.IsAdmin;
@@ -39,9 +42,21 @@ public class JobResource {
     @Autowired
     private JobService jobService;
 
+    @Autowired
+    private JobServiceTestData jobServiceTestData;
+
+    @IsAdmin
     @RequestMapping(method = RequestMethod.GET, value = "all")
     public List<JobDto> findAll() {
         List<Job> foundJobs = jobService.findAll();
+        List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.getJobsWithRelatedObjects(foundJobs);
+        return jobMapper.toDtos(jobsWithRelatedObjects);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "scroll")
+    public List<JobDto> scrollJobs(@RequestParam("startRow") Integer startRow,
+                                   @RequestParam("rowsCount") Integer rowsCount) {
+        List<Job> foundJobs = jobService.scrollJobs(startRow, rowsCount);
         List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.getJobsWithRelatedObjects(foundJobs);
         return jobMapper.toDtos(jobsWithRelatedObjects);
     }
@@ -62,33 +77,33 @@ public class JobResource {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "search")
-    public List<JobDto> searchByTextOnAttributesElasticSearch(@RequestBody JobSearchDto jobSearchDto) {
-        Instant start = Instant.now();
-        List<Job> foundJobs = jobService.searchByTextOnAttributesElasticSearch(jobSearchDto);
-        Instant end = Instant.now();
-        log.info("[FULL TEXT SEARCH] ES search took {} ms.", Duration.between(start, end).toMillis());
-        List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.getJobsWithRelatedObjects(foundJobs);
+    public List<JobDto> searchByTextOnAttributesElasticSearch(@RequestBody SearchRequestDto jobSearchDto) {
+        List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.searchByTextOnAttributesElasticSearch(jobSearchDto);
         return jobMapper.toDtos(jobsWithRelatedObjects);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "search")
-    public List<JobDto> searchByTextElasticSearch(@RequestParam("searchText") String searchText) {
-        Instant start = Instant.now();
-        List<Job> foundJobs = jobService.searchByTextElasticSearch(searchText);
-        Instant end = Instant.now();
-        log.info("[FULL TEXT SEARCH] ES search took {} ms.", Duration.between(start, end).toMillis());
-        List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.getJobsWithRelatedObjects(foundJobs);
-        return jobMapper.toDtos(jobsWithRelatedObjects);
+    public List<JobSimpleDto> searchByTextElasticSearch(@RequestParam("searchText") String searchText) {
+        List<DocumentDto> jobs = jobService.searchByTextElasticSearch(searchText);
+        return jobMapper.toSimpleDtos(jobs);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "search/sql")
     public List<JobDto> searchByTextSql(@RequestParam("searchText") String searchText) {
-        Instant start = Instant.now();
-        List<Job> foundJobs = jobService.searchByTextSql(searchText);
-        Instant end = Instant.now();
-        log.info("[FULL TEXT SEARCH] SQL search took {} ms.", Duration.between(start, end).toMillis());
-        List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.getJobsWithRelatedObjects(foundJobs);
+        List<JobWithRelatedObjects> jobsWithRelatedObjects = jobService.searchByTextSql(searchText);
         return jobMapper.toDtos(jobsWithRelatedObjects);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "bulk")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public ResourceDto createJobs(@RequestParam("n") Integer n) {
+        Instant start = Instant.now();
+        jobServiceTestData.createNJobsAsync();
+        Instant end = Instant.now();
+        log.info("[TEST CREATE] Created {} jobs in {} minutes", n, Duration.between(start, end).toMinutes());
+        return ResourceDto.builder()
+                .objectType(Job.JOB_TYPE)
+                .build();
     }
 
     @IsAdmin @IsRecruiter
@@ -114,7 +129,7 @@ public class JobResource {
     @IsAdmin @IsRecruiter
     @RequestMapping(method = RequestMethod.PUT)
     public ResourceDto updateJob(@RequestBody JobDto jobDTO) {
-        JobServicePreconditions.checkArgument(jobDTO.getId() != null, "Job id must be specified in DTO order to update it");
+        JobServicePreconditions.checkArgument(jobDTO.getId() != null, "Job id must be specified in Dto in order to update it");
         Job existingJob = jobService.getById(jobDTO.getId());
         Job updatedJob = jobMapper.updateExistingJobOffer(existingJob, jobDTO);
         jobService.update(updatedJob);

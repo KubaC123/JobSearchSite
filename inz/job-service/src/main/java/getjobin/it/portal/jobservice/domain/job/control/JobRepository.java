@@ -32,6 +32,8 @@ import java.util.Optional;
 @Slf4j
 public class JobRepository {
 
+    private static final int RESULT_SIZE = 100;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -91,7 +93,7 @@ public class JobRepository {
         try {
             return findBySpecification(node.accept(new ManagedEntityRSQLVisitor<>()));
         } catch (Exception exception) {
-            throw new JobServiceException("Invalid selector in rsql condition.");
+            throw new JobServiceException("Invalid selector in rsql condition");
         }
     }
 
@@ -101,8 +103,9 @@ public class JobRepository {
         Root<Job> job = criteriaQuery.from(Job.class);
         Predicate predicate = specification.toPredicate(job, criteriaQuery, criteriaBuilder);
         criteriaQuery.where(predicate);
-        TypedQuery<Job> query = entityManager.createQuery(criteriaQuery);
-        return query.getResultList();
+        return entityManager.createQuery(criteriaQuery)
+                .setMaxResults(RESULT_SIZE)
+                .getResultList();
     }
 
     public Long save(Job job) {

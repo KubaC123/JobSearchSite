@@ -1,12 +1,13 @@
 package getjobin.it.portal.jobservice.domain.job.control;
 
+import com.google.common.collect.ImmutableMap;
 import cz.jirutka.rsql.parser.RSQLParser;
 import cz.jirutka.rsql.parser.RSQLParserException;
 import cz.jirutka.rsql.parser.ast.Node;
+import getjobin.it.portal.elasticservice.api.DocumentDto;
 import getjobin.it.portal.elasticservice.api.DocumentEventDto;
-import getjobin.it.portal.elasticservice.api.FoundDocumentDto;
+import getjobin.it.portal.elasticservice.api.SearchRequestDto;
 import getjobin.it.portal.elasticservice.api.SearchResultDto;
-import getjobin.it.portal.jobservice.api.JobSearchDto;
 import getjobin.it.portal.jobservice.client.ElasticServiceClient;
 import getjobin.it.portal.jobservice.domain.company.entity.Company;
 import getjobin.it.portal.jobservice.domain.job.boundary.JobMapper;
@@ -21,8 +22,10 @@ import getjobin.it.portal.jobservice.domain.technology.entity.Technology;
 import getjobin.it.portal.jobservice.domain.techstack.control.TechStackService;
 import getjobin.it.portal.jobservice.domain.techstack.entity.TechStack;
 import getjobin.it.portal.jobservice.infrastructure.exception.JobServiceException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -31,16 +34,21 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
+@RefreshScope
+@Slf4j
 public class JobService {
 
     @Autowired
@@ -63,6 +71,18 @@ public class JobService {
 
     @Autowired
     private ElasticServiceClient elasticServiceClient;
+
+    Map<String, Float> esFullTextFieldsWithBoost = Stream.of(new Object[][] {
+            { "title", 1.5f },
+            { "companyName", 0.5f },
+            { "description", 2f },
+            { "technologyName", 3f },
+            { "projectDescription", 0.5f },
+            { "techStacks", 3f },
+            { "cities", 2.0f },
+            { "countries", 1.0f },
+            { "streets", 1.0f },
+    }).collect(Collectors.toMap(data -> (String) data[0], data -> (Float) data[1]));
 
     @Value("${getjobin.it.portal.job.sql.fulltext.attributes}")
     private String sqlFullTextSearchCommaSeparatedAttributes;
@@ -89,6 +109,10 @@ public class JobService {
 
     public List<Job> findAll() {
         return jobRepository.findAll();
+    }
+
+    public List<Job> scrollJobs(Integer startRow, Integer rowsCount) {
+        return jobRepository.queryPartition(startRow, startRow + rowsCount);
     }
 
     public List<JobWithRelatedObjects> getJobsWithRelatedObjects(List<Job> jobs) {
@@ -160,42 +184,93 @@ public class JobService {
         }
     }
 
-    public List<Job> searchByTextOnAttributesElasticSearch(JobSearchDto jobSearchDto) {
-        SearchResultDto searchResult = elasticServiceClient.fullTextSearch(
-                "job", jobSearchDto.getSearchText(), String.join(",", jobSearchDto.getAttributes()));
-        return parseElasticSearchResults(searchResult);
+    public List<JobWithRelatedObjects> searchByTextOnAttributesElasticSearch(SearchRequestDto searchRequest) {
+        Instant start = Instant.now();
+        SearchResultDto searchResult = elasticServiceClient.fullTextSearch(searchRequest);
+        List<Long> foundJobIds = getJobIds(searchResult);
+        Instant end = Instant.now();
+        log.info("[FULL TEXT SEARCH] ES search took {} ms", Duration.between(start, end).toMillis());
+        return getJobsWithRelatedObjects(findByIds(foundJobIds));
     }
 
-    public List<Job> searchByTextElasticSearch(String searchText) {
-        SearchResultDto searchResult = elasticServiceClient.fullTextSearch(
-                "job", searchText, "title,type");
-        return parseElasticSearchResults(searchResult);
+    public List<DocumentDto> searchByTextElasticSearch(String searchText) {
+        Instant start = Instant.now();
+        SearchResultDto searchResult = elasticServiceClient.fullTextSearch(buildSearchRequest(searchText));
+        Instant end = Instant.now();
+        log.info("[FULL TEXT SEARCH] ES search took {} ms", Duration.between(start, end).toMillis());
+        return searchResult.getDocuments();
     }
 
-    private List<Job> parseElasticSearchResults(SearchResultDto searchResultDto) {
-        if(searchResultDto.getDocuments() != null) {
-            return searchResultDto
-                    .getDocuments()
-                    .stream()
-                    .map(FoundDocumentDto::getObjectId)
-                    .map(jobRepository::findById)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
+    private SearchRequestDto buildSearchRequest(String searchText) {
+        return SearchRequestDto.builder()
+                .index("job")
+                .searchText(searchText)
+                .fieldsWithBoost(esFullTextFieldsWithBoost)
+                .build();
+    }
+
+    private List<Long> getJobIds(SearchResultDto searchResultDto) {
+        return searchResultDto
+                .getDocuments()
+                .stream()
+                .map(DocumentDto::getObjectId)
+                .collect(Collectors.toList());
+    }
+
+    public List<JobWithRelatedObjects> searchByTextSql(String searchText) {
+        Instant start = Instant.now();
+        List<String> words = getWords(searchText);
+
+        Optional<String> locationRelatedText = getLocationRelatedText(words);
+        locationRelatedText.ifPresent(words::remove);
+
+        String rsqlCondition = getRsqlCondition(words);
+        List<Job> foundJobs = findByRsqlCondition(rsqlCondition);
+
+        List<JobWithRelatedObjects> jobsWithRelatedObjects = getJobsWithRelatedObjects(foundJobs);
+
+        if(locationRelatedText.isPresent()) {
+            jobsWithRelatedObjects = filterJobsBasedOnLocation(locationRelatedText.get(), jobsWithRelatedObjects);
         }
-        return Collections.emptyList();
+
+        Instant end = Instant.now();
+        log.info("[FULL TEXT SEARCH] SQL search took {} ms", Duration.between(start, end).toMillis());
+        return jobsWithRelatedObjects;
     }
 
-    public List<Job> searchByTextSql(String searchText) {
-        String rsqlCondition = Arrays.stream(sqlFullTextSearchCommaSeparatedAttributes.split(","))
-                .map(attribute -> toRsqlEqual(attribute, searchText))
+    private List<JobWithRelatedObjects> filterJobsBasedOnLocation(String locationRelatedText, List<JobWithRelatedObjects> jobsWithRelatedObjects) {
+        return jobsWithRelatedObjects.stream()
+                .filter(job -> filterBasedOnLocation(job, locationRelatedText))
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getWords(String searchText) {
+        return Arrays.stream(searchText.split(" "))
+                .collect(Collectors.toList());
+    }
+
+    private Optional<String> getLocationRelatedText(List<String> words) {
+        return words.stream()
+                .filter(locationService::isSearchTextLocationRelated)
+                .findFirst();
+    }
+
+    private String getRsqlCondition(List<String> words) {
+        return Arrays.stream(sqlFullTextSearchCommaSeparatedAttributes.split(","))
+                .map(attribute -> toRsqlEqual(attribute, words))
                 .collect(Collectors.joining(GenericRSQLSpecification.RSQL_LOGICAL_OR));
-        return findByRsqlCondition(rsqlCondition);
     }
 
-    private String toRsqlEqual(String attribute, String searchText) {
-        return attribute + GenericRSQLSpecification.RSQL_EQUAL_TO + "'" + searchText + "'";
+    private String toRsqlEqual(String attribute, List<String> words) {
+        return attribute + GenericRSQLSpecification.RSQL_EQUAL_TO + "'*" + String.join(" ", words) + "*'";
     }
+
+    private boolean filterBasedOnLocation(JobWithRelatedObjects job, String searchText) {
+        return job.getLocationsWithRemote().stream()
+                .map(Pair::getFirst)
+                .anyMatch(location -> locationService.doesSearchTextOccur(location, searchText));
+    }
+
 
     public Long create(Job job) {
         validate(job);

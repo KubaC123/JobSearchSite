@@ -1,6 +1,7 @@
 package getjobin.it.portal.jobservice.domain.location.control;
 
 import getjobin.it.portal.jobservice.domain.location.entity.Location;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import javax.validation.Validator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Service
 public class LocationService {
@@ -63,5 +65,18 @@ public class LocationService {
         if(!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
+    }
+
+    public boolean isSearchTextLocationRelated(String searchText) {
+        return findAll().stream()
+                .anyMatch(location -> doesSearchTextOccur(location, searchText));
+    }
+
+    public boolean doesSearchTextOccur(Location location, String searchText) {
+        return Stream.of(
+                location.getCity(),
+                location.getStreet(),
+                location.getCountryName())
+                .anyMatch(loc -> loc.equals(searchText) || loc.equals(StringUtils.stripAccents(searchText)));
     }
 }

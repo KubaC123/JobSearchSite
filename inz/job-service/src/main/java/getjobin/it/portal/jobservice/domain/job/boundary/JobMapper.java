@@ -2,9 +2,11 @@ package getjobin.it.portal.jobservice.domain.job.boundary;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import getjobin.it.portal.elasticservice.api.DocumentDto;
 import getjobin.it.portal.elasticservice.api.DocumentEventDto;
 import getjobin.it.portal.jobservice.api.JobDocumentDto;
 import getjobin.it.portal.jobservice.api.JobDto;
+import getjobin.it.portal.jobservice.api.JobSimpleDto;
 import getjobin.it.portal.jobservice.domain.category.boundary.CategoryMapper;
 import getjobin.it.portal.jobservice.domain.company.boundary.CompanyMapper;
 import getjobin.it.portal.jobservice.domain.job.entity.Job;
@@ -18,7 +20,11 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.ApplicationScope;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -131,6 +137,35 @@ public class JobMapper {
                 .locations(locationRelationMapper.toDtos(jobWithRelatedObjects.getLocationsWithRemote()))
                 .applications(job.getApplications())
                 .build();
+    }
+
+    public List<JobSimpleDto> toSimpleDtos(List<DocumentDto> jobs) {
+        return jobs.stream()
+                .map(this::toSimleDto)
+                .collect(Collectors.toList());
+    }
+
+    private JobSimpleDto toSimleDto(DocumentDto job) {
+        return JobSimpleDto.builder()
+                .id(job.getObjectId())
+                .score(job.getScore())
+                .title((String)job.getData().get("title"))
+                .companyName((String)job.getData().get("companyName"))
+                .salaryMin(Integer.valueOf((String)job.getData().get("salaryMin")))
+                .salaryMax(Integer.valueOf((String)job.getData().get("salaryMax")))
+                .cities(parseCities(job.getData()))
+                .techStacks(parseTechStacks(job.getData()))
+                .build();
+    }
+
+    private List<String> parseCities(Map<String, Object> documentData) {
+        String commaSeparatedCities = (String) documentData.get("cities");
+        return Arrays.asList(commaSeparatedCities.split(","));
+    }
+
+    private List<String> parseTechStacks(Map<String, Object> documentData) {
+        String commaSeparatedTechStacks = (String) documentData.get("techStacks");
+        return Arrays.asList(commaSeparatedTechStacks.split(","));
     }
 
     Job updateExistingJobOffer(Job existingJob, JobDto jobDto) {

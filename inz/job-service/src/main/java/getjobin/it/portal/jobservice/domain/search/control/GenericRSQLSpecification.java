@@ -49,7 +49,7 @@ public class GenericRSQLSpecification<T extends ManagedEntity> implements Specif
 
     private void checkIfPropertyIsSingleNested(String[] nestedProperty) {
         JobServicePreconditions.checkArgument(nestedProperty.length == 2,
-                MessageFormat.format("RSQL search supports single nested attributes. Provided property: {0} indicates deeper nesting level", String.valueOf(nestedProperty.length)));
+                MessageFormat.format("Rsql search supports single nested attributes. Provided property: {0} indicates deeper nesting level", String.valueOf(nestedProperty.length)));
     }
 
     private Predicate buildPredicateFromExpression(CriteriaBuilder criteriaBuilder,
