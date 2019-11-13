@@ -20,8 +20,8 @@ const jobCard = (props) => {
                 <Box>
                   <JobCardContent
                     title={job.title}
-                    company={job.company.name}
-                    city={job.locations[0].location.city}
+                    company={job.companyName}
+                    city={job.cities[0]}
                     salaryMin={job.salaryMin}
                     salaryMax={job.salaryMax}
                     techStacks={job.techStacks}

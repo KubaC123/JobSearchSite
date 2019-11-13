@@ -9,11 +9,11 @@ const jobCardContent = (props) => {
   let secondTechStack = null
 
   if(props.techStacks[0]) {
-    firstTechStack = props.techStacks[0].techStack.name;
+    firstTechStack = props.techStacks[0];
   }
 
   if(props.techStacks[1]) {
-    secondTechStack = props.techStacks[1].techStack.name;
+    secondTechStack = props.techStacks[1];
   }
 
   return (

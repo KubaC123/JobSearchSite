@@ -87,6 +87,6 @@ public class ESRequestBuilder {
                         .fields(searchRequest.getFieldsWithBoost())
 //                        .minimumShouldMatch("3")
                         .type(MultiMatchQueryBuilder.Type.MOST_FIELDS))
-                .size(1000);
+                .size(RESULT_SIZE);
     }
 }

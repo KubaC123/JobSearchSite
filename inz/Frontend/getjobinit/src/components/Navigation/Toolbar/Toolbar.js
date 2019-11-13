@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     flexGrow: 1,
+    color: "#1976d2"
   },
 }));
 
@@ -24,13 +25,13 @@ export default function ButtonAppBar() {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static" style={{backgroundColor: "black"}}>
+      <AppBar position="static" style={{backgroundColor: "white"}}>
         <Toolbar>
           <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
             <MenuIcon />
           </IconButton>
           <Typography variant="h4" className={classes.title}>
-            GetJobInIt
+            <strong></strong>
           </Typography>
           <RecruiterMenu />
         </Toolbar>

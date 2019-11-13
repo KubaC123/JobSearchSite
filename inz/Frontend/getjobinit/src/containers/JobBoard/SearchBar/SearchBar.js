@@ -78,6 +78,7 @@ class SearchBar extends Component {
           <Button 
             style={{minWidth: 400}} 
             variant="contained"
+            color="primary"
             onClick={this.handleSearchClicked}>
             Search
           </Button>

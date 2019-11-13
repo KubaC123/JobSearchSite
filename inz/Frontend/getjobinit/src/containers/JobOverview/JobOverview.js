@@ -76,25 +76,25 @@ class JobOverview extends Component {
     return (
       <Box maxWidth="70%" mx="auto" paddingTop={10} border={2}>
         <Paper>
-        <Grid container direction="row" justify="center" spacing={8}>
-          <Grid item>
-            {companyData}
+          <Grid container direction="row" justify="center" spacing={8}>
+            <Grid item>
+              {companyData}
+            </Grid>
+            <Grid item>
+              {jobMap}  
+            </Grid>
           </Grid>
-          <Grid item>
-            {jobMap}  
+          <Grid container direction="column" justify="center" spacing={8}>
+            <Grid item>
+              {techStacks}
+            </Grid>
+            <Grid item>
+              {jobDescription}
+            </Grid>
+            <Grid item>
+              {projectDescription}
+            </Grid>
           </Grid>
-        </Grid>
-        <Grid container direction="column" justify="center" spacing={8}>
-          <Grid item>
-            {techStacks}
-          </Grid>
-          <Grid item>
-            {jobDescription}
-          </Grid>
-          <Grid item>
-            {projectDescription}
-          </Grid>
-        </Grid>
         </Paper>
       </Box>
     );

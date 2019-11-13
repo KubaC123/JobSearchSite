@@ -7,8 +7,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import PostAddIcon from '@material-ui/icons/PostAdd';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
 import Box from '@material-ui/core/Box';
+import { Link } from 'react-router-dom';
 
 const StyledMenu = withStyles({
   paper: {
@@ -33,7 +33,7 @@ const StyledMenu = withStyles({
 const StyledMenuItem = withStyles(theme => ({
   root: {
     '&:focus': {
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: "#1976d2",
       '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
         color: theme.palette.common.white,
       },
@@ -54,40 +54,31 @@ export default function CustomizedMenus() {
 
   return (
     <Box>
-      <Button
-        aria-controls="customized-menu"
-        aria-haspopup="true"
-        variant="contained"
-        color="primary"
-        onClick={handleClick}
-      >
+      <Button variant="contained" onClick={handleClick} style={{ backgroundColor: "#1976d2"}}>
         Recruiter
       </Button>
       <StyledMenu
-        id="customized-menu"
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <StyledMenuItem>
-          <ListItemIcon>
-            <LockOpenIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary="Login" />
-        </StyledMenuItem>
-        <StyledMenuItem>
-          <ListItemIcon>
-            <PostAddIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary="Post a Job" />
-        </StyledMenuItem>
-        <StyledMenuItem>
-          <ListItemIcon>
-            <AssignmentIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary="Panel" />
-        </StyledMenuItem>
+        <Link to="post-a-job" style={{ textDecoration: 'none' }}>
+          <StyledMenuItem>
+            <ListItemIcon>
+              <PostAddIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText primary="Post a Job" />
+          </StyledMenuItem>
+        </Link>
+        <Link to="recruiter-panel" style={{ textDecoration: 'none' }}>
+          <StyledMenuItem>
+            <ListItemIcon>
+              <AssignmentIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText primary="Panel" />
+          </StyledMenuItem>
+        </Link>
       </StyledMenu>
     </Box>
   );

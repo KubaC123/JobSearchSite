@@ -19,12 +19,10 @@ const theme = createMuiTheme({
     //   default: 'black'
     // },
     primary: {
-      main: orange[700] , //90caf9
-      box: blue[50], //e3f2fd
-      paper: indigo[100] //c5cae9
+      main: blue[700] , //90caf9
     },
     secondary: {
-      main: orange[700] //f57c00
+      main: blue[700] //f57c00
     }
   },
 });
@@ -33,11 +31,11 @@ function App() {
   return (
     <MuiThemeProvider theme={theme}>
       <CssBaseline />
-      <Layout>
         <BrowserRouter>
-          <MainScreen />
-        </BrowserRouter>
-      </Layout>
+          <Layout>
+            <MainScreen />
+          </Layout>
+      </BrowserRouter>
     </MuiThemeProvider>
   );
 }

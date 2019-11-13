@@ -75,6 +75,7 @@ public class JobService {
     Map<String, Float> esFullTextFieldsWithBoost = Stream.of(new Object[][] {
             { "title", 1.5f },
             { "companyName", 0.5f },
+            { "experienceLevel", 1.5f },
             { "description", 2f },
             { "technologyName", 3f },
             { "projectDescription", 0.5f },
@@ -86,9 +87,6 @@ public class JobService {
 
     @Value("${getjobin.it.portal.job.sql.fulltext.attributes}")
     private String sqlFullTextSearchCommaSeparatedAttributes;
-
-    @Value("${getjobin.it.portal.job.elastic.fulltext.attributes}")
-    private String elasticFullTextSearchCommaSeparatedAttributes;
 
     public List<DocumentEventDto> getDocumentEvents(Integer startRow, Integer endRow) {
         List<Job> jobs = jobRepository.queryPartition(startRow, endRow);

@@ -10,7 +10,7 @@ const fullTextSearchField = (props) => {
       <Box pl={3} pr={3}>
         <Tooltip title="Use our full text search, ex: Python Warszawa Junior">
           <TextField style={{width: '500px'}}
-            label="Keywords"
+            label="What job are you looking for..."
             type="search"
             margin="normal"
             variant="outlined"

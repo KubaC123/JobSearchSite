@@ -21,7 +21,7 @@ class JobMap extends Component {
       <Box border={1} borderColor="secondary.main">
       <LeafletMap
         center={[centerLat, centerLong]}
-        zoom={3}
+        zoom={10}
         maxZoom={20}
         attributionControl={true}
         zoomControl={true}

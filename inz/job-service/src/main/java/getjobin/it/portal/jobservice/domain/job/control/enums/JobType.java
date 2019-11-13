@@ -5,10 +5,10 @@ import java.util.Optional;
 
 public enum JobType {
 
-    FULL_TIME("FullTime"),
+    FULL_TIME("Full time"),
     CONSULTING("Consulting"),
     INTERNSHIP("Internship"),
-    PART_TIME("PartTime");
+    PART_TIME("Part time");
 
     private String literal;
 

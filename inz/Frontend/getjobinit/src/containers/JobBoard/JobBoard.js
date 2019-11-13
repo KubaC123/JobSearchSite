@@ -11,22 +11,17 @@ class JobBoard extends Component {
     jobs: [],
     searchText: null
   }
-  
-  componentDidMount() {
-    console.log("componentDidMount");
-    this.getAllJobs();
-  }
 
-  getAllJobs() {
-    getJobInItClient.get("/job-service/api/job/scroll?startRow=0&rowsCount=50")
-    .then(response => {
-      const jobs = response.data;
-      this.setState({jobs: jobs});
-    })
-    .catch(error => {
-      alert("Server is down :(")
-    })
-  }
+  // getAllJobs() {
+  //   getJobInItClient.get("/job-service/api/job/scroll?startRow=0&rowsCount=50")
+  //   .then(response => {
+  //     const jobs = response.data;
+  //     this.setState({jobs: jobs});
+  //   })
+  //   .catch(error => {
+  //     alert("Server is down :(")
+  //   })
+  // }
 
   handleSearch = (searchText) => {
     if(this.state.searchText !== searchText) {

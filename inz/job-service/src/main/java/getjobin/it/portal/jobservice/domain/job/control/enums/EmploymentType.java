@@ -7,9 +7,9 @@ public enum EmploymentType {
 
     B2B("B2B"),
     EMPLOYMENT("Employment"),
-    CONTRACT_AGREEMENT("ContractAgreement"),
-    CONTRACT_FOR_SPECIFIC_WORK("ContractForSpecificWork"),
-    INTERN_AGREEMENT("InternAgreement");
+    CONTRACT_AGREEMENT("Contract agreement"),
+    CONTRACT_FOR_SPECIFIC_WORK("Contract for specific work"),
+    INTERN_AGREEMENT("Intern agreement");
 
     private String literal;
 
